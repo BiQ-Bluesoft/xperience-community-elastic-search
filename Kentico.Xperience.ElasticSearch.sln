@@ -7,12 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1100D747-57F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{54E3717B-0A76-4D7E-8936-0C07F1D0E4C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kentico.Xperience.ElasticSearch", "src\Kentico.Xperience.ElasticSearch\Kentico.Xperience.ElasticSearch.csproj", "{935EAED3-4AB0-49BE-857C-47E354FC4996}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kentico.Xperience.ElasticSearch", "src\Kentico.Xperience.ElasticSearch\Kentico.Xperience.ElasticSearch.csproj", "{935EAED3-4AB0-49BE-857C-47E354FC4996}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DancingGoat", "examples\DancingGoat\DancingGoat.csproj", "{06EEFC6C-2E58-407D-8E5E-ED71D3B2CC9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6244D07E-863F-4C30-99D2-A28A2637C33E}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
