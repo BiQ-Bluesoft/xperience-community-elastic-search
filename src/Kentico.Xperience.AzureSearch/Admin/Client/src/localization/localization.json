@@ -1,6 +1,6 @@
 {
     "integrations": {
-        "azuresearch": {
+        "elasticsearch": {
             "content": {
                 "headlines": {
                     "main": "Indexed content",

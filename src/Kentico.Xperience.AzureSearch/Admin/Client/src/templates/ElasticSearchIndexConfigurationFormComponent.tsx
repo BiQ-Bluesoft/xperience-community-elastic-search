@@ -21,21 +21,21 @@ import { RxCross1 } from 'react-icons/rx';
 import Select, { type CSSObjectWithLabel, type ClearIndicatorProps, type GroupBase, type MultiValue, type MultiValueRemoveProps, type OptionProps, type StylesConfig, components } from 'react-select';
 import { Tooltip } from 'react-tooltip';
 
-export interface AzureSearchIndexContentType {
+export interface ElasticSearchIndexContentType {
     contentTypeName: string;
     contentTypeDisplayName: string;
 }
 
 export interface IncludedPath {
     aliasPath: string | null;
-    contentTypes: AzureSearchIndexContentType[];
+    contentTypes: ElasticSearchIndexContentType[];
     identifier: string | null;
 }
 
-export interface AzureSearchIndexConfigurationComponentClientProperties
+export interface ElasticSearchIndexConfigurationComponentClientProperties
     extends FormComponentProps {
     value: IncludedPath[];
-    possibleContentTypeItems: AzureSearchIndexContentType[] | null;
+    possibleContentTypeItems: ElasticSearchIndexContentType[] | null;
 }
 
 interface OptionType {
@@ -50,8 +50,8 @@ export interface TextAreaCell extends TableCell {
     value: HTMLTextAreaElement;
 }
 
-export const AzureSearchIndexConfigurationFormComponent = (
-    props: AzureSearchIndexConfigurationComponentClientProperties,
+export const ElasticSearchIndexConfigurationFormComponent = (
+    props: ElasticSearchIndexConfigurationComponentClientProperties,
 ): JSX.Element => {
     const [rows, setRows] = useState<TableRow[]>([]);
     const [showPathEdit, setShowPathEdit] = useState<boolean>(false);
@@ -131,7 +131,9 @@ export const AzureSearchIndexConfigurationFormComponent = (
         }
         setRows(() => prepareRows(props.value));
     }, [props?.value]);
+
     const prepareColumns = (): TableColumn[] => {
+        console.log('Prepare columns');
         const columns: TableColumn[] = [];
 
         const column: TableColumn = {
@@ -160,6 +162,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         columns.push(actionColumn);
         return columns;
     };
+
     const showContentItems = (identifier: unknown): void => {
         console.log(`Editing path with identifier: ${identifier as string}`);
         let rowIndex = -1;
@@ -191,12 +194,14 @@ export const AzureSearchIndexConfigurationFormComponent = (
         setShowPathEdit(!showPathEdit);
         setShowAddNewPath(!showAddNewPath);
     };
+
     const handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ): void => {
         console.log('Updating path input to: ', event.target.value);
         setPath(event.target.value);
     };
+
     const savePath = (): void => {
         console.log(`Saving path. Current editedIdentifier: ${editedIdentifier}`);
         if (editedIdentifier === '') {
@@ -211,7 +216,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
                         aliasPath: path,
                         identifier: null,
                         contentTypes: contentTypesValue.map(x => {
-                            const contentType: AzureSearchIndexContentType = {
+                            const contentType: ElasticSearchIndexContentType = {
                                 contentTypeDisplayName: x.label,
                                 contentTypeName: x.value
                             };
@@ -247,7 +252,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
                 aliasPath: path,
                 identifier: props.value[propPathIndex].identifier,
                 contentTypes: contentTypesValue.map(x => {
-                    const contentType: AzureSearchIndexContentType = {
+                    const contentType: ElasticSearchIndexContentType = {
                         contentTypeDisplayName: x.label,
                         contentTypeName: x.value
                     };
@@ -355,7 +360,9 @@ export const AzureSearchIndexConfigurationFormComponent = (
         height: '20',
         width: '30'
     };
+
     const MultiValueRemove = (props: MultiValueRemoveProps<OptionType>): JSX.Element => {
+        console.log('MultiValueRemove');
         return (
             <components.MultiValueRemove {...props}>
                 <RxCross1 style={MultiValueRemoveStyle} />
@@ -364,6 +371,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
     };
 
     const Option = (props: OptionProps<OptionType, true, GroupBase<OptionType>>): JSX.Element => {
+        console.log('option');
         return (
             <components.Option {...props}>
                 {props.isSelected ? <IoCheckmarkSharp style={{ width: 30, alignContent: 'center' }} /> : <span style={{ width: 30, display: 'inline-block' }}></span>}
@@ -373,16 +381,21 @@ export const AzureSearchIndexConfigurationFormComponent = (
     }
 
     const handleMouseEnter = (): void => {
+        console.log('handleMouseEnter');
         setIsClearIndicatorHover(true);
     };
+
     const handleMouseLeave = (): void => {
+        console.log('handleMouseLeave');
         setIsClearIndicatorHover(false);
     };
+
     const IndicatorStyle: CSSProperties = {
         color: 'black',
         width: '80%',
         height: '80%',
     }
+
     const ClearIndicator = (props: ClearIndicatorProps<OptionType>): JSX.Element => {
         console.log('cleaIndicator with props: ', props);
         return (

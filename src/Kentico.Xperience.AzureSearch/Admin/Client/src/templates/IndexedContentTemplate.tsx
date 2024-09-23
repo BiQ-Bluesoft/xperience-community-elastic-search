@@ -43,17 +43,17 @@ export const IndexedContentTemplate = ({
     <RoutingContentPlaceholder>
       <Stack spacing={Spacing.XXL}>
         <Headline size={HeadlineSize.M}>
-          {Localization.integrations.azuresearch.content.headlines.main}
+            {Localization.integrations.elasticsearch.content.headlines.main}
         </Headline>
         <Box>
           <Headline size={HeadlineSize.S}>
-            {Localization.integrations.azuresearch.content.headlines.paths}
+            {Localization.integrations.elasticsearch.content.headlines.paths}
           </Headline>
           <Table columns={pathColumns} rows={pathRows} />
         </Box>
         <Box>
           <Headline size={HeadlineSize.S}>
-            {Localization.integrations.azuresearch.content.headlines.properties}
+            {Localization.integrations.elasticsearch.content.headlines.properties}
           </Headline>
           <Table columns={propertyColumns} rows={propertyRows} />
         </Box>

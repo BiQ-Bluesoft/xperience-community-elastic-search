@@ -111,17 +111,17 @@ export const PathDetailTemplate = ({
   return (
     <Stack spacing={Spacing.XL}>
       <Headline size={HeadlineSize.L}>
-        {Localization.integrations.azuresearch.pathdetail.headlines.main}
+        {Localization.integrations.elasticsearch.pathdetail.headlines.main}
       </Headline>
       <Box>
         <Headline size={HeadlineSize.S}>
-          {Localization.integrations.azuresearch.pathdetail.headlines.path}
+            {Localization.integrations.elasticsearch.pathdetail.headlines.path}
         </Headline>
         <span>{aliasPath}</span>
       </Box>
       <Box>
         <Headline size={HeadlineSize.S}>
-          {Localization.integrations.azuresearch.pathdetail.headlines.pagetypes}
+            {Localization.integrations.elasticsearch.pathdetail.headlines.pagetypes}
         </Headline>
         {tableData.totalCount > 0 ? (
           <Table
@@ -131,7 +131,7 @@ export const PathDetailTemplate = ({
             rows={prepareRows(tableData.rows)}
           />
         ) : (
-          <p>{Localization.integrations.azuresearch.messages.norecords}</p>
+          <p>{Localization.integrations.elasticsearch.messages.norecords}</p>
         )}
       </Box>
 

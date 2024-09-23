@@ -1,7 +1,7 @@
 {
-  "name": "kentico-azuresearch-web-admin",
+  "name": "kentico-elasticsearch-web-admin",
   "version": "1.0.0",
-  "description": "Xperience by Kentico AzureSearch administration project.",
+  "description": "Xperience by Kentico ElasticSearch administration project.",
   "private": true,
   "scripts": {
     "start": "npm run lint && webpack serve --mode development",

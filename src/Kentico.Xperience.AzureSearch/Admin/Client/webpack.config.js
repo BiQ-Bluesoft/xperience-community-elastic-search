@@ -5,7 +5,7 @@ module.exports = (opts) => {
   const baseConfig = (webpackConfigEnv, argv) => {
     return baseWebpackConfig({
       orgName: 'kentico',
-      projectName: 'kentico-xperience-integrations-azuresearch',
+      projectName: 'xperience-integrations-elasticsearch',
       webpackConfigEnv: webpackConfigEnv,
       argv: argv,
     });
@@ -23,8 +23,7 @@ module.exports = (opts) => {
     },
     devServer: {
       port: 3009,
-      },
-    devtool: 'source-map'
+    },
   };
 
   return webpackMerge.merge(projectConfig, baseConfig(opts));

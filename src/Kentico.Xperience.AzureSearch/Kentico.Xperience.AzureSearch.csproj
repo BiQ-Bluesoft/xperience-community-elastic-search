@@ -27,7 +27,7 @@
 
 		<!-- Requires that npm run build or npm run build:dev was executed _before_ the .NET build -->
 		<AdminClientPath Include="Admin\Client\dist\**" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-			<ProjectName>xperience-integrations-azureearch</ProjectName>
+			<ProjectName>xperience-integrations-elasticsearch</ProjectName>
 		</AdminClientPath>
 	</ItemGroup>
 

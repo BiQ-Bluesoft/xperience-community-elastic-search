@@ -1,4 +1,4 @@
-/* http://meyerweb.com/eric/tools/css/reset/
+/* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
    License: none (public domain)
 */
@@ -5023,30 +5023,6 @@ li.dropdown a {
   position: absolute;
   left: 0;
   display: inline-block;
-}
-/*# Consent #*/
-.consent-item:not(:first-of-type) {
-  border-top: 1px solid #e7e7e7;
-}
-.consent-item .row {
-  margin: 0 32px 0 32px;
-  padding: 8px 0 0 0;
-}
-.consent-item .consent-heading {
-  margin: 0;
-}
-.cookie-consent {
-  font-size: 16px;
-  padding: 8px;
-  background: #E2D1BA;
-  color: #000000;
-}
-.cookie-consent .consent-text {
-  padding-bottom: 16px;
-}
-.cookie-consent .consent-buttons {
-  text-align: right;
-  margin: 0;
 }
 /*# Buttons #*/
 .btn {

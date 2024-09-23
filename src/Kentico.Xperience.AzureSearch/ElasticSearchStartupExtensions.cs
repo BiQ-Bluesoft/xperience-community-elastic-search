@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 using Kentico.Xperience.AzureSearch.Admin;
-using Kentico.Xperience.AzureSearch.Aliasing;
+//using Kentico.Xperience.AzureSearch.Aliasing;
 using Kentico.Xperience.AzureSearch.Indexing;
 using Kentico.Xperience.AzureSearch.Search;
 
@@ -74,8 +74,8 @@ public static class ElasticSearchStartupExtensions
             .AddSingleton<IElasticSearchTaskLogger, DefaultElasticSearchTaskLogger>()
             .AddSingleton<IElasticSearchTaskProcessor, DefaultElasticSearchTaskProcessor>()
             .AddSingleton<IElasticSearchConfigurationStorageService, DefaultElasticSearchConfigurationStorageService>()
-            .AddSingleton<IElasticSearchIndexClientService, ElasticSearchIndexClientService>()
-            .AddSingleton<IElasticSearchIndexAliasService, ElasticSearchIndexAliasService>();
+            .AddSingleton<IElasticSearchIndexClientService, ElasticSearchIndexClientService>();
+    //.AddSingleton<IElasticSearchIndexAliasService, ElasticSearchIndexAliasService>();
 }
 
 public interface IElasticSearchBuilder

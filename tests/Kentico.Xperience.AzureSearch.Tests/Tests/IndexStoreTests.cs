@@ -27,7 +27,7 @@ internal class IndexStoreTests
         ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
-        bool hasThrown = false;
+        var hasThrown = false;
 
         try
         {

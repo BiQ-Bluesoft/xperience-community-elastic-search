@@ -6,8 +6,8 @@ using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.AzureSearch.Admin;
 
 [assembly: RegisterFormComponent(
-    identifier: ElasticSearchIndexConfigurationComponent.IDENTIFIER,
-    componentType: typeof(ElasticSearchIndexConfigurationComponent),
+    identifier: ElasticSearchIndexConfigurationFormComponent.IDENTIFIER,
+    componentType: typeof(ElasticSearchIndexConfigurationFormComponent),
     name: "ElasticSearch Search Index Configuration")]
 
 namespace Kentico.Xperience.AzureSearch.Admin;
@@ -28,7 +28,7 @@ public sealed class ElasticSearchIndexConfigurationComponentAttribute : FormComp
 }
 
 [ComponentAttribute(typeof(ElasticSearchIndexConfigurationComponentAttribute))]
-public class ElasticSearchIndexConfigurationComponent : FormComponent<ElasticSearchIndexConfigurationComponentProperties, ElasticSearchIndexConfigurationComponentClientProperties, IEnumerable<ElasticSearchIndexIncludedPath>>
+public class ElasticSearchIndexConfigurationFormComponent : FormComponent<ElasticSearchIndexConfigurationComponentProperties, ElasticSearchIndexConfigurationComponentClientProperties, IEnumerable<ElasticSearchIndexIncludedPath>>
 {
     public const string IDENTIFIER = "kentico.xperience-integrations-elasticsearch.elasticsearch-index-configuration";
 
