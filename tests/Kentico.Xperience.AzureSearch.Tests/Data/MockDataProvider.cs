@@ -19,19 +19,19 @@ internal static class MockDataProvider
         return item;
     }
 
-    public static AzureSearchIndexIncludedPath Path => new("/%")
+    public static ElasticSearchIndexIncludedPath Path => new("/%")
     {
-        ContentTypes = [new AzureSearchIndexContentType(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))]
+        ContentTypes = [new ElasticSearchIndexContentType(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))]
     };
 
 
-    public static AzureSearchIndex Index => new(
-        new AzureSearchConfigurationModel()
+    public static ElasticSearchIndex Index => new(
+        new ElasticSearchConfigurationModel()
         {
             IndexName = DefaultIndex,
             ChannelName = DefaultChannel,
             LanguageNames = new List<string>() { EnglishLanguageName, CzechLanguageName },
-            Paths = new List<AzureSearchIndexIncludedPath>() { Path },
+            Paths = new List<ElasticSearchIndexIncludedPath>() { Path },
             StrategyName = "strategy"
         },
         []
@@ -44,14 +44,14 @@ internal static class MockDataProvider
     public static readonly int IndexId = 1;
     public static readonly string EventName = "publish";
 
-    public static AzureSearchIndex GetIndex(string indexName, int id) => new(
-        new AzureSearchConfigurationModel()
+    public static ElasticSearchIndex GetIndex(string indexName, int id) => new(
+        new ElasticSearchConfigurationModel()
         {
             Id = id,
             IndexName = indexName,
             ChannelName = DefaultChannel,
             LanguageNames = new List<string>() { EnglishLanguageName, CzechLanguageName },
-            Paths = new List<AzureSearchIndexIncludedPath>() { Path }
+            Paths = new List<ElasticSearchIndexIncludedPath>() { Path }
         },
         []
     );

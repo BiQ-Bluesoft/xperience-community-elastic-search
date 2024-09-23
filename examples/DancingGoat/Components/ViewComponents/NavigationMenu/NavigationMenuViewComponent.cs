@@ -21,7 +21,7 @@ namespace DancingGoat.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            string languageName = currentLanguageRetriever.Get();
+            var languageName = currentLanguageRetriever.Get();
 
             var navigationViewModels = (await navigationService.GetNavigationItemViewModels(languageName, HttpContext.RequestAborted)).ToList();
 
@@ -29,7 +29,6 @@ namespace DancingGoat.ViewComponents
             {
                 new($"Search", "/Search"),
                 new($"{nameof(SearchController.Geo)}Search", $"/Search/{nameof(SearchController.Geo)}"),
-                new($"{nameof(SearchController.Semantic)}Search", $"/Search/{nameof(SearchController.Semantic)}"),
                 new($"{nameof(SearchController.Simple)}Search", $"/Search/{nameof(SearchController.Simple)}"),
             });
 

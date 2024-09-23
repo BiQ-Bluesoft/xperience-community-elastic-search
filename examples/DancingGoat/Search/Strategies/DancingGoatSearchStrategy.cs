@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search;
 
-public class DancingGoatSearchStrategy : BaseAzureSearchIndexingStrategy<DancingGoatSearchModel>
+public class DancingGoatSearchStrategy : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
 {
     private readonly WebScraperHtmlSanitizer htmlSanitizer;
     private readonly WebCrawlerService webCrawler;
@@ -25,7 +25,7 @@ public class DancingGoatSearchStrategy : BaseAzureSearchIndexingStrategy<Dancing
         this.strategyHelper = strategyHelper;
     }
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSearchModel();
 
@@ -47,8 +47,8 @@ public class DancingGoatSearchStrategy : BaseAzureSearchIndexingStrategy<Dancing
                     return null;
                 }
 
-                result.Title = page?.CafeTitle ?? "";
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                result.Title = page.CafeTitle ?? "";
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else if (string.Equals(item.ContentTypeName, ArticlePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
@@ -65,8 +65,8 @@ public class DancingGoatSearchStrategy : BaseAzureSearchIndexingStrategy<Dancing
                     return null;
                 }
 
-                result.Title = page?.ArticleTitle ?? "";
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                result.Title = page.ArticleTitle ?? "";
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else if (string.Equals(item.ContentTypeName, HomePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
@@ -88,7 +88,7 @@ public class DancingGoatSearchStrategy : BaseAzureSearchIndexingStrategy<Dancing
                 }
 
                 result.Title = page!.HomePageBanner.First().BannerHeaderText;
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else

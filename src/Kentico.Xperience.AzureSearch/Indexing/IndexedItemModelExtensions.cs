@@ -24,28 +24,25 @@ internal static class IndexedItemModelExtensions
             throw new ArgumentNullException(nameof(indexName));
         }
 
-        if (item is null)
-        {
-            throw new ArgumentNullException(nameof(item));
-        }
+        ArgumentNullException.ThrowIfNull(item);
 
-        var azureSearchIndex = AzureSearchIndexStore.Instance.GetIndex(indexName);
+        var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName);
 
-        if (azureSearchIndex is null)
+        if (elasticSearchIndex is null)
         {
             log.LogError(nameof(IndexedItemModelExtensions), nameof(IsIndexedByIndex), $"Error loading registered AzureSearch index '{indexName}' for event [{eventName}].");
 
             return false;
         }
 
-        if (!azureSearchIndex.LanguageNames.Exists(x => x == item.LanguageName))
+        if (!elasticSearchIndex.LanguageNames.Exists(x => x == item.LanguageName))
         {
             return false;
         }
 
-        return azureSearchIndex.IncludedPaths.Any(path =>
+        return elasticSearchIndex.IncludedPaths.Any(path =>
         {
-            bool matchesContentType = path.ContentTypes.Exists(x => string.Equals(x.ContentTypeName, item.ContentTypeName));
+            var matchesContentType = path.ContentTypes.Exists(x => string.Equals(x.ContentTypeName, item.ContentTypeName));
 
             if (!matchesContentType)
             {
@@ -55,7 +52,7 @@ internal static class IndexedItemModelExtensions
             // Supports wildcard matching
             if (path.AliasPath.EndsWith("/%", StringComparison.OrdinalIgnoreCase))
             {
-                string pathToMatch = path.AliasPath[..^2];
+                var pathToMatch = path.AliasPath[..^2];
                 var pathsOnPath = TreePathUtils.GetTreePathsOnPath(item.WebPageItemTreePath, true, false).ToHashSet();
 
                 return pathsOnPath.Any(p => p.StartsWith(pathToMatch, StringComparison.OrdinalIgnoreCase));
@@ -81,20 +78,17 @@ internal static class IndexedItemModelExtensions
             throw new ArgumentNullException(nameof(indexName));
         }
 
-        if (item is null)
-        {
-            throw new ArgumentNullException(nameof(item));
-        }
+        ArgumentNullException.ThrowIfNull(item);
 
-        var azureSearchIndex = AzureSearchIndexStore.Instance.GetIndex(indexName);
+        var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName);
 
-        if (azureSearchIndex is null)
+        if (elasticSearchIndex is null)
         {
             log.LogError(nameof(IndexedItemModelExtensions), nameof(IsIndexedByIndex), $"Error loading registered AzureSearch index '{indexName}' for event [{eventName}].");
 
             return false;
         }
 
-        return azureSearchIndex.LanguageNames.Exists(x => x == item.LanguageName);
+        return elasticSearchIndex.LanguageNames.Exists(x => x == item.LanguageName);
     }
 }

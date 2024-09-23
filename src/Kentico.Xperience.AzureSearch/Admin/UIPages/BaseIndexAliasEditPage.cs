@@ -1,95 +1,85 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿//using System.ComponentModel.DataAnnotations;
+//using System.Text;
 
-using Azure.Search.Documents.Indexes.Models;
+//using Kentico.Xperience.Admin.Base;
+//using Kentico.Xperience.Admin.Base.Forms;
+//using Kentico.Xperience.AzureSearch.Aliasing;
 
-using Kentico.Xperience.Admin.Base;
-using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.AzureSearch.Aliasing;
+//using Microsoft.IdentityModel.Tokens;
 
-using Microsoft.IdentityModel.Tokens;
+//using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
-using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
+//namespace Kentico.Xperience.AzureSearch.Admin;
 
-namespace Kentico.Xperience.AzureSearch.Admin;
+//internal abstract class BaseIndexAliasEditPage(
+//    IFormItemCollectionProvider formItemCollectionProvider,
+//    IFormDataBinder formDataBinder,
+//    IElasticSearchIndexAliasService elasticSearchIndexAliasService,
+//    IElasticSearchConfigurationStorageService storageService) : ModelEditPage<ElasticSearchAliasConfigurationModel>(formItemCollectionProvider, formDataBinder)
+//{
+//    protected IElasticSearchConfigurationStorageService StorageService = storageService;
+//    protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchAliasConfigurationModel configuration)
+//    {
+//        configuration.AliasName = RemoveWhitespacesUsingStringBuilder(configuration.AliasName ?? "");
 
-internal abstract class BaseIndexAliasEditPage : ModelEditPage<AzureSearchAliasConfigurationModel>
-{
-    protected readonly IAzureSearchConfigurationStorageService StorageService;
-    private readonly IAzureSearchIndexAliasService azureSearchIndexAliasService;
+//        var context = new ValidationContext(configuration, null, null);
+//        var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+//        var valid = Validator.TryValidateObject(configuration, context, validationResults, true);
 
-    protected BaseIndexAliasEditPage(
-        IFormItemCollectionProvider formItemCollectionProvider,
-        IFormDataBinder formDataBinder,
-        IAzureSearchIndexAliasService azureSearchIndexAliasService,
-        IAzureSearchConfigurationStorageService storageService)
-        : base(formItemCollectionProvider, formDataBinder)
-    {
-        StorageService = storageService;
-        this.azureSearchIndexAliasService = azureSearchIndexAliasService;
-    }
+//        if (!valid)
+//        {
+//            return new ModificationResponse(ModificationResult.Failure,
+//                validationResults
+//                    .Where(result => result.ErrorMessage is not null)
+//                    .Select(result => result.ErrorMessage!)
+//                    .ToList()
+//            );
+//        }
 
-    protected async Task<ModificationResponse> ValidateAndProcess(AzureSearchAliasConfigurationModel configuration)
-    {
-        configuration.AliasName = RemoveWhitespacesUsingStringBuilder(configuration.AliasName ?? "");
+//        if (storageService.GetAliasIds().Exists(x => x == configuration.Id))
+//        {
+//            var oldAliasName = storageService.GetAliasDataOrNull(configuration.Id)!.AliasName;
 
-        var context = new ValidationContext(configuration, null, null);
-        var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
-        bool valid = Validator.TryValidateObject(configuration, context, validationResults, true);
+//            var edited = storageService.TryEditAlias(configuration);
 
-        if (!valid)
-        {
-            return new ModificationResponse(ModificationResult.Failure,
-                validationResults
-                    .Where(result => result.ErrorMessage is not null)
-                    .Select(result => result.ErrorMessage!)
-                    .ToList()
-            );
-        }
+//            if (edited)
+//            {
+//                AzureSearchIndexAliasStore.SetAliases(storageService);
+//                var indexName = configuration.IndexNames.First();
+//                await elasticSearchIndexAliasService.EditAlias(indexName, oldAliasName, configuration.AliasName, default);
 
-        if (StorageService.GetAliasIds().Exists(x => x == configuration.Id))
-        {
-            string oldAliasName = StorageService.GetAliasDataOrNull(configuration.Id)!.AliasName;
+//                return new ModificationResponse(ModificationResult.Success);
+//            }
 
-            bool edited = StorageService.TryEditAlias(configuration);
+//            return new ModificationResponse(ModificationResult.Failure);
+//        }
 
-            if (edited)
-            {
-                AzureSearchIndexAliasStore.SetAliases(StorageService);
-                await azureSearchIndexAliasService.EditAlias(oldAliasName, new SearchAlias(configuration.AliasName, configuration.IndexNames), default);
+//        var created = !configuration.IndexNames.IsNullOrEmpty() && storageService.TryCreateAlias(configuration);
 
-                return new ModificationResponse(ModificationResult.Success);
-            }
+//        if (created)
+//        {
+//            AzureSearchIndexAliasStore.Instance.AddAlias(new AzureSearchIndexAlias(configuration));
 
-            return new ModificationResponse(ModificationResult.Failure);
-        }
+//            return new ModificationResponse(ModificationResult.Success);
+//        }
 
-        bool created = !configuration.IndexNames.IsNullOrEmpty() && StorageService.TryCreateAlias(configuration);
+//        return new ModificationResponse(ModificationResult.Failure);
+//    }
 
-        if (created)
-        {
-            AzureSearchIndexAliasStore.Instance.AddAlias(new AzureSearchIndexAlias(configuration));
+//    protected static string RemoveWhitespacesUsingStringBuilder(string source)
+//    {
+//        var builder = new StringBuilder(source.Length);
 
-            return new ModificationResponse(ModificationResult.Success);
-        }
+//        for (var i = 0; i < source.Length; i++)
+//        {
+//            var c = source[i];
 
-        return new ModificationResponse(ModificationResult.Failure);
-    }
+//            if (!char.IsWhiteSpace(c))
+//            {
+//                builder.Append(c);
+//            }
+//        }
 
-    protected static string RemoveWhitespacesUsingStringBuilder(string source)
-    {
-        var builder = new StringBuilder(source.Length);
-
-        for (int i = 0; i < source.Length; i++)
-        {
-            char c = source[i];
-
-            if (!char.IsWhiteSpace(c))
-            {
-                builder.Append(c);
-            }
-        }
-
-        return source.Length == builder.Length ? source : builder.ToString();
-    }
-}
+//        return source.Length == builder.Length ? source : builder.ToString();
+//    }
+//}

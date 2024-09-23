@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Product>Xperience by Kentico AzureSearch Search</Product>
+		<Product>Xperience by Kentico ElasticSearch Search</Product>
 		<Title>$(Product)</Title>
 		<PackageId>Kentico.Xperience.AzureSearch</PackageId>
-		<Description>Enables the creation of AzureSearch search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
+		<Description>Enables the creation of ElasticSearch search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
 		<RepositoryUrl>https://github.com/kentico/xperience-by-kentico-azure-ai-search</RepositoryUrl>
 	</PropertyGroup>
 
@@ -27,7 +27,7 @@
 
 		<!-- Requires that npm run build or npm run build:dev was executed _before_ the .NET build -->
 		<AdminClientPath Include="Admin\Client\dist\**" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-			<ProjectName>xperience-integrations-azuresearch</ProjectName>
+			<ProjectName>xperience-integrations-azureearch</ProjectName>
 		</AdminClientPath>
 	</ItemGroup>
 
@@ -45,9 +45,10 @@
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Search.Documents" />
+		<PackageReference Include="Elastic.Clients.Elasticsearch" />
 		<PackageReference Include="Kentico.Xperience.Admin" />
 		<PackageReference Include="Kentico.Xperience.WebApp" />
+		<PackageReference Include="NEST" />
 	</ItemGroup>
 
 	<ItemGroup>

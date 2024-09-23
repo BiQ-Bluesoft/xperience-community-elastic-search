@@ -1,14 +1,14 @@
-﻿using Azure.Core.GeoJson;
-
-using DancingGoat.Models;
+﻿using DancingGoat.Models;
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
 using Kentico.Xperience.AzureSearch.Indexing;
 
+using Nest;
+
 namespace DancingGoat.Search;
 
-public class GeoLocationSearchStrategy : BaseAzureSearchIndexingStrategy<GeoLocationSearchModel>
+public class GeoLocationSearchStrategy : BaseElasticSearchIndexingStrategy<GeoLocationSearchModel>
 {
     private readonly WebScraperHtmlSanitizer htmlSanitizer;
     private readonly WebCrawlerService webCrawler;
@@ -25,7 +25,7 @@ public class GeoLocationSearchStrategy : BaseAzureSearchIndexingStrategy<GeoLoca
         this.strategyHelper = strategyHelper;
     }
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new GeoLocationSearchModel();
 
@@ -47,14 +47,14 @@ public class GeoLocationSearchStrategy : BaseAzureSearchIndexingStrategy<GeoLoca
                     return null;
                 }
 
-                result.Title = page?.CafeTitle ?? "";
-                result.Location = page?.CafeLocation ?? "";
+                result.Title = page.CafeTitle ?? "";
+                result.Location = page.CafeLocation ?? "";
 
                 //We can use this value later to sort by distance from the user accessing our search page.
                 //Example for this scenario is shown in DancingGoatSearchService.GeoSearch
-                result.GeoLocation = new GeoPoint((double)page.CafeLocationLatitude, (double)page.CafeLocationLongitude);
+                result.GeoLocation = new GeoLocation((double)page.CafeLocationLatitude, (double)page.CafeLocationLongitude);
 
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else

@@ -71,7 +71,7 @@ public sealed class AzureSearchIndexAliasStore
     /// Resets all aliases
     /// </summary>
     /// <param name="models"></param>
-    internal void SetAliases(IEnumerable<AzureSearchAliasConfigurationModel> models)
+    internal void SetAliases(IEnumerable<ElasticSearchAliasConfigurationModel> models)
     {
         registeredAliases.Clear();
         foreach (var alias in models)
@@ -84,7 +84,7 @@ public sealed class AzureSearchIndexAliasStore
     /// Sets the current aliases to those provided by <paramref name="configurationService"/>
     /// </summary>
     /// <param name="configurationService"></param>
-    internal static void SetAliases(IAzureSearchConfigurationStorageService configurationService)
+    internal static void SetAliases(IElasticSearchConfigurationStorageService configurationService)
     {
         var aliases = configurationService.GetAllAliasData();
 

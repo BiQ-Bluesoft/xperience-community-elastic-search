@@ -3,7 +3,7 @@
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.AzureSearch.Admin;
-using Kentico.Xperience.AzureSearch.Indexing;
+//using Kentico.Xperience.AzureSearch.Indexing;
 
 [assembly: UIPage(
    parentType: typeof(IndexListingPage),
@@ -18,7 +18,7 @@ namespace Kentico.Xperience.AzureSearch.Admin;
 [UIEvaluatePermission(SystemPermissions.UPDATE)]
 internal class IndexEditPage : BaseIndexEditPage
 {
-    private AzureSearchConfigurationModel? model = null;
+    private ElasticSearchConfigurationModel? model = null;
 
     [PageParameter(typeof(IntPageModelBinder))]
     public int IndexIdentifier { get; set; }
@@ -26,11 +26,11 @@ internal class IndexEditPage : BaseIndexEditPage
     public IndexEditPage(
         Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        IAzureSearchConfigurationStorageService storageService,
-        IAzureSearchIndexClientService indexClientService)
-        : base(formItemCollectionProvider, formDataBinder, storageService, indexClientService) { }
+        IElasticSearchConfigurationStorageService storageService
+        /*IElasticSearchIndexClientService indexClientService*/)
+        : base(formItemCollectionProvider, formDataBinder, storageService/*, indexClientService*/) { }
 
-    protected override AzureSearchConfigurationModel Model
+    protected override ElasticSearchConfigurationModel Model
     {
         get
         {
@@ -40,7 +40,7 @@ internal class IndexEditPage : BaseIndexEditPage
         }
     }
 
-    protected override async Task<ICommandResponse> ProcessFormData(AzureSearchConfigurationModel model, ICollection<IFormItem> formItems)
+    protected override async Task<ICommandResponse> ProcessFormData(ElasticSearchConfigurationModel model, ICollection<IFormItem> formItems)
     {
         var result = await ValidateAndProcess(model);
 

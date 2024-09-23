@@ -17,7 +17,7 @@ public class WebCrawlerService
         IWebPageUrlRetriever webPageUrlRetriever,
         IAppSettingsService appSettingsService)
     {
-        string baseUrl = appSettingsService["WebCrawlerBaseUrl"];
+        var baseUrl = appSettingsService["WebCrawlerBaseUrl"];
 
         this.httpClient = httpClient;
         this.httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, "SearchCrawler");
@@ -32,7 +32,7 @@ public class WebCrawlerService
         try
         {
             var url = await webPageUrlRetriever.Retrieve(page);
-            string path = url.RelativePath.TrimStart('~').TrimStart('/');
+            var path = url.RelativePath.TrimStart('~').TrimStart('/');
 
             return await CrawlPage(path);
         }

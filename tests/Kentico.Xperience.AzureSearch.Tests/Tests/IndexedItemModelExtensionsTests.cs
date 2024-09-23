@@ -17,8 +17,8 @@ internal class IndexedItemModelExtensionsTests
         Service.InitializeContainer();
         var log = Substitute.For<IEventLogService>();
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         var fixture = new Fixture();
         var item = fixture.Create<IndexEventWebPageItemModel>();
@@ -39,12 +39,12 @@ internal class IndexedItemModelExtensionsTests
         model.WebPageItemTreePath = "/Home";
 
         var index = MockDataProvider.Index;
-        var path = new AzureSearchIndexIncludedPath("/%") { ContentTypes = [new(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))] };
+        var path = new ElasticSearchIndexIncludedPath("/%") { ContentTypes = [new(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))] };
 
-        index.IncludedPaths = new List<AzureSearchIndexIncludedPath>() { path };
+        index.IncludedPaths = new List<ElasticSearchIndexIncludedPath>() { path };
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(index);
 
         Assert.That(model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
     }
@@ -61,12 +61,12 @@ internal class IndexedItemModelExtensionsTests
         model.WebPageItemTreePath = "/Home";
 
         var index = MockDataProvider.Index;
-        var path = new AzureSearchIndexIncludedPath("/Index/%") { ContentTypes = [new(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))] };
+        var path = new ElasticSearchIndexIncludedPath("/Index/%") { ContentTypes = [new(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))] };
 
-        index.IncludedPaths = new List<AzureSearchIndexIncludedPath>() { path };
+        index.IncludedPaths = new List<ElasticSearchIndexIncludedPath>() { path };
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
     }
@@ -83,12 +83,12 @@ internal class IndexedItemModelExtensionsTests
         model.WebPageItemTreePath = "/Home";
 
         var index = MockDataProvider.Index;
-        var path = new AzureSearchIndexIncludedPath("/Index") { ContentTypes = [new(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))] };
+        var path = new ElasticSearchIndexIncludedPath("/Index") { ContentTypes = [new(ArticlePage.CONTENT_TYPE_NAME, nameof(ArticlePage))] };
 
-        index.IncludedPaths = new List<AzureSearchIndexIncludedPath>() { path };
+        index.IncludedPaths = new List<ElasticSearchIndexIncludedPath>() { path };
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
     }
@@ -105,8 +105,8 @@ internal class IndexedItemModelExtensionsTests
         var model = MockDataProvider.WebModel(item);
         model.ContentTypeName = "DancingGoat.HomePage";
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
     }
@@ -122,8 +122,8 @@ internal class IndexedItemModelExtensionsTests
 
         var model = MockDataProvider.WebModel(item);
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         Assert.That(!MockDataProvider.WebModel(model).IsIndexedByIndex(log, "NewIndex", MockDataProvider.EventName));
     }
@@ -140,8 +140,8 @@ internal class IndexedItemModelExtensionsTests
         var model = MockDataProvider.WebModel(item);
         model.LanguageName = "sk";
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
     }

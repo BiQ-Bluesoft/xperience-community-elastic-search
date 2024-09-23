@@ -22,7 +22,7 @@ public sealed class AzureSearchIndexAlias
     /// </summary>
     public IEnumerable<string> IndexNames { get; }
 
-    internal AzureSearchIndexAlias(AzureSearchAliasConfigurationModel aliasConfiguration)
+    internal AzureSearchIndexAlias(ElasticSearchAliasConfigurationModel aliasConfiguration)
     {
         Identifier = aliasConfiguration.Id;
         IndexNames = aliasConfiguration.IndexNames;

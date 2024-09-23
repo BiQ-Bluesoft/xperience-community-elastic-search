@@ -5,9 +5,9 @@ namespace Kentico.Xperience.AzureSearch.Admin;
 
 internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
 {
-    private readonly IAzureSearchIndexItemInfoProvider indexProvider;
+    private readonly IElasticSearchIndexItemInfoProvider indexProvider;
 
-    public ExistingIndexOptionsProvider(IAzureSearchIndexItemInfoProvider indexProvider) => this.indexProvider = indexProvider;
+    public ExistingIndexOptionsProvider(IElasticSearchIndexItemInfoProvider indexProvider) => this.indexProvider = indexProvider;
 
     public async Task<PagedSelectListItems<string>> GetItemsAsync(string searchTerm, int pageIndex, CancellationToken cancellationToken)
     {
@@ -17,7 +17,7 @@ internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
         // If a search term is entered, only loads indexes whose indexName starts with the term
         if (!string.IsNullOrEmpty(searchTerm))
         {
-            itemQuery.WhereStartsWith(nameof(AzureSearchIndexItemInfo.AzureSearchIndexItemIndexName), searchTerm);
+            itemQuery.WhereStartsWith(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemIndexName), searchTerm);
         }
 
         // Ensures paging of items
@@ -26,8 +26,8 @@ internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
         // Retrieves the users and converts them into ObjectSelectorListItem<string> options
         var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
         {
-            Value = x.AzureSearchIndexItemIndexName,
-            Text = x.AzureSearchIndexItemIndexName,
+            Value = x.ElasticSearchIndexItemIndexName,
+            Text = x.ElasticSearchIndexItemIndexName,
             IsValid = true
         });
 
@@ -44,8 +44,8 @@ internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
         var itemQuery = indexProvider.Get().Page(0, 20);
         var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
         {
-            Value = x.AzureSearchIndexItemIndexName,
-            Text = x.AzureSearchIndexItemIndexName,
+            Value = x.ElasticSearchIndexItemIndexName,
+            Text = x.ElasticSearchIndexItemIndexName,
             IsValid = true
         });
 
@@ -53,7 +53,7 @@ internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
 
         if (selectedValues is not null)
         {
-            foreach (string? value in selectedValues)
+            foreach (var value in selectedValues)
             {
                 var item = items.FirstOrDefault(x => x.Value == value);
 

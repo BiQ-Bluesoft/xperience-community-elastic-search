@@ -1,21 +1,20 @@
-﻿using Azure.Core.GeoJson;
-using Azure.Search.Documents.Indexes;
+﻿using Kentico.Xperience.AzureSearch.Indexing;
 
-using Kentico.Xperience.AzureSearch.Indexing;
+using Nest;
 
 namespace DancingGoat.Search.Models;
 
-public class GeoLocationSearchModel : BaseAzureSearchModel
+public class GeoLocationSearchModel : BaseElasticSearchModel
 {
-    [SearchableField]
+    [Text(Name = "title")]
     public string Title { get; set; }
 
-    [SearchableField]
+    [Text(Name = "content")]
     public string Content { get; set; }
 
-    [SimpleField(IsSortable = true, IsFilterable = true, IsKey = false)]
-    public GeoPoint GeoLocation { get; set; }
+    [GeoPoint(Name = "geo_location")]
+    public GeoLocation GeoLocation { get; set; }
 
-    [SearchableField(IsSortable = true, IsFilterable = true, IsFacetable = true)]
+    [Keyword(Name = "location")]
     public string Location { get; set; }
 }

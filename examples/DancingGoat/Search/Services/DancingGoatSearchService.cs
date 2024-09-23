@@ -1,17 +1,13 @@
-﻿using Azure.Search.Documents;
-
-using DancingGoat.Search.Models;
+﻿using DancingGoat.Search.Models;
 
 using Kentico.Xperience.AzureSearch.Search;
 
+using Nest;
+
 namespace DancingGoat.Search.Services;
 
-public class DancingGoatSearchService
+public class DancingGoatSearchService(IElasticSearchQueryClientService searchClientService)
 {
-    private readonly IAzureSearchQueryClientService searchClientService;
-
-    public DancingGoatSearchService(IAzureSearchQueryClientService searchClientService) => this.searchClientService = searchClientService;
-
     public async Task<DancingGoatSearchViewModel> GlobalSearch(
         string indexName,
         string searchText,
@@ -23,68 +19,29 @@ public class DancingGoatSearchService
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var options = new SearchOptions()
-        {
-            IncludeTotalCount = true,
-            Size = pageSize,
-            Skip = (page - 1) * pageSize
-        };
-        options.Select.Add(nameof(DancingGoatSearchModel.Title));
-        options.Select.Add(nameof(DancingGoatSearchModel.Url));
-
-        var response = await index.SearchAsync<DancingGoatSearchModel>(searchText, options);
-
-        return new DancingGoatSearchViewModel()
-        {
-            Hits = response.Value.GetResults().Select(x => new DancingGoatSearchResult()
-            {
-                Title = x.Document.Title,
-                Url = x.Document.Url,
-            }),
-            TotalHits = (int)response.Value.TotalCount,
-            Query = searchText,
-            TotalPages = (int)response.Value.TotalCount <= 0 ? 0 : (((int)response.Value.TotalCount - 1) / pageSize) + 1,
-            PageSize = pageSize,
-            Page = page
-        };
-    }
-
-    public async Task<DancingGoatSearchViewModel> SemanticSearch(
-        string indexName,
-        string searchText,
-        int page = 1,
-        int pageSize = 10)
-    {
-        var index = searchClientService.CreateSearchClientForQueries(indexName);
-
-        page = Math.Max(page, 1);
-        pageSize = Math.Max(1, pageSize);
-
-        var options = new SearchOptions()
-        {
-            SemanticSearch = new()
-            {
-                SemanticConfigurationName = SemanticRankingSearchStrategy.DANCING_GOAT_SEMANTIC_SEARCH_CONFIGURATION_NAME
-            },
-            IncludeTotalCount = true,
-            Size = pageSize,
-            Skip = (page - 1) * pageSize
-        };
-        options.Select.Add(nameof(DancingGoatSearchModel.Title));
-        options.Select.Add(nameof(DancingGoatSearchModel.Url));
-
-        var response = await index.SearchAsync<DancingGoatSearchModel>(searchText, options);
+        var response = await index.SearchAsync<DancingGoatSearchModel>(s => s
+            .From((page - 1) * pageSize)
+            .Size(pageSize)
+            .Source(src => src
+                .Includes(i => i
+                    .Fields(f => f.Title, f => f.Url)))
+            .Query(q => q
+                .MultiMatch(mm => mm
+                    .Fields(f => f
+                        .Field(p => p.Title)
+                        .Field(p => p.Url))
+                    .Query(searchText))));
 
         return new DancingGoatSearchViewModel()
         {
-            Hits = response.Value.GetResults().Select(x => new DancingGoatSearchResult()
+            Hits = response.Hits.Select(x => new DancingGoatSearchResult()
             {
-                Title = x.Document.Title,
-                Url = x.Document.Url,
+                Title = x.Source.Title,
+                Url = x.Source.Url,
             }),
-            TotalHits = (int)response.Value.TotalCount,
+            TotalHits = (int)response.Total,
             Query = searchText,
-            TotalPages = (int)response.Value.TotalCount <= 0 ? 0 : (((int)response.Value.TotalCount - 1) / pageSize) + 1,
+            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
             PageSize = pageSize,
             Page = page
         };
@@ -101,27 +58,28 @@ public class DancingGoatSearchService
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var options = new SearchOptions()
-        {
-            IncludeTotalCount = true,
-            Size = pageSize,
-            Skip = (page - 1) * pageSize,
-        };
-        options.Select.Add(nameof(DancingGoatSimpleSearchModel.Title));
-        options.Select.Add(nameof(DancingGoatSimpleSearchModel.Url));
-
-        var response = await index.SearchAsync<DancingGoatSimpleSearchModel>(searchText, options);
+        var response = await index.SearchAsync<DancingGoatSimpleSearchModel>(s => s
+            .From((page - 1) * pageSize)
+            .Size(pageSize)
+            .Source(src => src
+                .Includes(i => i
+                    .Fields(f => f.Title, fields => fields.Url)))
+            .Query(q => q
+                .MultiMatch(mm => mm
+                    .Fields(f => f.Field(p => p.Title).Field(p => p.Url))
+                    .Query(searchText)))
+            .TrackTotalHits(true));
 
         return new DancingGoatSearchViewModel()
         {
-            Hits = response.Value.GetResults().Select(x => new DancingGoatSearchResult()
+            Hits = response.Hits.Select(x => new DancingGoatSearchResult()
             {
-                Title = x.Document.Title,
-                Url = x.Document.Url,
+                Title = x.Source.Title,
+                Url = x.Source.Url,
             }),
-            TotalHits = (int)response.Value.TotalCount,
+            TotalHits = (int)response.Total,
             Query = searchText,
-            TotalPages = (int)response.Value.TotalCount <= 0 ? 0 : (((int)response.Value.TotalCount - 1) / pageSize) + 1,
+            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
             PageSize = pageSize,
             Page = page
         };
@@ -142,35 +100,43 @@ public class DancingGoatSearchService
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var options = new SearchOptions
-        {
-            IncludeTotalCount = true,
-            Size = pageSize,
-            Skip = (page - 1) * pageSize
-        };
-
-        if (sortByDistance)
-        {
-            options.OrderBy.Add($"geo.distance({nameof(GeoLocationSearchModel.GeoLocation)}, geography'POINT({longitude} {latitude})') asc");
-        }
-
-        options.Select.Add(nameof(GeoLocationSearchModel.Title));
-        options.Select.Add(nameof(GeoLocationSearchModel.Url));
-        options.Select.Add(nameof(GeoLocationSearchModel.Location));
-
-        var response = await index.SearchAsync<GeoLocationSearchModel>(searchText, options);
+        var response = await index.SearchAsync<GeoLocationSearchModel>(s => s
+            .From((page - 1) * pageSize)
+            .Size(pageSize)
+            .Source(src => src
+                .Includes(i => i
+                    .Fields(f => f.Title, f => f.Url, f => f.Location)))
+            .Query(q => q
+                .MultiMatch(mm => mm
+                    .Fields(f => f
+                        .Field(p => p.Title)
+                        .Field(p => p.Url))
+                    .Query(searchText)))
+            .TrackTotalHits(true)
+            .Sort(sort =>
+            {
+                if (sortByDistance)
+                {
+                    sort.GeoDistance(g => g
+                        .Field(p => p.Location)
+                        .DistanceType(GeoDistanceType.Arc)
+                        .Order(SortOrder.Ascending)
+                        .Points(new GeoLocation(latitude, longitude)));
+                }
+                return sort;
+            }));
 
         return new GeoLocationSearchViewModel
         {
-            Hits = response.Value.GetResults().Select(x => new GeoLocationSearchResult()
+            Hits = response.Hits.Select(x => new GeoLocationSearchResult()
             {
-                Title = x.Document.Title,
-                Url = x.Document.Url,
-                Location = x.Document.Location,
+                Title = x.Source.Title,
+                Url = x.Source.Url,
+                Location = x.Source.Location,
             }),
-            TotalHits = (int)response.Value.TotalCount,
+            TotalHits = (int)response.Total,
             Query = searchText,
-            TotalPages = (int)response.Value.TotalCount <= 0 ? 0 : (((int)response.Value.TotalCount - 1) / pageSize) + 1,
+            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
             PageSize = pageSize,
             Page = page
         };

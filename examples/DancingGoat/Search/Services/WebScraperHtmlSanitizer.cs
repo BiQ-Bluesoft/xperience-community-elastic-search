@@ -48,14 +48,14 @@ public class WebScraperHtmlSanitizer
         }
 
         // Gets the text content of the body element
-        string textContent = body.TextContent;
+        var textContent = body.TextContent;
 
         // Normalizes and trims whitespace characters
         textContent = HTMLHelper.RegexHtmlToTextWhiteSpace.Replace(textContent, " ");
         textContent = textContent.Trim();
 
-        string title = doc.Head?.QuerySelector("title")?.TextContent ?? "";
-        string description = doc.Head?.QuerySelector("meta[name='description']")?.GetAttribute("content") ?? "";
+        var title = doc.Head?.QuerySelector("title")?.TextContent ?? "";
+        var description = doc.Head?.QuerySelector("meta[name='description']")?.GetAttribute("content") ?? "";
 
         return string.Join(
             " ",

@@ -56,9 +56,9 @@ public class Tests : UnitTests
     {
         var log = Substitute.For<EventLogService>();
 
-        IEnumerable<AzureSearchIndexIncludedPath> paths = [new("/path") { ContentTypes = [new("contentType", "contentType")], Identifier = "1" }];
+        IEnumerable<ElasticSearchIndexIncludedPath> paths = [new("/path") { ContentTypes = [new("contentType", "contentType")], Identifier = "1" }];
 
-        var index = new AzureSearchIndex(new AzureSearchConfigurationModel
+        var index = new ElasticSearchIndex(new ElasticSearchConfigurationModel
         {
             ChannelName = "channel",
             Id = 2,
@@ -67,8 +67,8 @@ public class Tests : UnitTests
             Paths = paths,
             RebuildHook = "/rebuild",
             StrategyName = "strategy"
-        }, new() { { "strategy", typeof(BaseAzureSearchIndexingStrategy<BaseAzureSearchModel>) } });
-        AzureSearchIndexStore.Instance.AddIndex(index);
+        }, new() { { "strategy", typeof(BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>) } });
+        ElasticSearchIndexStore.Instance.AddIndex(index);
 
         var sut = GetDefaultIndexEventWebPageItemModel();
         sut.ContentTypeName = paths.First().ContentTypes[0] + "-abc";
@@ -80,11 +80,11 @@ public class Tests : UnitTests
     public void IsIndexedByIndex_Will_Return_False_When_The_Matching_Index_Has_No_Matching_Paths()
     {
         var log = Substitute.For<EventLogService>();
-        List<AzureSearchIndexContentType> contentTypes = [new("contentType", "contentType")];
+        List<ElasticSearchIndexContentType> contentTypes = [new("contentType", "contentType")];
 
-        IEnumerable<AzureSearchIndexIncludedPath> exactPaths = [new("/path") { ContentTypes = [new("contentType", "contentType")], Identifier = "1" }];
+        IEnumerable<ElasticSearchIndexIncludedPath> exactPaths = [new("/path") { ContentTypes = [new("contentType", "contentType")], Identifier = "1" }];
 
-        var index1 = new AzureSearchIndex(new AzureSearchConfigurationModel
+        var index1 = new ElasticSearchIndex(new ElasticSearchConfigurationModel
         {
             ChannelName = "channel",
             Id = 1,
@@ -93,11 +93,11 @@ public class Tests : UnitTests
             Paths = exactPaths,
             RebuildHook = "/rebuild",
             StrategyName = "strategy"
-        }, new() { { "strategy", typeof(BaseAzureSearchIndexingStrategy<BaseAzureSearchModel>) } });
-        AzureSearchIndexStore.Instance.AddIndex(index1);
+        }, new() { { "strategy", typeof(BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>) } });
+        ElasticSearchIndexStore.Instance.AddIndex(index1);
 
-        IEnumerable<AzureSearchIndexIncludedPath> wildcardPaths = [new("/home/%") { ContentTypes = contentTypes, Identifier = "1" }];
-        var index2 = new AzureSearchIndex(new AzureSearchConfigurationModel
+        IEnumerable<ElasticSearchIndexIncludedPath> wildcardPaths = [new("/home/%") { ContentTypes = contentTypes, Identifier = "1" }];
+        var index2 = new ElasticSearchIndex(new ElasticSearchConfigurationModel
         {
             ChannelName = "channel",
             Id = 2,
@@ -106,8 +106,8 @@ public class Tests : UnitTests
             Paths = wildcardPaths,
             RebuildHook = "/rebuild",
             StrategyName = "strategy"
-        }, new() { { "strategy", typeof(BaseAzureSearchIndexingStrategy<BaseAzureSearchModel>) } });
-        AzureSearchIndexStore.Instance.AddIndex(index2);
+        }, new() { { "strategy", typeof(BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>) } });
+        ElasticSearchIndexStore.Instance.AddIndex(index2);
 
         var sut = GetDefaultIndexEventWebPageItemModel();
         sut.ContentTypeName = contentTypes[0].ContentTypeName;
@@ -121,11 +121,11 @@ public class Tests : UnitTests
     public void IsIndexedByIndex_Will_Return_True_When_The_Matching_Index_Has_An_Exact_Path_Match()
     {
         var log = Substitute.For<EventLogService>();
-        List<AzureSearchIndexContentType> contentTypes = [new("contentType", "contentType")];
+        List<ElasticSearchIndexContentType> contentTypes = [new("contentType", "contentType")];
 
-        IEnumerable<AzureSearchIndexIncludedPath> exactPaths = [new("/path/abc/def") { ContentTypes = contentTypes, Identifier = "1" }];
+        IEnumerable<ElasticSearchIndexIncludedPath> exactPaths = [new("/path/abc/def") { ContentTypes = contentTypes, Identifier = "1" }];
 
-        var index1 = new AzureSearchIndex(new AzureSearchConfigurationModel
+        var index1 = new ElasticSearchIndex(new ElasticSearchConfigurationModel
         {
             ChannelName = "channel",
             Id = 1,
@@ -134,12 +134,12 @@ public class Tests : UnitTests
             Paths = exactPaths,
             RebuildHook = "/rebuild",
             StrategyName = "strategy"
-        }, new() { { "strategy", typeof(BaseAzureSearchIndexingStrategy<BaseAzureSearchModel>) } });
-        AzureSearchIndexStore.Instance.AddIndex(index1);
+        }, new() { { "strategy", typeof(BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>) } });
+        ElasticSearchIndexStore.Instance.AddIndex(index1);
 
-        IEnumerable<AzureSearchIndexIncludedPath> wildcardPaths = [new("/path/%") { ContentTypes = [new("contentType", "contentType")], Identifier = "1" }];
+        IEnumerable<ElasticSearchIndexIncludedPath> wildcardPaths = [new("/path/%") { ContentTypes = [new("contentType", "contentType")], Identifier = "1" }];
 
-        var index2 = new AzureSearchIndex(new AzureSearchConfigurationModel
+        var index2 = new ElasticSearchIndex(new ElasticSearchConfigurationModel
         {
             ChannelName = "channel",
             Id = 2,
@@ -148,8 +148,8 @@ public class Tests : UnitTests
             Paths = wildcardPaths,
             RebuildHook = "/rebuild",
             StrategyName = "strategy"
-        }, new() { { "strategy", typeof(BaseAzureSearchIndexingStrategy<BaseAzureSearchModel>) } });
-        AzureSearchIndexStore.Instance.AddIndex(index2);
+        }, new() { { "strategy", typeof(BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>) } });
+        ElasticSearchIndexStore.Instance.AddIndex(index2);
 
         var sut = GetDefaultIndexEventWebPageItemModel();
         sut.ContentTypeName = contentTypes[0].ContentTypeName;
@@ -160,7 +160,7 @@ public class Tests : UnitTests
     }
 
     [TearDown]
-    public void TearDown() => AzureSearchIndexStore.Instance.SetIndicies([]);
+    public void TearDown() => ElasticSearchIndexStore.Instance.SetIndicies([]);
 
     private IndexEventWebPageItemModel GetDefaultIndexEventWebPageItemModel()
     {

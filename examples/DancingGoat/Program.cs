@@ -48,7 +48,7 @@ builder.Services.AddLocalization()
 
 builder.Services.AddDancingGoatServices();
 
-builder.Services.AddKenticoAzureSearchServices(builder.Configuration);
+builder.Services.AddKenticoElasticSearchServices(builder.Configuration);
 
 ConfigureMembershipServices(builder.Services);
 

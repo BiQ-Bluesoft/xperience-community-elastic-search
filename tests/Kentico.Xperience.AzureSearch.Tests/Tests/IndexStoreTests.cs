@@ -9,29 +9,29 @@ internal class IndexStoreTests
     [Test]
     public void AddAndGetIndex()
     {
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
 
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.GetIndex("TestIndex", 1));
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.GetIndex("TestIndex", 1));
 
         Assert.Multiple(() =>
         {
-            Assert.That(AzureSearchIndexStore.Instance.GetIndex("TestIndex") is not null);
-            Assert.That(AzureSearchIndexStore.Instance.GetIndex(MockDataProvider.DefaultIndex) is not null);
+            Assert.That(ElasticSearchIndexStore.Instance.GetIndex("TestIndex") is not null);
+            Assert.That(ElasticSearchIndexStore.Instance.GetIndex(MockDataProvider.DefaultIndex) is not null);
         });
     }
 
     [Test]
     public void AddIndex_AlreadyExists()
     {
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>());
-        AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         bool hasThrown = false;
 
         try
         {
-            AzureSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
+            ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
         }
         catch
         {
@@ -44,15 +44,15 @@ internal class IndexStoreTests
     [Test]
     public void SetIndicies()
     {
-        var defaultIndex = new AzureSearchConfigurationModel { IndexName = "DefaultIndex", Id = 0 };
-        var simpleIndex = new AzureSearchConfigurationModel { IndexName = "SimpleIndex", Id = 1 };
+        var defaultIndex = new ElasticSearchConfigurationModel { IndexName = "DefaultIndex", Id = 0 };
+        var simpleIndex = new ElasticSearchConfigurationModel { IndexName = "SimpleIndex", Id = 1 };
 
-        AzureSearchIndexStore.Instance.SetIndicies(new List<AzureSearchConfigurationModel>() { defaultIndex, simpleIndex });
+        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>() { defaultIndex, simpleIndex });
 
         Assert.Multiple(() =>
         {
-            Assert.That(AzureSearchIndexStore.Instance.GetIndex(defaultIndex.IndexName) is not null);
-            Assert.That(AzureSearchIndexStore.Instance.GetIndex(simpleIndex.IndexName) is not null);
+            Assert.That(ElasticSearchIndexStore.Instance.GetIndex(defaultIndex.IndexName) is not null);
+            Assert.That(ElasticSearchIndexStore.Instance.GetIndex(simpleIndex.IndexName) is not null);
         });
     }
 }

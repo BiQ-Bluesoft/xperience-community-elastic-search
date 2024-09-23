@@ -21,17 +21,17 @@ namespace Kentico.Xperience.AzureSearch.Admin;
 internal class IndexCreatePage : BaseIndexEditPage
 {
     private readonly IPageUrlGenerator pageUrlGenerator;
-    private AzureSearchConfigurationModel? model = null;
+    private ElasticSearchConfigurationModel? model = null;
 
     public IndexCreatePage(
         IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        IAzureSearchConfigurationStorageService storageService,
-        IPageUrlGenerator pageUrlGenerator,
-        IAzureSearchIndexClientService searchClientService)
-        : base(formItemCollectionProvider, formDataBinder, storageService, searchClientService) => this.pageUrlGenerator = pageUrlGenerator;
+        IElasticSearchConfigurationStorageService storageService,
+        IPageUrlGenerator pageUrlGenerator
+        /*IElasticSearchIndexClientService searchClientService*/)
+        : base(formItemCollectionProvider, formDataBinder, storageService/*, searchClientService*/) => this.pageUrlGenerator = pageUrlGenerator;
 
-    protected override AzureSearchConfigurationModel Model
+    protected override ElasticSearchConfigurationModel Model
     {
         get
         {
@@ -41,13 +41,13 @@ internal class IndexCreatePage : BaseIndexEditPage
         }
     }
 
-    protected override async Task<ICommandResponse> ProcessFormData(AzureSearchConfigurationModel model, ICollection<IFormItem> formItems)
+    protected override async Task<ICommandResponse> ProcessFormData(ElasticSearchConfigurationModel model, ICollection<IFormItem> formItems)
     {
         var result = await ValidateAndProcess(model);
 
         if (result.ModificationResult == ModificationResult.Success)
         {
-            var index = AzureSearchIndexStore.Instance.GetRequiredIndex(model.IndexName);
+            var index = ElasticSearchIndexStore.Instance.GetRequiredIndex(model.IndexName);
 
             var successResponse = NavigateTo(pageUrlGenerator.GenerateUrl<IndexEditPage>(index.Identifier.ToString()))
                 .AddSuccessMessage("Index created.");

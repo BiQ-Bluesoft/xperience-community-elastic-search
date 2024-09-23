@@ -8,10 +8,10 @@ using Kentico.Xperience.AzureSearch.Indexing;
 using Microsoft.Extensions.Options;
 
 [assembly: UIPage(
-   parentType: typeof(AzureSearchApplicationPage),
+   parentType: typeof(ElasticSearchApplicationPage),
    slug: "indexes",
    uiPageType: typeof(IndexListingPage),
-   name: "List of registered Azure AI Search indices",
+   name: "List of registered Elastic AI Search indices",
    templateName: TemplateNames.LISTING,
    order: UIPageOrder.NoOrder)]
 
@@ -23,26 +23,26 @@ namespace Kentico.Xperience.AzureSearch.Admin;
 [UIEvaluatePermission(SystemPermissions.VIEW)]
 internal class IndexListingPage : ListingPage
 {
-    private readonly AzureSearchOptions azureSearchOptions;
-    private readonly IAzureSearchClient azureSearchClient;
+    private readonly ElasticSearchOptions elasticSearchOptions;
+    private readonly IElasticSearchClient elasticSearchClient;
     private readonly IPageUrlGenerator pageUrlGenerator;
-    private readonly IAzureSearchConfigurationStorageService configurationStorageService;
+    private readonly IElasticSearchConfigurationStorageService configurationStorageService;
     private readonly IConversionService conversionService;
 
-    protected override string ObjectType => AzureSearchIndexItemInfo.OBJECT_TYPE;
+    protected override string ObjectType => ElasticSearchIndexItemInfo.OBJECT_TYPE;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IndexListingPage"/> class.
     /// </summary>
     public IndexListingPage(
-        IAzureSearchClient azureSearchClient,
+        IElasticSearchClient elasticSearchClient,
         IPageUrlGenerator pageUrlGenerator,
-        IOptions<AzureSearchOptions> azureSearchOptions,
-        IAzureSearchConfigurationStorageService configurationStorageService,
+        IOptions<ElasticSearchOptions> elasticSearchOptions,
+        IElasticSearchConfigurationStorageService configurationStorageService,
         IConversionService conversionService)
     {
-        this.azureSearchClient = azureSearchClient;
-        this.azureSearchOptions = azureSearchOptions.Value;
+        this.elasticSearchClient = elasticSearchClient;
+        this.elasticSearchOptions = elasticSearchOptions.Value;
         this.pageUrlGenerator = pageUrlGenerator;
         this.configurationStorageService = configurationStorageService;
         this.conversionService = conversionService;
@@ -51,7 +51,7 @@ internal class IndexListingPage : ListingPage
     /// <inheritdoc/>
     public override async Task ConfigurePage()
     {
-        if (!azureSearchOptions.SearchServiceEnabled)
+        if (!elasticSearchOptions.SearchServiceEnabled)
         {
             PageConfiguration.Callouts =
             [
@@ -68,14 +68,14 @@ internal class IndexListingPage : ListingPage
         else
         {
 
-            if (!AzureSearchIndexStore.Instance.GetAllIndices().Any())
+            if (!ElasticSearchIndexStore.Instance.GetAllIndices().Any())
             {
                 PageConfiguration.Callouts =
                 [
                     new()
                     {
                         Headline = "No indexes",
-                        Content = "No AzureSearch indexes registered. See <a target='_blank' href='https://github.com/Kentico/kentico-xperience-azuresearch'>our instructions</a> to read more about creating and registering AzureSearch indexes.",
+                        Content = "No ElasticSearch indexes registered. See <a target='_blank' href='https://github.com/Kentico/kentico-xperience-azuresearch'>our instructions</a> to read more about creating and registering ELasticSearch indexes.",
                         ContentAsHtml = true,
                         Type = CalloutType.FriendlyWarning,
                         Placement = CalloutPlacement.OnDesk
@@ -84,17 +84,17 @@ internal class IndexListingPage : ListingPage
             }
 
             PageConfiguration.ColumnConfigurations
-                .AddColumn(nameof(AzureSearchIndexItemInfo.AzureSearchIndexItemId), "ID", defaultSortDirection: SortTypeEnum.Asc, sortable: true)
-                .AddColumn(nameof(AzureSearchIndexItemInfo.AzureSearchIndexItemIndexName), "Name", sortable: true, searchable: true)
-                .AddColumn(nameof(AzureSearchIndexItemInfo.AzureSearchIndexItemChannelName), "Channel", searchable: true, sortable: true)
-                .AddColumn(nameof(AzureSearchIndexItemInfo.AzureSearchIndexItemStrategyName), "Index Strategy", searchable: true, sortable: true)
-                .AddColumn(nameof(AzureSearchIndexItemInfo.AzureSearchIndexItemId), "Entries", sortable: true);
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemId), "ID", defaultSortDirection: SortTypeEnum.Asc, sortable: true)
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemIndexName), "Name", sortable: true, searchable: true)
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemChannelName), "Channel", searchable: true, sortable: true)
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemStrategyName), "Index Strategy", searchable: true, sortable: true)
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemId), "Entries", sortable: true);
 
             PageConfiguration.AddEditRowAction<IndexEditPage>();
             PageConfiguration.TableActions.AddCommand("Rebuild", nameof(Rebuild), icon: Icons.RotateRight);
             PageConfiguration.TableActions.AddDeleteAction(nameof(Delete), "Delete");
             PageConfiguration.HeaderActions.AddLink<IndexCreatePage>("Create Index");
-            PageConfiguration.HeaderActions.AddLink<IndexAliasListingPage>("Index Aliases");
+            //PageConfiguration.HeaderActions.AddLink<IndexAliasListingPage>("Index Aliases");
         }
 
         await base.ConfigurePage();
@@ -102,14 +102,14 @@ internal class IndexListingPage : ListingPage
 
     protected override async Task<LoadDataResult> LoadData(LoadDataSettings settings, CancellationToken cancellationToken)
     {
-        if (!azureSearchOptions.SearchServiceEnabled)
+        if (!elasticSearchOptions.SearchServiceEnabled)
         {
             return new();
         }
 
         var result = await base.LoadData(settings, cancellationToken);
 
-        var statistics = await azureSearchClient.GetStatistics(default);
+        var statistics = await elasticSearchClient.GetStatistics(default);
         // Add statistics for indexes that are registered but not created in AzureSearch
         AddMissingStatistics(ref statistics);
 
@@ -118,7 +118,7 @@ internal class IndexListingPage : ListingPage
             return result;
         }
 
-        int entriesColIndex = columns.FindIndex(c => c.Caption == "Entries");
+        var entriesColIndex = columns.FindIndex(c => c.Caption == "Entries");
 
         foreach (var row in result.Rows)
         {
@@ -143,10 +143,10 @@ internal class IndexListingPage : ListingPage
         return result;
     }
 
-    private AzureSearchIndexStatisticsViewModel? GetStatistic(Row row, ICollection<AzureSearchIndexStatisticsViewModel> statistics)
+    private ElasticSearchIndexStatisticsViewModel? GetStatistic(Row row, ICollection<ElasticSearchIndexStatisticsViewModel> statistics)
     {
-        int indexId = conversionService.GetInteger(row.Identifier, 0);
-        string indexName = AzureSearchIndexStore.Instance.GetIndex(indexId) is AzureSearchIndex index
+        var indexId = conversionService.GetInteger(row.Identifier, 0);
+        var indexName = ElasticSearchIndexStore.Instance.GetIndex(indexId) is ElasticSearchIndex index
             ? index.IndexName
             : "";
 
@@ -157,25 +157,25 @@ internal class IndexListingPage : ListingPage
     /// A page command which rebuilds an AzureSearch index.
     /// </summary>
     /// <param name="id">The ID of the row whose action was performed, which corresponds with the internal
-    /// <see cref="AzureSearchIndex.Identifier"/> to rebuild.</param>
+    /// <see cref="ElasticSearchIndex.Identifier"/> to rebuild.</param>
     /// <param name="cancellationToken">The cancellation token for the action.</param>
-    [PageCommand(Permission = AzureSearchIndexPermissions.REBUILD)]
+    [PageCommand(Permission = ElasticSearchIndexPermissions.REBUILD)]
     public async Task<ICommandResponse<RowActionResult>> Rebuild(int id, CancellationToken cancellationToken)
     {
         var result = new RowActionResult(false);
-        var index = AzureSearchIndexStore.Instance.GetIndex(id);
+        var index = ElasticSearchIndexStore.Instance.GetIndex(id);
 
         if (index is null)
         {
             return ResponseFrom(result)
-                .AddErrorMessage(string.Format("Error loading AzureSearch index with identifier {0}.", id));
+                .AddErrorMessage(string.Format("Error loading ElasticSearch index with identifier {0}.", id));
         }
         try
         {
-            await azureSearchClient.Rebuild(index.IndexName, cancellationToken);
+            await elasticSearchClient.Rebuild(index.IndexName, cancellationToken);
 
             return ResponseFrom(result)
-                .AddSuccessMessage("Indexing in progress. Visit your AzureSearch dashboard for details about the indexing process.");
+                .AddSuccessMessage("Indexing in progress. Visit your ElasticSearch dashboard for details about the indexing process.");
         }
         catch (Exception ex)
         {
@@ -190,27 +190,27 @@ internal class IndexListingPage : ListingPage
     public async Task<INavigateResponse> Delete(int id, CancellationToken cancellationToken)
     {
         var response = NavigateTo(pageUrlGenerator.GenerateUrl<IndexListingPage>());
-        var index = AzureSearchIndexStore.Instance.GetIndex(id);
+        var index = ElasticSearchIndexStore.Instance.GetIndex(id);
         if (index == null)
         {
             return response
-                .AddErrorMessage(string.Format("Error deleting AzureSearch index with identifier {0}.", id));
+                .AddErrorMessage(string.Format("Error deleting ElasticSearch index with identifier {0}.", id));
         }
         try
         {
-            await azureSearchClient.DeleteIndex(index.IndexName, cancellationToken);
-            bool res = configurationStorageService.TryDeleteIndex(id);
+            await elasticSearchClient.DeleteIndex(index.IndexName, cancellationToken);
+            var res = configurationStorageService.TryDeleteIndex(id);
             if (res)
             {
-                AzureSearchIndexStore.SetIndicies(configurationStorageService);
+                ElasticSearchIndexStore.SetIndicies(configurationStorageService);
             }
             else
             {
                 return response
-                    .AddErrorMessage(string.Format("Error deleting AzureSearch index with identifier {0}.", id));
+                    .AddErrorMessage(string.Format("Error deleting ElasticSearch index with identifier {0}.", id));
             }
 
-            return response.AddSuccessMessage("Index deletion in progress. Visit your Azure dashboard for details about your indexes.");
+            return response.AddSuccessMessage("Index deletion in progress. Visit your Elastic dashboard for details about your indexes.");
         }
         catch (Exception ex)
         {
@@ -220,13 +220,13 @@ internal class IndexListingPage : ListingPage
         }
     }
 
-    private static void AddMissingStatistics(ref ICollection<AzureSearchIndexStatisticsViewModel> statistics)
+    private static void AddMissingStatistics(ref ICollection<ElasticSearchIndexStatisticsViewModel> statistics)
     {
-        foreach (string indexName in AzureSearchIndexStore.Instance.GetAllIndices().Select(i => i.IndexName))
+        foreach (var indexName in ElasticSearchIndexStore.Instance.GetAllIndices().Select(i => i.IndexName))
         {
             if (!statistics.Any(stat => stat.Name?.Equals(indexName, StringComparison.OrdinalIgnoreCase) ?? false))
             {
-                statistics.Add(new AzureSearchIndexStatisticsViewModel
+                statistics.Add(new ElasticSearchIndexStatisticsViewModel
                 {
                     Name = indexName,
                     Entries = 0,

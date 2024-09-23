@@ -56,7 +56,7 @@ internal class LanguageOptionsProvider : IGeneralSelectorDataProvider
 
         if (selectedValues is not null)
         {
-            foreach (string? value in selectedValues)
+            foreach (var value in selectedValues)
             {
                 var item = items.FirstOrDefault(x => x.Value == value);
 

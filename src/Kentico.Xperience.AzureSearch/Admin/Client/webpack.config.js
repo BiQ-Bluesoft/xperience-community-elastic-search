@@ -23,7 +23,8 @@ module.exports = (opts) => {
     },
     devServer: {
       port: 3009,
-    },
+      },
+    devtool: 'source-map'
   };
 
   return webpackMerge.merge(projectConfig, baseConfig(opts));

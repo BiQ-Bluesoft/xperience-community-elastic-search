@@ -6,11 +6,10 @@ namespace DancingGoat.Search;
 
 public static class DancingGoatSearchStartupExtensions
 {
-    public static IServiceCollection AddKenticoAzureSearchServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddKenticoElasticSearchServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddKenticoAzureSearch(builder =>
+        services.AddKenticoElasticSearch(builder =>
         {
-            builder.RegisterStrategy<SemanticRankingSearchStrategy, DancingGoatSearchModel>(nameof(SemanticRankingSearchStrategy));
             builder.RegisterStrategy<DancingGoatSearchStrategy, DancingGoatSearchModel>(nameof(DancingGoatSearchStrategy));
             builder.RegisterStrategy<DancingGoatSimpleSearchStrategy, DancingGoatSimpleSearchModel>(nameof(DancingGoatSimpleSearchStrategy));
             builder.RegisterStrategy<GeoLocationSearchStrategy, GeoLocationSearchModel>(nameof(GeoLocationSearchStrategy));
@@ -19,7 +18,7 @@ public static class DancingGoatSearchStartupExtensions
 
         services.AddTransient<DancingGoatSearchService>();
 
-        services.AddKenticoAzureSearch(configuration);
+        services.AddKenticoElasticSearch(configuration);
 
         services.AddHttpClient<WebCrawlerService>();
         services.AddSingleton<WebScraperHtmlSanitizer>();

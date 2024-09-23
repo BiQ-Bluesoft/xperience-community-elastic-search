@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search.Strategies;
 
-public class CustomItemsReindexingSearchStrategy : BaseAzureSearchIndexingStrategy<DancingGoatSearchModel>
+public class CustomItemsReindexingSearchStrategy : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
 {
     private readonly IContentQueryExecutor queryExecutor;
     private readonly IWebPageQueryResultMapper webPageMapper;
@@ -81,7 +81,7 @@ public class CustomItemsReindexingSearchStrategy : BaseAzureSearchIndexingStrate
         return reindexedItems;
     }
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSearchModel();
 
@@ -103,8 +103,8 @@ public class CustomItemsReindexingSearchStrategy : BaseAzureSearchIndexingStrate
                     return null;
                 }
 
-                result.Title = page?.CafeTitle ?? "";
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                result.Title = page.CafeTitle ?? "";
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else if (string.Equals(item.ContentTypeName, ArticlePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
@@ -121,8 +121,8 @@ public class CustomItemsReindexingSearchStrategy : BaseAzureSearchIndexingStrate
                     return null;
                 }
 
-                result.Title = page?.ArticleTitle ?? "";
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                result.Title = page.ArticleTitle ?? "";
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else if (string.Equals(item.ContentTypeName, HomePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
@@ -144,7 +144,7 @@ public class CustomItemsReindexingSearchStrategy : BaseAzureSearchIndexingStrate
                 }
 
                 result.Title = page!.HomePageBanner.First().BannerHeaderText;
-                string rawContent = await webCrawler.CrawlWebPage(page!);
+                var rawContent = await webCrawler.CrawlWebPage(page!);
                 result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
             }
             else

@@ -37,13 +37,4 @@ public class SearchController : Controller
 
         return View("~/Views/Search/Index.cshtml", results);
     }
-
-    [HttpGet(nameof(Semantic))]
-    public async Task<IActionResult> Semantic(string? query, int? pageSize, int? page, string? indexName)
-    {
-        var results = await searchService.SemanticSearch(indexName ?? "semantic", query ?? "", page ?? 1, pageSize ?? 10);
-        results.Endpoint = nameof(Semantic);
-
-        return View("~/Views/Search/Index.cshtml", results);
-    }
 }

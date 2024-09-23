@@ -63,11 +63,13 @@ export const AzureSearchIndexConfigurationFormComponent = (
 
     const prepareRows = (paths: IncludedPath[]): TableRow[] => {
         if (paths === undefined) {
+            console.log('prepareRows: paths are undefined');
             return [];
         }
         const getCells = (path: IncludedPath): TableCell[] => {
             const pathVal: string = path.aliasPath?.toString() ?? '';
             if (path.aliasPath === null) {
+                console.log('getCells: allias path is null');
                 return [];
             }
             const cell: StringCell = {
@@ -83,6 +85,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
 
             const deletePath: () => Promise<void> = async () => {
                 await new Promise(() => {
+                    console.log(`Deleting path: ${pathVal}`)
                     props.value = props.value.filter((x) => x.aliasPath !== pathVal);
 
                     if (props.onChange !== null && props.onChange !== undefined) {
@@ -109,6 +112,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         };
 
         return paths.map((path) => {
+            console.log('Creating row for path: ', path.aliasPath)
             const row: TableRow = {
                 identifier: path.aliasPath,
                 cells: getCells(path),
@@ -118,6 +122,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         });
     };
     useEffect(() => {
+        console.log('useEffect triggered. Current props.value: ', props.value);
         if (props.value === null || props.value === undefined) {
             props.value = [];
         }
@@ -156,6 +161,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         return columns;
     };
     const showContentItems = (identifier: unknown): void => {
+        console.log(`Editing path with identifier: ${identifier as string}`);
         let rowIndex = -1;
         for (let i = 0; i < rows.length; i++) {
             if ((rows[i].identifier as string) === (identifier as string)) {
@@ -188,10 +194,13 @@ export const AzureSearchIndexConfigurationFormComponent = (
     const handleInputChange = (
         event: React.ChangeEvent<HTMLInputElement>,
     ): void => {
+        console.log('Updating path input to: ', event.target.value);
         setPath(event.target.value);
     };
     const savePath = (): void => {
+        console.log(`Saving path. Current editedIdentifier: ${editedIdentifier}`);
         if (editedIdentifier === '') {
+            console.log('Adding new path:', path);
             if (!rows.some((x) => {
                 return x.identifier === path;
             })) {
@@ -217,6 +226,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
                 alert('This path already exists!');
             }
         } else {
+            console.log('Editing existing path:', editedIdentifier);
             const rowIndex = rows.findIndex((x) => {
                 return x.identifier === editedIdentifier;
             });
@@ -260,6 +270,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         setShowAddNewPath(true);
     };
     const addNewPath = (): void => {
+        console.log('Adding new path');
         setShowPathEdit(true);
         setContentTypesValue([]);
         setPath('');
@@ -274,6 +285,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         return option;
     }) ?? [];
     const selectContentTypes = (newValue: MultiValue<OptionType>): void => {
+        console.log('Selected content types:', newValue);
         setContentTypesValue(newValue as OptionType[]);
     }
 
@@ -372,6 +384,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         height: '80%',
     }
     const ClearIndicator = (props: ClearIndicatorProps<OptionType>): JSX.Element => {
+        console.log('cleaIndicator with props: ', props);
         return (
             <components.ClearIndicator {...props}>
                 <Tooltip id="clear-content-type-select-tooltip-1" />
@@ -396,6 +409,7 @@ export const AzureSearchIndexConfigurationFormComponent = (
         );
     }
 
+    console.log('FormComponent');
     return (
         <Stack>
             <Table

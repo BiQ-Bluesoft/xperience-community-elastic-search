@@ -1,14 +1,14 @@
-﻿using Azure.Search.Documents.Indexes;
+﻿using Kentico.Xperience.AzureSearch.Indexing;
 
-using Kentico.Xperience.AzureSearch.Indexing;
+using Nest;
 
 namespace DancingGoat.Search.Models;
 
-public class DancingGoatSearchModel : BaseAzureSearchModel
+public class DancingGoatSearchModel : BaseElasticSearchModel
 {
-    [SearchableField]
+    [Text(Name = "content")]
     public string Content { get; set; }
 
-    [SearchableField]
+    [Text(Name = "title")]
     public string Title { get; set; }
 }

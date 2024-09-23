@@ -8,13 +8,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search;
 
-public class DancingGoatSimpleSearchStrategy : BaseAzureSearchIndexingStrategy<DancingGoatSimpleSearchModel>
+public class DancingGoatSimpleSearchStrategy : BaseElasticSearchIndexingStrategy<DancingGoatSimpleSearchModel>
 {
     private readonly StrategyHelper strategyHelper;
 
     public DancingGoatSimpleSearchStrategy(StrategyHelper strategyHelper) => this.strategyHelper = strategyHelper;
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSimpleSearchModel();
 
@@ -36,7 +36,7 @@ public class DancingGoatSimpleSearchStrategy : BaseAzureSearchIndexingStrategy<D
                     return null;
                 }
 
-                result.Title = page?.ArticleTitle ?? "";
+                result.Title = page.ArticleTitle ?? "";
             }
             else if (string.Equals(item.ContentTypeName, HomePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
             {
