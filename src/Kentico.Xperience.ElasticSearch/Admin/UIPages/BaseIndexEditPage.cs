@@ -3,7 +3,12 @@ using System.Text;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
+using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 

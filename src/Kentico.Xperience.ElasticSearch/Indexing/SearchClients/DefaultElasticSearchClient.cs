@@ -4,7 +4,9 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Websites;
 
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +14,7 @@ using Nest;
 
 using BulkRequest = Nest.BulkRequest;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 /// <summary>
 /// Default implementation of <see cref="IElasticSearchClient"/>.

@@ -1,9 +1,11 @@
 ﻿using CMS.Core;
 using CMS.Websites;
 
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 /// <summary>
 /// Default implementation of <see cref="IElasticSearchTaskLogger"/>.

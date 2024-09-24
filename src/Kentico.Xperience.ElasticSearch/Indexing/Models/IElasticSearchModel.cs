@@ -1,4 +1,4 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Indexing;
+﻿namespace Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 /// <summary>
 /// Abstraction of properties used to define, create and retrieve data from elastic search index.

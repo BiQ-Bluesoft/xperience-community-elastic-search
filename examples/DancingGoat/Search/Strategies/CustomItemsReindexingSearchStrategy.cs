@@ -5,7 +5,8 @@ using DancingGoat.Models;
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
-using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 using Microsoft.IdentityModel.Tokens;
 

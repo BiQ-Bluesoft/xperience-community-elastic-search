@@ -1,4 +1,4 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Indexing;
+﻿namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 /// <summary>
 /// Processes tasks from <see cref="ElasticSearchQueueWorker"/>.

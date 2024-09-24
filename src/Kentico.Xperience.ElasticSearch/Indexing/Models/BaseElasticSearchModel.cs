@@ -1,6 +1,6 @@
 ﻿using Nest;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 /// <summary>
 /// Base implementation of <see cref="IElasticSearchModel"/> with decorators used to specify properties of indexed columns.

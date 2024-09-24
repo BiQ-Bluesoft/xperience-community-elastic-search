@@ -1,8 +1,9 @@
-﻿using Kentico.Xperience.ElasticSearch.Admin;
+﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 using Nest;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 /// <summary>
 /// Initializes <see cref="ElasticClient" /> instances.

@@ -1,4 +1,6 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Admin;
+﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
+
+namespace Kentico.Xperience.ElasticSearch.Admin.Services;
 
 public interface IElasticSearchConfigurationStorageService
 {

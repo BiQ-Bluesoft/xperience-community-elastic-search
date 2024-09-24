@@ -1,8 +1,14 @@
 ﻿using System.Reflection;
 
 using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Services;
+
 //using Kentico.Xperience.AzureSearch.Aliasing;
 using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
+using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 using Kentico.Xperience.ElasticSearch.Search;
 
 using Microsoft.Extensions.Configuration;

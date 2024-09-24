@@ -1,4 +1,6 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Indexing;
+﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
+
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 /// <summary>
 /// Contains methods for logging <see cref="ElasticSearchQueueItem"/>s and <see cref="ElasticSearchQueueItem"/>s

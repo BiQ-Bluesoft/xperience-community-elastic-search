@@ -1,4 +1,6 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Indexing;
+﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
+
+namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 internal static class StrategyStorage
 {

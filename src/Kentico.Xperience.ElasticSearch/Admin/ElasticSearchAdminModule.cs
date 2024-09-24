@@ -4,6 +4,7 @@ using CMS.Core;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Indexing;
 
 using Microsoft.Extensions.DependencyInjection;

@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+
 using Nest;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 /// <summary>
 /// Default indexing strategy that provides simple indexing.

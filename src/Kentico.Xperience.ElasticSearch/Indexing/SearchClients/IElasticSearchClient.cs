@@ -1,6 +1,7 @@
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 /// <summary>
 /// Contains methods to interface with the ElasticSearch API.

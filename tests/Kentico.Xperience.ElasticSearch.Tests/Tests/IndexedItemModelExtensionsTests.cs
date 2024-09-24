@@ -2,8 +2,9 @@
 
 using DancingGoat.Models;
 
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Tests.Base;
 
 namespace Kentico.Xperience.ElasticSearch.Tests.Tests;

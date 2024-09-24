@@ -4,6 +4,7 @@ using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
 
 [assembly: RegisterFormComponent(
     identifier: ElasticSearchIndexConfigurationFormComponent.IDENTIFIER,

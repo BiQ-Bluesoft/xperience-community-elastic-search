@@ -1,4 +1,4 @@
-﻿using Kentico.Xperience.ElasticSearch.Indexing;
+﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 using Nest;
 

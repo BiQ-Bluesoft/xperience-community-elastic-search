@@ -2,6 +2,7 @@ using CMS.Base;
 using CMS.Core;
 
 using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 namespace Kentico.Xperience.ElasticSearch;
 

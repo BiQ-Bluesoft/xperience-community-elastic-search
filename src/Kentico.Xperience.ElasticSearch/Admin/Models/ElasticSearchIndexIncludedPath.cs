@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.Models;
 
 public class ElasticSearchIndexIncludedPath
 {

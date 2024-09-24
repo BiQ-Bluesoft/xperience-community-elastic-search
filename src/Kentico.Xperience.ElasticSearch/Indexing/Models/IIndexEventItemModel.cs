@@ -1,7 +1,7 @@
 ﻿using CMS.ContentEngine;
 using CMS.Websites;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 /// <summary>
 /// Abstraction of different types of events generated from content modifications

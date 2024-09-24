@@ -7,6 +7,8 @@ using CMS.Websites;
 
 using Kentico.Xperience.ElasticSearch;
 using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

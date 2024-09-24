@@ -2,7 +2,9 @@
 
 using CMS.DataEngine;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+
+namespace Kentico.Xperience.ElasticSearch.Admin.Services;
 
 internal class DefaultElasticSearchConfigurationStorageService(
     IElasticSearchIndexItemInfoProvider indexProvider,

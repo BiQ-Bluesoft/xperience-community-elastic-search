@@ -3,7 +3,7 @@
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.Models;
 
 public class ElasticSearchConfigurationModel
 {

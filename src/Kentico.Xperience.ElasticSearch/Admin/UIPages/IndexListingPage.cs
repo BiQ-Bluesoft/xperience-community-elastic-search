@@ -3,7 +3,11 @@ using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 using Microsoft.Extensions.Options;
 

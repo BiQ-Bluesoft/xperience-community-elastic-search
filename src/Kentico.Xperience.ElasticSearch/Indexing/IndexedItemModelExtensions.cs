@@ -1,6 +1,8 @@
 ﻿using CMS.ContentEngine.Internal;
 using CMS.Core;
 
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+
 namespace Kentico.Xperience.ElasticSearch.Indexing;
 
 /// <summary>

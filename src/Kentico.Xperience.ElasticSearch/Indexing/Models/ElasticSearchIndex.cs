@@ -1,6 +1,7 @@
-﻿using Kentico.Xperience.ElasticSearch.Admin;
+﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 /// <summary>
 /// Represents the configuration of an ElasticSearch index.

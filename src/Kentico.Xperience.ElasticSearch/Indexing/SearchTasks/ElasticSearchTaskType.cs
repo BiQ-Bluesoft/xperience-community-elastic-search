@@ -1,6 +1,4 @@
-﻿using Kentico.Xperience.ElasticSearch.Indexing;
-
-namespace Kentico.Xperience.ElasticSearch;
+﻿namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 /// <summary>
 /// Represents the type of a <see cref="ElasticSearchQueueItem"/>

@@ -1,4 +1,6 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Indexing;
+﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
+
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 /// <summary>
 /// A queued item to be processed by <see cref="ElasticSearchQueueWorker"/> which

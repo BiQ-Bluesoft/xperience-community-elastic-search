@@ -1,12 +1,12 @@
-﻿using CMS.EventLog;
-
-using Kentico.Xperience.ElasticSearch.Admin;
+﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using Nest;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 public sealed class ElasticSearchIndexClientService(
     ElasticClient indexClient,

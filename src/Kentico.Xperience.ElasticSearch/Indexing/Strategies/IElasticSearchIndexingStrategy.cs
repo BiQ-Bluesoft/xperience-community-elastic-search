@@ -1,6 +1,8 @@
-﻿using Nest;
+﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
-namespace Kentico.Xperience.ElasticSearch.Indexing;
+using Nest;
+
+namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 public interface IElasticSearchIndexingStrategy
 {

@@ -1,7 +1,7 @@
 ﻿using DancingGoat.Models;
 
-using Kentico.Xperience.ElasticSearch.Admin;
-using Kentico.Xperience.ElasticSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 namespace Kentico.Xperience.ElasticSearch.Tests.Base;
 internal static class MockDataProvider
