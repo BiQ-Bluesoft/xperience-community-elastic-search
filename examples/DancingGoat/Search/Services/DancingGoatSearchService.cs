@@ -1,6 +1,6 @@
 ﻿using DancingGoat.Search.Models;
 
-using Kentico.Xperience.AzureSearch.Search;
+using Kentico.Xperience.ElasticSearch.Search;
 
 using Nest;
 

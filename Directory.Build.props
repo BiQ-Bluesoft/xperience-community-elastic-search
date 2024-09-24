@@ -9,11 +9,11 @@
     <VersionSuffix></VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-    <PackageProjectUrl>https://github.com/Kentico/xperience-by-kentico-azure-ai-search</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/Kentico/xperience-by-kentico-azure-ai-search/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch</PackageProjectUrl>
+    <PackageReleaseNotes>https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/releases</PackageReleaseNotes>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>xperience;kentico;aspnetcore;azure;search</PackageTags>
+    <PackageTags>xperience;kentico;aspnetcore;elastic;search</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

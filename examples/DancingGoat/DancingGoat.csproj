@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <RootNamespace>DancingGoat</RootNamespace>
     <UserSecretsId>a5fede4d-ad40-4e59-9fec-46156fc6b6e0</UserSecretsId>
@@ -28,6 +28,6 @@
     <PackageReference Include="kentico.xperience.webapp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Kentico.Xperience.AzureSearch\Kentico.Xperience.AzureSearch.csproj" />
+    <ProjectReference Include="..\..\src\Kentico.Xperience.ElasticSearch\Kentico.Xperience.ElasticSearch.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using Kentico.Xperience.AzureSearch.Indexing;
+﻿using Kentico.Xperience.ElasticSearch.Indexing;
 
 using Nest;
 

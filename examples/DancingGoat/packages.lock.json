@@ -966,7 +966,7 @@
           "System.IO.Hashing": "7.0.0"
         }
       },
-      "kentico.xperience.azuresearch": {
+      "kentico.xperience.elasticsearch": {
         "type": "Project",
         "dependencies": {
           "Elastic.Clients.Elasticsearch": "[8.15.6, )",

@@ -2,7 +2,7 @@
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
-using Kentico.Xperience.AzureSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing;
 
 using Nest;
 

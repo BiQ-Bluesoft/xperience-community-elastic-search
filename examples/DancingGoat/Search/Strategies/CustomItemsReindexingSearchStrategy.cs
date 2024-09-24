@@ -5,7 +5,7 @@ using DancingGoat.Models;
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
-using Kentico.Xperience.AzureSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing;
 
 using Microsoft.IdentityModel.Tokens;
 
@@ -61,7 +61,7 @@ public class CustomItemsReindexingSearchStrategy : BaseElasticSearchIndexingStra
 
             foreach (var articlePage in result)
             {
-                // This will be a IIndexEventItemModel passed to our MapToAzureSearchModelOrNull method
+                // This will be a IIndexEventItemModel passed to our MapToElasticSearchModelOrNull method
                 reindexedItems.Add(new IndexEventWebPageItemModel(
                     articlePage.SystemFields.WebPageItemID,
                     articlePage.SystemFields.WebPageItemGUID,
