@@ -12,17 +12,19 @@ namespace Kentico.Xperience.ElasticSearch.Admin;
 internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigurationModel>
 {
     protected readonly IElasticSearchConfigurationStorageService StorageService;
-    //private readonly IElasticSearchIndexClientService indexClientService;
+    private readonly IElasticSearchIndexClientService indexClientService;
 
     protected BaseIndexEditPage(
         IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        IElasticSearchConfigurationStorageService storageService
-        //IElasticSearchIndexClientService indexClientService
+        IElasticSearchConfigurationStorageService storageService,
+        IElasticSearchIndexClientService indexClientService
         )
-        : base(formItemCollectionProvider, formDataBinder) =>
-        //this.indexClientService = indexClientService;
+        : base(formItemCollectionProvider, formDataBinder)
+    {
+        this.indexClientService = indexClientService;
         StorageService = storageService;
+    }
 
     protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchConfigurationModel configuration)
     {
@@ -50,7 +52,7 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
             if (edited)
             {
                 ElasticSearchIndexStore.SetIndicies(StorageService);
-                //await indexClientService.EditIndex(oldIndex!.IndexName, configuration, default);
+                await indexClientService.EditIndexAsync(oldIndex!.IndexName, configuration, default);
 
                 return new ModificationResponse(ModificationResult.Success);
             }

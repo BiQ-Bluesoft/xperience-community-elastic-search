@@ -1,4 +1,4 @@
-﻿//using Kentico.Xperience.AzureSearch.Admin;
+﻿using Kentico.Xperience.ElasticSearch.Admin;
 
 using Nest;
 
@@ -17,14 +17,6 @@ public interface IElasticSearchIndexClientService
     /// <exception cref="InvalidOperationException" />
     Task<ElasticClient> InitializeIndexClient(string indexName, CancellationToken cancellationToken);
 
-    /// <summary>
-    /// Edits the ElasticSearch index in Azure.
-    /// </summary>
-    /// <param name="oldIndexName">The name of index to edit.</param>
-    /// <param name="newIndexConfiguration">New index configuration.</param>
-    /// <param name="cancellationToken">The cancellation token for the task.</param>
-    /// <exception cref="InvalidOperationException" />
-    /// <exception cref="ArgumentNullException" />
-    /// <exception cref="OperationCanceledException" />
-    //Task EditIndex(string oldIndexName, ElasticSearchConfigurationModel newIndexConfiguration, CancellationToken cancellationToken);
+    Task EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration,
+            CancellationToken cancellationToken);
 }

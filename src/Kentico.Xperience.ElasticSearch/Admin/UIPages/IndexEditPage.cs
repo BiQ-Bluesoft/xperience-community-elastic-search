@@ -3,7 +3,7 @@
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.ElasticSearch.Admin;
-//using Kentico.Xperience.AzureSearch.Indexing;
+using Kentico.Xperience.ElasticSearch.Indexing;
 
 [assembly: UIPage(
    parentType: typeof(IndexListingPage),
@@ -26,9 +26,9 @@ internal class IndexEditPage : BaseIndexEditPage
     public IndexEditPage(
         Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        IElasticSearchConfigurationStorageService storageService
-        /*IElasticSearchIndexClientService indexClientService*/)
-        : base(formItemCollectionProvider, formDataBinder, storageService/*, indexClientService*/) { }
+        IElasticSearchConfigurationStorageService storageService,
+        IElasticSearchIndexClientService indexClientService)
+        : base(formItemCollectionProvider, formDataBinder, storageService, indexClientService) { }
 
     protected override ElasticSearchConfigurationModel Model
     {

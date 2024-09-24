@@ -27,9 +27,9 @@ internal class IndexCreatePage : BaseIndexEditPage
         IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
         IElasticSearchConfigurationStorageService storageService,
-        IPageUrlGenerator pageUrlGenerator
-        /*IElasticSearchIndexClientService searchClientService*/)
-        : base(formItemCollectionProvider, formDataBinder, storageService/*, searchClientService*/) => this.pageUrlGenerator = pageUrlGenerator;
+        IPageUrlGenerator pageUrlGenerator,
+        IElasticSearchIndexClientService searchClientService)
+        : base(formItemCollectionProvider, formDataBinder, storageService, searchClientService) => this.pageUrlGenerator = pageUrlGenerator;
 
     protected override ElasticSearchConfigurationModel Model
     {
