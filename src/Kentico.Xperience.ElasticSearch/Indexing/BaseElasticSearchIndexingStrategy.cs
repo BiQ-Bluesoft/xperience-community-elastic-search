@@ -48,6 +48,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
             var failedItems = bulkResponse.ItemsWithErrors;
             foreach (var item in failedItems)
             {
+                // TODO
                 Console.WriteLine($"Operation {item.Operation} failed for document {item.Id} with error: {item.Error?.Reason}");
             }
         }

@@ -18,35 +18,22 @@ using Microsoft.Extensions.Options;
 namespace Kentico.Xperience.ElasticSearch.Admin;
 
 /// <summary>
-/// An admin UI page that displays statistics about the registered AzureSearch indexes.
+/// An admin UI page that displays statistics about the registered ElasticSearch indexes.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="IndexListingPage"/> class.
+/// </remarks>
 [UIEvaluatePermission(SystemPermissions.VIEW)]
-internal class IndexListingPage : ListingPage
+internal class IndexListingPage(
+    IElasticSearchClient elasticSearchClient,
+    IPageUrlGenerator pageUrlGenerator,
+    IOptions<ElasticSearchOptions> elasticSearchOptions,
+    IElasticSearchConfigurationStorageService configurationStorageService,
+    IConversionService conversionService) : ListingPage
 {
-    private readonly ElasticSearchOptions elasticSearchOptions;
-    private readonly IElasticSearchClient elasticSearchClient;
-    private readonly IPageUrlGenerator pageUrlGenerator;
-    private readonly IElasticSearchConfigurationStorageService configurationStorageService;
-    private readonly IConversionService conversionService;
+    private readonly ElasticSearchOptions elasticSearchOptions = elasticSearchOptions.Value;
 
     protected override string ObjectType => ElasticSearchIndexItemInfo.OBJECT_TYPE;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="IndexListingPage"/> class.
-    /// </summary>
-    public IndexListingPage(
-        IElasticSearchClient elasticSearchClient,
-        IPageUrlGenerator pageUrlGenerator,
-        IOptions<ElasticSearchOptions> elasticSearchOptions,
-        IElasticSearchConfigurationStorageService configurationStorageService,
-        IConversionService conversionService)
-    {
-        this.elasticSearchClient = elasticSearchClient;
-        this.elasticSearchOptions = elasticSearchOptions.Value;
-        this.pageUrlGenerator = pageUrlGenerator;
-        this.configurationStorageService = configurationStorageService;
-        this.conversionService = conversionService;
-    }
 
     /// <inheritdoc/>
     public override async Task ConfigurePage()

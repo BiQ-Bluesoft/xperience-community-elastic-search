@@ -8,12 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search;
 
-public class DancingGoatSimpleSearchStrategy : BaseElasticSearchIndexingStrategy<DancingGoatSimpleSearchModel>
+public class DancingGoatSimpleSearchStrategy(StrategyHelper strategyHelper) : BaseElasticSearchIndexingStrategy<DancingGoatSimpleSearchModel>
 {
-    private readonly StrategyHelper strategyHelper;
-
-    public DancingGoatSimpleSearchStrategy(StrategyHelper strategyHelper) => this.strategyHelper = strategyHelper;
-
     public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSimpleSearchModel();

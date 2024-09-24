@@ -4,32 +4,15 @@ using CMS.DataEngine;
 
 namespace Kentico.Xperience.ElasticSearch.Admin;
 
-internal class DefaultElasticSearchConfigurationStorageService : IElasticSearchConfigurationStorageService
+internal class DefaultElasticSearchConfigurationStorageService(
+    IElasticSearchIndexItemInfoProvider indexProvider,
+    IElasticSearchIndexAliasItemInfoProvider indexAliasProvider,
+    IElasticSearchIndexAliasIndexItemInfoProvider indexAliasIndexProvider,
+    IElasticSearchIncludedPathItemInfoProvider pathProvider,
+    IElasticSearchContentTypeItemInfoProvider contentTypeProvider,
+    IElasticSearchIndexLanguageItemInfoProvider languageProvider
+    ) : IElasticSearchConfigurationStorageService
 {
-    private readonly IElasticSearchIndexItemInfoProvider indexProvider;
-    private readonly IElasticSearchIndexAliasItemInfoProvider indexAliasProvider;
-    private readonly IElasticSearchIndexAliasIndexItemInfoProvider indexAliasIndexProvider;
-    private readonly IElasticSearchIncludedPathItemInfoProvider pathProvider;
-    private readonly IElasticSearchContentTypeItemInfoProvider contentTypeProvider;
-    private readonly IElasticSearchIndexLanguageItemInfoProvider languageProvider;
-
-    public DefaultElasticSearchConfigurationStorageService(
-        IElasticSearchIndexItemInfoProvider indexProvider,
-        IElasticSearchIndexAliasItemInfoProvider indexAliasProvider,
-        IElasticSearchIndexAliasIndexItemInfoProvider indexAliasIndexProvider,
-        IElasticSearchIncludedPathItemInfoProvider pathProvider,
-        IElasticSearchContentTypeItemInfoProvider contentTypeProvider,
-        IElasticSearchIndexLanguageItemInfoProvider languageProvider
-    )
-    {
-        this.indexProvider = indexProvider;
-        this.indexAliasProvider = indexAliasProvider;
-        this.pathProvider = pathProvider;
-        this.contentTypeProvider = contentTypeProvider;
-        this.languageProvider = languageProvider;
-        this.indexAliasIndexProvider = indexAliasIndexProvider;
-    }
-
     private static string RemoveWhitespacesUsingStringBuilder(string source)
     {
         var builder = new StringBuilder(source.Length);

@@ -11,29 +11,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DancingGoat.Search.Strategies;
 
-public class CustomItemsReindexingSearchStrategy : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
+public class CustomItemsReindexingSearchStrategy(
+    IWebPageQueryResultMapper webPageMapper,
+    IContentQueryExecutor queryExecutor,
+    StrategyHelper strategyHelper,
+    WebScraperHtmlSanitizer htmlSanitizer,
+    WebCrawlerService webCrawler
+    ) : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
 {
-    private readonly IContentQueryExecutor queryExecutor;
-    private readonly IWebPageQueryResultMapper webPageMapper;
-    private readonly StrategyHelper strategyHelper;
-    private readonly WebScraperHtmlSanitizer htmlSanitizer;
-    private readonly WebCrawlerService webCrawler;
-
-    public CustomItemsReindexingSearchStrategy(
-        IWebPageQueryResultMapper webPageMapper,
-        IContentQueryExecutor queryExecutor,
-        StrategyHelper strategyHelper,
-        WebScraperHtmlSanitizer htmlSanitizer,
-        WebCrawlerService webCrawler
-    )
-    {
-        this.webPageMapper = webPageMapper;
-        this.queryExecutor = queryExecutor;
-        this.strategyHelper = strategyHelper;
-        this.htmlSanitizer = htmlSanitizer;
-        this.webCrawler = webCrawler;
-    }
-
     public override async Task<IEnumerable<IIndexEventItemModel>> FindItemsToReindex(IndexEventWebPageItemModel changedItem)
     {
         var reindexedItems = new List<IIndexEventItemModel>();

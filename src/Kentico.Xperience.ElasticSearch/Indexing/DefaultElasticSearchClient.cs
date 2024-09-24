@@ -112,7 +112,6 @@ internal class DefaultElasticSearchClient(
 
     private async Task<int> DeleteRecordsInternal(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
     {
-        //var searchClient = await elasticSearchIndexClientService.InitializeIndexClient(indexName, cancellationToken);
         var bulkDeleteResponse = await searchIndexClient.BulkAsync(new BulkRequest(indexName)
         {
             Operations = itemGuids.Select(x => new BulkDeleteOperation<BaseElasticSearchModel>(x)).Cast<IBulkOperation>().ToList()

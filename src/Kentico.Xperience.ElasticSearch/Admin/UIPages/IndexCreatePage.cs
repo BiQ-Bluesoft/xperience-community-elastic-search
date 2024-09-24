@@ -18,18 +18,14 @@ using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.
 namespace Kentico.Xperience.ElasticSearch.Admin;
 
 [UIEvaluatePermission(SystemPermissions.CREATE)]
-internal class IndexCreatePage : BaseIndexEditPage
+internal class IndexCreatePage(
+    IFormItemCollectionProvider formItemCollectionProvider,
+    IFormDataBinder formDataBinder,
+    IElasticSearchConfigurationStorageService storageService,
+    IPageUrlGenerator pageUrlGenerator,
+    IElasticSearchIndexClientService searchClientService) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, searchClientService)
 {
-    private readonly IPageUrlGenerator pageUrlGenerator;
     private ElasticSearchConfigurationModel? model = null;
-
-    public IndexCreatePage(
-        IFormItemCollectionProvider formItemCollectionProvider,
-        IFormDataBinder formDataBinder,
-        IElasticSearchConfigurationStorageService storageService,
-        IPageUrlGenerator pageUrlGenerator,
-        IElasticSearchIndexClientService searchClientService)
-        : base(formItemCollectionProvider, formDataBinder, storageService, searchClientService) => this.pageUrlGenerator = pageUrlGenerator;
 
     protected override ElasticSearchConfigurationModel Model
     {

@@ -12,24 +12,12 @@ internal class ElasticSearchBatchResult
     internal HashSet<ElasticSearchIndex> PublishedIndices { get; set; } = [];
 }
 
-internal class DefaultElasticSearchTaskProcessor : IElasticSearchTaskProcessor
+internal class DefaultElasticSearchTaskProcessor(
+    IElasticSearchClient elasticSearchClient,
+    IEventLogService eventLogService,
+    IWebPageUrlRetriever urlRetriever,
+    IServiceProvider serviceProvider) : IElasticSearchTaskProcessor
 {
-    private readonly IWebPageUrlRetriever urlRetriever;
-    private readonly IServiceProvider serviceProvider;
-    private readonly IElasticSearchClient elasticSearchClient;
-    private readonly IEventLogService eventLogService;
-
-    public DefaultElasticSearchTaskProcessor(
-        IElasticSearchClient elasticSearchClient,
-        IEventLogService eventLogService,
-        IWebPageUrlRetriever urlRetriever,
-        IServiceProvider serviceProvider)
-    {
-        this.elasticSearchClient = elasticSearchClient;
-        this.eventLogService = eventLogService;
-        this.urlRetriever = urlRetriever;
-        this.serviceProvider = serviceProvider;
-    }
 
     /// <inheritdoc />
     public async Task<int> ProcessElasticSearchTasks(IEnumerable<ElasticSearchQueueItem> queueItems, CancellationToken cancellationToken, int maximumBatchSize = 100)

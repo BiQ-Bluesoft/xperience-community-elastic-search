@@ -10,8 +10,7 @@ namespace Kentico.Xperience.ElasticSearch.Indexing;
 
 public sealed class ElasticSearchIndexClientService(
     ElasticClient indexClient,
-    IServiceProvider serviceProvider,
-    IEventLogInfoProvider eventLogInfoProvider) : IElasticSearchIndexClientService
+    IServiceProvider serviceProvider) : IElasticSearchIndexClientService
 {
 
     /// <inheritdoc />

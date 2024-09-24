@@ -8,23 +8,12 @@ using Nest;
 
 namespace DancingGoat.Search;
 
-public class GeoLocationSearchStrategy : BaseElasticSearchIndexingStrategy<GeoLocationSearchModel>
+public class GeoLocationSearchStrategy(
+    WebScraperHtmlSanitizer htmlSanitizer,
+    WebCrawlerService webCrawler,
+    StrategyHelper strategyHelper
+    ) : BaseElasticSearchIndexingStrategy<GeoLocationSearchModel>
 {
-    private readonly WebScraperHtmlSanitizer htmlSanitizer;
-    private readonly WebCrawlerService webCrawler;
-    private readonly StrategyHelper strategyHelper;
-
-    public GeoLocationSearchStrategy(
-        WebScraperHtmlSanitizer htmlSanitizer,
-        WebCrawlerService webCrawler,
-        StrategyHelper strategyHelper
-    )
-    {
-        this.htmlSanitizer = htmlSanitizer;
-        this.webCrawler = webCrawler;
-        this.strategyHelper = strategyHelper;
-    }
-
     public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new GeoLocationSearchModel();

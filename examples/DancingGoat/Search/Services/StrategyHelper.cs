@@ -3,18 +3,9 @@ using CMS.Websites;
 
 namespace DancingGoat.Search.Services;
 
-public class StrategyHelper
+public class StrategyHelper(IWebPageQueryResultMapper webPageMapper, IContentQueryExecutor queryExecutor)
 {
-    private readonly IWebPageQueryResultMapper webPageMapper;
-    private readonly IContentQueryExecutor queryExecutor;
-
     public const string INDEXED_WEBSITECHANNEL_NAME = "DancingGoatPages";
-
-    public StrategyHelper(IWebPageQueryResultMapper webPageMapper, IContentQueryExecutor queryExecutor)
-    {
-        this.webPageMapper = webPageMapper;
-        this.queryExecutor = queryExecutor;
-    }
 
     public async Task<T?> GetPage<T>(Guid id, string channelName, string languageName, string contentTypeName)
         where T : IWebPageFieldsSource, new()

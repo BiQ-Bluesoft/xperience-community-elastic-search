@@ -1,13 +1,7 @@
 ﻿namespace Kentico.Xperience.ElasticSearch.Admin;
 
-public class ModificationResponse
+public class ModificationResponse(ModificationResult result, List<string>? errorMessage = null)
 {
-    public ModificationResult ModificationResult { get; set; }
-    public List<string>? ErrorMessages { get; set; }
-
-    public ModificationResponse(ModificationResult result, List<string>? errorMessage = null)
-    {
-        ModificationResult = result;
-        ErrorMessages = errorMessage;
-    }
+    public ModificationResult ModificationResult { get; set; } = result;
+    public List<string>? ErrorMessages { get; set; } = errorMessage;
 }

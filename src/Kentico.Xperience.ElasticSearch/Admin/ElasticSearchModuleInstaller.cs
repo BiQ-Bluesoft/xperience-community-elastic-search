@@ -4,12 +4,8 @@ using CMS.Modules;
 
 namespace Kentico.Xperience.ElasticSearch.Admin;
 
-internal class ElasticSearchModuleInstaller
+internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resourceProvider)
 {
-    private readonly IInfoProvider<ResourceInfo> resourceProvider;
-
-    public ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resourceProvider) => this.resourceProvider = resourceProvider;
-
     public void Install()
     {
         var resource = resourceProvider.Get("CMS.Integration.ElasticSearch")
@@ -41,7 +37,7 @@ internal class ElasticSearchModuleInstaller
         return resource;
     }
 
-    public void InstallElasticSearchItemInfo(ResourceInfo resource)
+    public static void InstallElasticSearchItemInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchIndexItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchIndexItemInfo.OBJECT_TYPE);
 
@@ -120,7 +116,7 @@ internal class ElasticSearchModuleInstaller
         }
     }
 
-    public void InstallElasticSearchIndexAliasItemInfo(ResourceInfo resource)
+    public static void InstallElasticSearchIndexAliasItemInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchIndexAliasItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchIndexAliasItemInfo.OBJECT_TYPE);
 
@@ -163,7 +159,7 @@ internal class ElasticSearchModuleInstaller
         }
     }
 
-    public void InstallElasticSearchIndexAliasIndexItemInfo(ResourceInfo resource)
+    public static void InstallElasticSearchIndexAliasIndexItemInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchIndexAliasIndexItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchIndexAliasIndexItemInfo.OBJECT_TYPE);
 
@@ -218,7 +214,7 @@ internal class ElasticSearchModuleInstaller
         }
     }
 
-    public void InstallElasticSearchIndexPathItemInfo(ResourceInfo resource)
+    public static void InstallElasticSearchIndexPathItemInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchIncludedPathItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchIncludedPathItemInfo.OBJECT_TYPE);
 
@@ -274,7 +270,7 @@ internal class ElasticSearchModuleInstaller
         }
     }
 
-    public void InstallElasticSearchLanguageInfo(ResourceInfo resource)
+    public static void InstallElasticSearchLanguageInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchIndexLanguageItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchIndexLanguageItemInfo.OBJECT_TYPE);
 
@@ -331,7 +327,7 @@ internal class ElasticSearchModuleInstaller
         }
     }
 
-    public void InstallElasticSearchContentTypeItemInfo(ResourceInfo resource)
+    public static void InstallElasticSearchContentTypeItemInfo(ResourceInfo resource)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchContentTypeItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchContentTypeItemInfo.OBJECT_TYPE);
 

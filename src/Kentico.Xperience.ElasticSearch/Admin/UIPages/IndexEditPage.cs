@@ -16,19 +16,16 @@ using Kentico.Xperience.ElasticSearch.Indexing;
 namespace Kentico.Xperience.ElasticSearch.Admin;
 
 [UIEvaluatePermission(SystemPermissions.UPDATE)]
-internal class IndexEditPage : BaseIndexEditPage
+internal class IndexEditPage(
+    Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
+    IFormDataBinder formDataBinder,
+    IElasticSearchConfigurationStorageService storageService,
+    IElasticSearchIndexClientService indexClientService) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, indexClientService)
 {
     private ElasticSearchConfigurationModel? model = null;
 
     [PageParameter(typeof(IntPageModelBinder))]
     public int IndexIdentifier { get; set; }
-
-    public IndexEditPage(
-        Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
-        IFormDataBinder formDataBinder,
-        IElasticSearchConfigurationStorageService storageService,
-        IElasticSearchIndexClientService indexClientService)
-        : base(formItemCollectionProvider, formDataBinder, storageService, indexClientService) { }
 
     protected override ElasticSearchConfigurationModel Model
     {

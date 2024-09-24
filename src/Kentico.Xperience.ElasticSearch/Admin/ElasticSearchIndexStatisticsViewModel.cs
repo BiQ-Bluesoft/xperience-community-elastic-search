@@ -2,13 +2,13 @@
 
 public class ElasticSearchIndexStatisticsViewModel
 {
-    //
-    // Summary:
-    //     Index name.
+    /// <summary>
+    /// Index name.
+    /// </summary>
     public string? Name { get; set; }
 
-    //
-    // Summary:
-    //     Number of records contained in the index
+    /// <summary>
+    /// Number of records contained in the index
+    /// </summary>
     public long Entries { get; set; }
 }

@@ -6,12 +6,8 @@ namespace DancingGoat.Search;
 
 [Route("[controller]")]
 [ApiController]
-public class SearchController : Controller
+public class SearchController(DancingGoatSearchService searchService) : Controller
 {
-    private readonly DancingGoatSearchService searchService;
-
-    public SearchController(DancingGoatSearchService searchService) => this.searchService = searchService;
-
     public async Task<IActionResult> Index(string? query, int? pageSize, int? page, string? indexName)
     {
         var results = await searchService.GlobalSearch(indexName ?? "advanced", query, page ?? 1, pageSize ?? 10);

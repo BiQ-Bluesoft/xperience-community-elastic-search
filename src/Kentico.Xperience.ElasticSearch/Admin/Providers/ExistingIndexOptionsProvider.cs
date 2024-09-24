@@ -3,12 +3,8 @@ using Kentico.Xperience.Admin.Base.Forms;
 
 namespace Kentico.Xperience.ElasticSearch.Admin;
 
-internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
+internal class ExistingIndexOptionsProvider(IElasticSearchIndexItemInfoProvider indexProvider) : IGeneralSelectorDataProvider
 {
-    private readonly IElasticSearchIndexItemInfoProvider indexProvider;
-
-    public ExistingIndexOptionsProvider(IElasticSearchIndexItemInfoProvider indexProvider) => this.indexProvider = indexProvider;
-
     public async Task<PagedSelectListItems<string>> GetItemsAsync(string searchTerm, int pageIndex, CancellationToken cancellationToken)
     {
         // Prepares a query for retrieving index objects
@@ -38,7 +34,12 @@ internal class ExistingIndexOptionsProvider : IGeneralSelectorDataProvider
         };
     }
 
-    // Returns ObjectSelectorListItem<string> options for all item values that are currently selected
+    /// <summary>
+    /// Returns ObjectSelectorListItem options for all item values that are currently selected.
+    /// </summary>
+    /// <param name="selectedValues"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<IEnumerable<ObjectSelectorListItem<string>>> GetSelectedItemsAsync(IEnumerable<string> selectedValues, CancellationToken cancellationToken)
     {
         var itemQuery = indexProvider.Get().Page(0, 20);
