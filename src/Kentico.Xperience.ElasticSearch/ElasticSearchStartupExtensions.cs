@@ -2,8 +2,8 @@
 
 using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
+using Kentico.Xperience.ElasticSearch.Aliasing;
 
-//using Kentico.Xperience.AzureSearch.Aliasing;
 using Kentico.Xperience.ElasticSearch.Indexing;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
@@ -80,8 +80,8 @@ public static class ElasticSearchStartupExtensions
             .AddSingleton<IElasticSearchTaskLogger, DefaultElasticSearchTaskLogger>()
             .AddSingleton<IElasticSearchTaskProcessor, DefaultElasticSearchTaskProcessor>()
             .AddSingleton<IElasticSearchConfigurationStorageService, DefaultElasticSearchConfigurationStorageService>()
-            .AddSingleton<IElasticSearchIndexClientService, ElasticSearchIndexClientService>();
-    //.AddSingleton<IElasticSearchIndexAliasService, ElasticSearchIndexAliasService>();
+            .AddSingleton<IElasticSearchIndexClientService, ElasticSearchIndexClientService>()
+            .AddSingleton<IElasticSearchIndexAliasService, ElasticSearchIndexAliasService>();
 }
 
 public interface IElasticSearchBuilder
