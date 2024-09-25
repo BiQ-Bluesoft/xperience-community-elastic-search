@@ -118,7 +118,7 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
                 if (sortByDistance)
                 {
                     sort.GeoDistance(g => g
-                        .Field(p => p.Location)
+                        .Field(p => p.GeoLocation)
                         .DistanceType(GeoDistanceType.Arc)
                         .Order(SortOrder.Ascending)
                         .Points(new GeoLocation(latitude, longitude)));

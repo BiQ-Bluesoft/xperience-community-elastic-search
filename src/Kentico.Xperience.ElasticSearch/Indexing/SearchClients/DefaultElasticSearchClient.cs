@@ -192,11 +192,11 @@ internal class DefaultElasticSearchClient(
     {
         var languages = await GetAllLanguages();
 
-        var languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? "";
+        var languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? string.Empty;
 
         var websiteChannels = await GetAllWebsiteChannels();
 
-        var channelName = websiteChannels.FirstOrDefault(c => c.WebsiteChannelID == content.WebPageItemWebsiteChannelID).ChannelName ?? "";
+        var channelName = websiteChannels.FirstOrDefault(c => c.WebsiteChannelID == content.WebPageItemWebsiteChannelID).ChannelName ?? string.Empty;
 
         var item = new IndexEventWebPageItemModel(
             content.WebPageItemID,
@@ -275,7 +275,7 @@ internal class DefaultElasticSearchClient(
             {
                 if (item.TryGetValue(nameof(WebsiteChannelInfo.WebsiteChannelID), out var channelID) && item.TryGetValue(nameof(ChannelInfo.ChannelName), out var channelName))
                 {
-                    items.Add(new(conversionService.GetInteger(channelID, 0), conversionService.GetString(channelName, "")));
+                    items.Add(new(conversionService.GetInteger(channelID, 0), conversionService.GetString(channelName, string.Empty)));
                 }
             }
 

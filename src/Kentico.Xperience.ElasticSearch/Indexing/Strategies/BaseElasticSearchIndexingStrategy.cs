@@ -63,6 +63,15 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
 
         foreach (var prop in type.GetProperties())
         {
+
+            // Ignore Attribute
+            var ignoreAttr = prop.GetCustomAttribute<IgnoreAttribute>();
+            if (ignoreAttr != null)
+            {
+                continue;
+            }
+
+            // Text Attribute
             var textAttr = prop.GetCustomAttribute<TextAttribute>();
             if (textAttr != null)
             {
@@ -74,6 +83,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
                 continue;
             }
 
+            // Keyword Attribute
             var keywordAttr = prop.GetCustomAttribute<KeywordAttribute>();
             if (keywordAttr != null)
             {
@@ -81,6 +91,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
                 continue;
             }
 
+            // Number Attribute
             var numberAttr = prop.GetCustomAttribute<NumberAttribute>();
             if (numberAttr != null)
             {
@@ -90,6 +101,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
                 continue;
             }
 
+            // Date Attribute
             var dateAttr = prop.GetCustomAttribute<DateAttribute>();
             if (dateAttr != null)
             {
@@ -100,7 +112,32 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
                 continue;
             }
 
-            // Add handling for other NEST attributes as needed
+            // GeoPoint Attribute
+            var geoAttr = prop.GetCustomAttribute<GeoPointAttribute>();
+            if (geoAttr != null)
+            {
+                descriptor.GeoPoint(d => d
+                    .Name(geoAttr.Name ?? prop.Name)
+                );
+                continue;
+            }
+
+            // Join Attribute
+            var joinAttr = prop.GetCustomAttribute<JoinAttribute>();
+            if (joinAttr != null)
+            {
+                descriptor.Join(j => j
+                    .Name(joinAttr.Name ?? prop.Name));
+                continue;
+            }
+
+            // Completion Attribute
+            var completionAttr = prop.GetCustomAttribute<CompletionAttribute>();
+            if (completionAttr != null)
+            {
+                descriptor.Completion(c => c
+                    .Name(completionAttr.Name ?? prop.Name));
+            }
         }
 
         return descriptor;

@@ -216,12 +216,18 @@ internal class DefaultElasticSearchConfigurationStorageService(
         }
 
         var paths = pathProvider.Get().ToList();
+        var reusableContentTypes = reusableContentTypeProvider.Get().ToList();
+        var languages = languageProvider.Get().ToList();
 
-        var contentTypesInfoItems = contentTypeProvider
-           .Get()
-           .GetEnumerableTypedResult();
+        return indexInfos.Select(index =>
+        {
+            // TODO Report as bug in Azure search
+            var contentTypesInfoItems = contentTypeProvider
+                .Get()
+                .WhereEquals(nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId), index.ElasticSearchIndexItemId)
+                .GetEnumerableTypedResult();
 
-        var contentTypes = DataClassInfoProvider.ProviderObject
+            var contentTypes = DataClassInfoProvider.ProviderObject
             .Get()
             .WhereIn(
                 nameof(DataClassInfo.ClassName),
@@ -231,11 +237,8 @@ internal class DefaultElasticSearchConfigurationStorageService(
             ).GetEnumerableTypedResult()
             .Select(x => new ElasticSearchIndexContentType(x.ClassName, x.ClassDisplayName));
 
-        var reusableContentTypes = reusableContentTypeProvider.Get().ToList();
-
-        var languages = languageProvider.Get().ToList();
-
-        return indexInfos.Select(index => new ElasticSearchConfigurationModel(index, languages, paths, contentTypes, reusableContentTypes));
+            return new ElasticSearchConfigurationModel(index, languages, paths, contentTypes, reusableContentTypes);
+        });
     }
 
     public IEnumerable<ElasticSearchAliasConfigurationModel> GetAllAliasData()
