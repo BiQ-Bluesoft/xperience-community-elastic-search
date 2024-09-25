@@ -129,36 +129,62 @@ internal class DefaultElasticSearchClient(
 
     private async Task RebuildInternal(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
     {
-        var indexedItems = new List<IndexEventWebPageItemModel>();
+        var indexedItems = new List<IIndexEventItemModel>();
 
         foreach (var includedPathAttribute in elasticSearchIndex.IncludedPaths)
         {
+            var pathMatch =
+             includedPathAttribute.AliasPath.EndsWith("/%", StringComparison.OrdinalIgnoreCase)
+                 ? PathMatch.Children(includedPathAttribute.AliasPath[..^2])
+                 : PathMatch.Single(includedPathAttribute.AliasPath);
+
             foreach (var language in elasticSearchIndex.LanguageNames)
             {
-                var queryBuilder = new ContentItemQueryBuilder();
-
                 if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
                 {
+                    var queryBuilder = new ContentItemQueryBuilder();
                     foreach (var contentType in includedPathAttribute.ContentTypes)
                     {
-                        queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(elasticSearchIndex.WebSiteChannelName, includeUrlPath: true));
+                        queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(elasticSearchIndex.WebSiteChannelName, includeUrlPath: true, pathMatch: pathMatch));
+                        queryBuilder.InLanguage(language);
+
+                        var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken ?? default);
+
+                        foreach (var page in webpages)
+                        {
+                            var item = await MapToEventItem(page);
+                            indexedItems.Add(item);
+                        }
                     }
+                }
+            }
+
+        }
+
+        foreach (var language in elasticSearchIndex.LanguageNames)
+        {
+            var queryBuilder = new ContentItemQueryBuilder();
+
+            if (elasticSearchIndex.IncludedReusableContentTypes != null && elasticSearchIndex.IncludedReusableContentTypes.Count > 0)
+            {
+                foreach (var reusableContentType in elasticSearchIndex.IncludedReusableContentTypes)
+                {
+                    queryBuilder.ForContentType(reusableContentType);
                 }
 
                 queryBuilder.InLanguage(language);
 
-                var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken ?? default);
+                var reusableItems = await executor.GetResult(queryBuilder, result => result, cancellationToken: cancellationToken ?? default);
 
-                foreach (var page in webpages)
+                foreach (var reusableItem in reusableItems)
                 {
-                    var item = await MapToEventItem(page);
+                    var item = await MapToEventReusableItem(reusableItem);
                     indexedItems.Add(item);
                 }
             }
         }
 
         await searchIndexClient.Indices.DeleteAsync(elasticSearchIndex.IndexName, ct: cancellationToken ?? default);
-
         indexedItems.ForEach(item => ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(item, ElasticSearchTaskType.PUBLISH_INDEX, elasticSearchIndex.IndexName)));
     }
 
@@ -184,6 +210,25 @@ internal class DefaultElasticSearchClient(
             channelName,
             content.WebPageItemTreePath,
             content.WebPageItemOrder);
+
+        return item;
+    }
+
+    private async Task<IndexEventReusableItemModel> MapToEventReusableItem(IContentQueryDataContainer content)
+    {
+        var languages = await GetAllLanguages();
+
+        var languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? string.Empty;
+
+        var item = new IndexEventReusableItemModel(
+            content.ContentItemID,
+            content.ContentItemGUID,
+            languageName,
+            content.ContentTypeName,
+            content.ContentItemName,
+            content.ContentItemIsSecured,
+            content.ContentItemContentTypeID,
+            content.ContentItemCommonDataContentLanguageID);
 
         return item;
     }

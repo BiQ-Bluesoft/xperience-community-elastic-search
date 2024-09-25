@@ -14,7 +14,7 @@ namespace Kentico.Xperience.ElasticSearch.Admin;
 /// Data container class for <see cref="ElasticSearchIncludedPathItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class ElasticSearchIncludedPathItemInfo : AbstractInfo<ElasticSearchIncludedPathItemInfo, IElasticSearchIncludedPathItemInfoProvider>
+public partial class ElasticSearchIncludedPathItemInfo : AbstractInfo<ElasticSearchIncludedPathItemInfo, IInfoProvider<ElasticSearchIncludedPathItemInfo>>
 {
     /// <summary>
     /// Object type.
@@ -25,7 +25,7 @@ public partial class ElasticSearchIncludedPathItemInfo : AbstractInfo<ElasticSea
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(ElasticSearchIncludedPathItemInfoProvider), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIncludedPathItem", nameof(ElasticSearchIncludedPathItemId), null, nameof(ElasticSearchIncludedPathItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIncludedPathItemInfo>), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIncludedPathItem", nameof(ElasticSearchIncludedPathItemId), null, nameof(ElasticSearchIncludedPathItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

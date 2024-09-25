@@ -18,6 +18,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
         InstallElasticSearchLanguageInfo(resource);
         InstallElasticSearchIndexPathItemInfo(resource);
         InstallElasticSearchContentTypeItemInfo(resource);
+        InstallElasticSearchReusableContentTypeItemInfo(resource);
     }
 
     public ResourceInfo InitializeResource(ResourceInfo resource)
@@ -380,6 +381,64 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
         formItem = new FormFieldInfo
         {
             Name = nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = "integer",
+            ReferenceToObjectType = ElasticSearchIndexItemInfo.OBJECT_TYPE,
+            ReferenceType = ObjectDependencyEnum.Required
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
+    }
+
+    public static void InstallElasticSearchReusableContentTypeItemInfo(ResourceInfo resource)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(ElasticSearchReusableContentTypeItemInfo.OBJECT_TYPE) ?? DataClassInfo.New(ElasticSearchReusableContentTypeItemInfo.OBJECT_TYPE);
+
+        info.ClassName = ElasticSearchReusableContentTypeItemInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = ElasticSearchReusableContentTypeItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Elastic Search Reusable Content Type Item";
+        info.ClassType = ClassType.OTHER;
+        info.ClassResourceID = resource.ResourceID;
+
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemId));
+
+        var formItem = new FormFieldInfo
+        {
+            Name = nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemContentTypeName),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = "text",
+            Enabled = true,
+            IsUnique = false
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemGuid),
+            Enabled = true,
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = "guid",
+        };
+
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemIndexItemId),
             AllowEmpty = false,
             Visible = true,
             Precision = 0,

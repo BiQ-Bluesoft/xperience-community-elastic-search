@@ -37,6 +37,11 @@ internal static class IndexedItemModelExtensions
             return false;
         }
 
+        if (!string.Equals(item.WebsiteChannelName, elasticSearchIndex.WebSiteChannelName))
+        {
+            return false;
+        }
+
         if (!elasticSearchIndex.LanguageNames.Exists(x => x == item.LanguageName))
         {
             return false;

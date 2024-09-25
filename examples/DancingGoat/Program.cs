@@ -126,7 +126,7 @@ static void ConfigureMembershipServices(IServiceCollection services)
         {
             var factory = ctx.HttpContext.RequestServices.GetRequiredService<IUrlHelperFactory>();
             var urlHelper = factory.GetUrlHelper(new ActionContext(ctx.HttpContext, new RouteData(ctx.HttpContext.Request.RouteValues), new ActionDescriptor()));
-            string url = urlHelper.Action("Login", "Account") + new Uri(ctx.RedirectUri).Query;
+            var url = urlHelper.Action("Login", "Account") + new Uri(ctx.RedirectUri).Query;
 
             ctx.Response.Redirect(url);
 

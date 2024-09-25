@@ -7,12 +7,13 @@ using Kentico.Xperience.ElasticSearch.Admin.Models;
 namespace Kentico.Xperience.ElasticSearch.Admin.Services;
 
 internal class DefaultElasticSearchConfigurationStorageService(
-    IElasticSearchIndexItemInfoProvider indexProvider,
-    IElasticSearchIndexAliasItemInfoProvider indexAliasProvider,
-    IElasticSearchIndexAliasIndexItemInfoProvider indexAliasIndexProvider,
-    IElasticSearchIncludedPathItemInfoProvider pathProvider,
-    IElasticSearchContentTypeItemInfoProvider contentTypeProvider,
-    IElasticSearchIndexLanguageItemInfoProvider languageProvider
+    IInfoProvider<ElasticSearchIndexItemInfo> indexProvider,
+    IInfoProvider<ElasticSearchIndexAliasItemInfo> indexAliasProvider,
+    IInfoProvider<ElasticSearchIndexAliasIndexItemInfo> indexAliasIndexProvider,
+    IInfoProvider<ElasticSearchIncludedPathItemInfo> pathProvider,
+    IInfoProvider<ElasticSearchContentTypeItemInfo> contentTypeProvider,
+    IInfoProvider<ElasticSearchIndexLanguageItemInfo> languageProvider,
+    IInfoProvider<ElasticSearchReusableContentTypeItemInfo> reusableContentTypeProvider
     ) : IElasticSearchConfigurationStorageService
 {
     private static string RemoveWhitespacesUsingStringBuilder(string source)
@@ -88,6 +89,20 @@ internal class DefaultElasticSearchConfigurationStorageService(
             }
         }
 
+        if (configuration.ReusableContentTypeNames is not null)
+        {
+            foreach (var reusableContentTypeName in configuration.ReusableContentTypeNames)
+            {
+                var reusableContentTypeItemInfo = new ElasticSearchReusableContentTypeItemInfo()
+                {
+                    ElasticSearchReusableContentTypeItemContentTypeName = reusableContentTypeName,
+                    ElasticSearchReusableContentTypeItemIndexItemId = newInfo.ElasticSearchIndexItemId
+                };
+
+                reusableContentTypeItemInfo.Insert();
+            }
+        }
+
         return true;
     }
 
@@ -157,9 +172,14 @@ internal class DefaultElasticSearchConfigurationStorageService(
             ).GetEnumerableTypedResult()
             .Select(x => new ElasticSearchIndexContentType(x.ClassName, x.ClassDisplayName));
 
+        var reusableContentTypes = reusableContentTypeProvider
+            .Get()
+            .WhereEquals(nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemIndexItemId), indexInfo.ElasticSearchIndexItemId)
+            .GetEnumerableTypedResult();
+
         var languages = languageProvider.Get().WhereEquals(nameof(ElasticSearchIndexLanguageItemInfo.ElasticSearchIndexLanguageItemIndexItemId), indexInfo.ElasticSearchIndexItemId).GetEnumerableTypedResult();
 
-        return new ElasticSearchConfigurationModel(indexInfo, languages, paths, contentTypes);
+        return new ElasticSearchConfigurationModel(indexInfo, languages, paths, contentTypes, reusableContentTypes);
     }
 
     public ElasticSearchAliasConfigurationModel? GetAliasDataOrNull(int aliasId)
@@ -211,9 +231,11 @@ internal class DefaultElasticSearchConfigurationStorageService(
             ).GetEnumerableTypedResult()
             .Select(x => new ElasticSearchIndexContentType(x.ClassName, x.ClassDisplayName));
 
+        var reusableContentTypes = reusableContentTypeProvider.Get().ToList();
+
         var languages = languageProvider.Get().ToList();
 
-        return indexInfos.Select(index => new ElasticSearchConfigurationModel(index, languages, paths, contentTypes));
+        return indexInfos.Select(index => new ElasticSearchConfigurationModel(index, languages, paths, contentTypes, reusableContentTypes));
     }
 
     public IEnumerable<ElasticSearchAliasConfigurationModel> GetAllAliasData()
@@ -297,6 +319,9 @@ internal class DefaultElasticSearchConfigurationStorageService(
             }
         }
 
+        RemoveUnusedReusableContentTypes(configuration);
+        SetNewIndexReusableContentTypeItems(configuration, indexInfo);
+
         return true;
     }
 
@@ -347,7 +372,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
         languageProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexLanguageItemInfo.ElasticSearchIndexLanguageItemIndexItemId)} = {id}"));
         contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId)} = {id}"));
         indexAliasIndexProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexAliasIndexItemInfo.ElasticSearchIndexAliasIndexItemIndexItemId)} = {id}"));
-
+        reusableContentTypeProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemIndexItemId)} = {id}"));
         return true;
     }
 
@@ -357,5 +382,42 @@ internal class DefaultElasticSearchConfigurationStorageService(
         indexAliasIndexProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexAliasIndexItemInfo.ElasticSearchIndexAliasIndexItemIndexAliasId)} = {id}"));
 
         return true;
+    }
+
+    private void RemoveUnusedReusableContentTypes(ElasticSearchConfigurationModel configuration)
+    {
+        var removeReusableContentTypesQuery = reusableContentTypeProvider
+            .Get()
+            .WhereEquals(nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemIndexItemId), configuration.Id)
+            .WhereNotIn(nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemContentTypeName), configuration.ReusableContentTypeNames.ToArray());
+
+        reusableContentTypeProvider.BulkDelete(new WhereCondition(removeReusableContentTypesQuery));
+    }
+
+
+    private void SetNewIndexReusableContentTypeItems(ElasticSearchConfigurationModel configuration, ElasticSearchIndexItemInfo indexInfo)
+    {
+        var newReusableContentTypes = GetNewReusableContentTypesOnIndex(configuration);
+
+        foreach (var reusableContentType in newReusableContentTypes)
+        {
+            var reusableContentTypeInfo = new ElasticSearchReusableContentTypeItemInfo()
+            {
+                ElasticSearchReusableContentTypeItemContentTypeName = reusableContentType,
+                ElasticSearchReusableContentTypeItemIndexItemId = indexInfo.ElasticSearchIndexItemId,
+            };
+
+            reusableContentTypeProvider.Set(reusableContentTypeInfo);
+        }
+    }
+
+    private IEnumerable<string> GetNewReusableContentTypesOnIndex(ElasticSearchConfigurationModel configuration)
+    {
+        var existingReusableContentTypes = reusableContentTypeProvider
+            .Get()
+            .WhereEquals(nameof(ElasticSearchReusableContentTypeItemInfo.ElasticSearchReusableContentTypeItemIndexItemId), configuration.Id)
+            .GetEnumerableTypedResult();
+
+        return configuration.ReusableContentTypeNames.Where(x => !existingReusableContentTypes.Any(y => y.ElasticSearchReusableContentTypeItemContentTypeName == x));
     }
 }

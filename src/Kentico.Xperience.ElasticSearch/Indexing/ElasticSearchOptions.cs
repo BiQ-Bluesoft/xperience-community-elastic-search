@@ -23,17 +23,17 @@ public sealed class ElasticSearchOptions
     {
         get;
         set;
-    } = "";
+    } = string.Empty;
 
     public string SearchServiceUsername
     {
         get;
         set;
-    } = "";
+    } = string.Empty;
 
     public string SearchServicePassword
     {
         get;
         set;
-    } = "";
+    } = string.Empty;
 }

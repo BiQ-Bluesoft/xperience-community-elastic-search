@@ -14,23 +14,30 @@ public class ElasticSearchConfigurationModel
         Order = 1)]
     [Required]
     [MinLength(1)]
+    [MaxLength(128)]
     [RegularExpression("^(?!-)[a-z0-9-]+(?<!-)$", ErrorMessage = "Index name must only contain lowercase letters, digits or dashes, cannot start or end with dashes and is limited to 128 characters.")]
-    public string IndexName { get; set; } = "";
+    public string IndexName { get; set; } = string.Empty;
 
     [GeneralSelectorComponent(dataProviderType: typeof(LanguageOptionsProvider), Label = "Indexed Languages", Order = 2)]
+    [MinLength(1, ErrorMessage = "You must select at least one Language name")]
     public IEnumerable<string> LanguageNames { get; set; } = [];
 
     [DropDownComponent(Label = "Channel Name", DataProviderType = typeof(ChannelOptionsProvider), Order = 3)]
-    public string ChannelName { get; set; } = "";
+    [Required]
+    public string ChannelName { get; set; } = string.Empty;
 
     [DropDownComponent(Label = "Indexing Strategy", DataProviderType = typeof(IndexingStrategyOptionsProvider), Order = 4, ExplanationText = "Changing strategy which has an incompatible configuration will result in deleting indexed items.")]
-    public string StrategyName { get; set; } = "";
+    [Required]
+    public string StrategyName { get; set; } = string.Empty;
 
     [TextInputComponent(Label = "Rebuild Hook")]
-    public string RebuildHook { get; set; } = "";
+    public string RebuildHook { get; set; } = string.Empty;
 
     [ElasticSearchIndexConfigurationComponent(Label = "Included Paths")]
     public IEnumerable<ElasticSearchIndexIncludedPath> Paths { get; set; } = [];
+
+    [GeneralSelectorComponent(dataProviderType: typeof(ReusableContentOptionsProvider), Label = "Included Reusable Content Types", Order = 3)]
+    public IEnumerable<string> ReusableContentTypeNames { get; set; } = [];
 
     public ElasticSearchConfigurationModel() { }
 
@@ -38,7 +45,8 @@ public class ElasticSearchConfigurationModel
         ElasticSearchIndexItemInfo index,
         IEnumerable<ElasticSearchIndexLanguageItemInfo> indexLanguages,
         IEnumerable<ElasticSearchIncludedPathItemInfo> indexPaths,
-        IEnumerable<ElasticSearchIndexContentType> contentTypes
+        IEnumerable<ElasticSearchIndexContentType> contentTypes,
+        IEnumerable<ElasticSearchReusableContentTypeItemInfo> reusableContentTypes
     )
     {
         Id = index.ElasticSearchIndexItemId;
@@ -46,6 +54,10 @@ public class ElasticSearchConfigurationModel
         ChannelName = index.ElasticSearchIndexItemChannelName;
         RebuildHook = index.ElasticSearchIndexItemRebuildHook;
         StrategyName = index.ElasticSearchIndexItemStrategyName;
+        ReusableContentTypeNames = reusableContentTypes
+             .Where(c => c.ElasticSearchReusableContentTypeItemIndexItemId == index.ElasticSearchIndexItemId)
+             .Select(c => c.ElasticSearchReusableContentTypeItemContentTypeName)
+             .ToList();
         LanguageNames = indexLanguages
             .Where(l => l.ElasticSearchIndexLanguageItemIndexItemId == index.ElasticSearchIndexItemId)
             .Select(l => l.ElasticSearchIndexLanguageItemName)

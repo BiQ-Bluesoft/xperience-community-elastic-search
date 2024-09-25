@@ -64,7 +64,7 @@ internal class DefaultElasticSearchTaskProcessor(
                     }
                 }
 
-                deleteIds.AddRange(GetIdsToDelete(deleteTasks ?? []).Where(x => x is not null).Select(x => x ?? ""));
+                deleteIds.AddRange(GetIdsToDelete(deleteTasks ?? []).Where(x => x is not null).Select(x => x ?? string.Empty));
 
                 if (ElasticSearchIndexStore.Instance.GetIndex(group.Key) is { } index)
                 {

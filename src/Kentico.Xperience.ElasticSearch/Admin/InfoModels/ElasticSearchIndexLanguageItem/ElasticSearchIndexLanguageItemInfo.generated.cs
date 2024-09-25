@@ -15,7 +15,7 @@ namespace Kentico.Xperience.ElasticSearch.Admin;
 /// Data container class for <see cref="ElasticSearchIndexLanguageItemInfo"/>.
 /// </summary>
 [Serializable]
-public partial class ElasticSearchIndexLanguageItemInfo : AbstractInfo<ElasticSearchIndexLanguageItemInfo, IElasticSearchIndexLanguageItemInfoProvider>
+public partial class ElasticSearchIndexLanguageItemInfo : AbstractInfo<ElasticSearchIndexLanguageItemInfo, IInfoProvider<ElasticSearchIndexLanguageItemInfo>>
 {
     /// <summary>
     /// Object type.
@@ -26,7 +26,7 @@ public partial class ElasticSearchIndexLanguageItemInfo : AbstractInfo<ElasticSe
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(ElasticSearchIndexedLanguageInfoProvider), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIndexLanguageItem", nameof(ElasticSearchIndexLanguageItemID), null, nameof(ElasticSearchIndexLanguageItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIndexLanguageItemInfo>), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIndexLanguageItem", nameof(ElasticSearchIndexLanguageItemID), null, nameof(ElasticSearchIndexLanguageItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

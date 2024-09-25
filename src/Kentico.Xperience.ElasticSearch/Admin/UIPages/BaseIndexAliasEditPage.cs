@@ -25,7 +25,7 @@ internal abstract class BaseIndexAliasEditPage(
 
     protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchAliasConfigurationModel configuration)
     {
-        configuration.AliasName = RemoveWhitespacesUsingStringBuilder(configuration.AliasName ?? "");
+        configuration.AliasName = RemoveWhitespacesUsingStringBuilder(configuration.AliasName ?? string.Empty);
 
         var context = new ValidationContext(configuration, null, null);
         var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();

@@ -154,6 +154,7 @@ public class Tests : UnitTests
         ElasticSearchIndexStore.Instance.AddIndex(index2);
 
         var sut = GetDefaultIndexEventWebPageItemModel();
+        sut.WebsiteChannelName = "channel";
         sut.ContentTypeName = contentTypes[0].ContentTypeName;
         sut.WebPageItemTreePath = exactPaths.First().AliasPath;
 
