@@ -4,11 +4,12 @@ using Nest;
 
 namespace DancingGoat.Search.Models;
 
+[ElasticsearchType(IdProperty = nameof(base.ItemGuid))]
 public class DancingGoatSearchModel : BaseElasticSearchModel
 {
-    [Text(Name = "content")]
+    [Text]
     public string Content { get; set; }
 
-    [Text(Name = "title")]
+    [Text]
     public string Title { get; set; }
 }
