@@ -27,7 +27,7 @@ public interface IElasticSearchIndexingStrategy
     /// <returns>Items that should be passed to <see cref="MapToElasticSearchModelOrNull"/> for indexing</returns>
     Task<IEnumerable<IIndexEventItemModel>> FindItemsToReindex(IndexEventReusableItemModel changedItem);
 
-    IPromise<IProperties> MapAnnotatedProperties(PropertiesDescriptor<IElasticSearchModel> descriptor);
+    Task CreateIndexInternalAsync(ElasticClient indexClient, string indexName, CancellationToken cancellationToken);
 
     /// <summary>
     /// Called when uploading data to user defined <see cref="ElasticSearchIndex"/>.

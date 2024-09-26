@@ -1,6 +1,5 @@
 ﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
-using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,7 +23,7 @@ public sealed class ElasticSearchIndexClientService(
         var indexExistsInElastic = (await indexClient.Indices.ExistsAsync(indexName, ct: cancellationToken))?.Exists ?? false;
         if (!indexExistsInElastic)
         {
-            await CreateIndexInternalAsync(indexName, elasticSearchStrategy, cancellationToken);
+            await elasticSearchStrategy.CreateIndexInternalAsync(indexClient, indexName, cancellationToken);
         }
 
         return indexClient;
@@ -37,25 +36,25 @@ public sealed class ElasticSearchIndexClientService(
             throw new InvalidOperationException($"Registered index with name '{oldIndexName}' doesn't exist.");
         var newIndexStrategy = serviceProvider.GetRequiredStrategy(newIndex);
 
-        if (oldIndexName == newIndex.IndexName)
-        {
-            var updateMappingResponse = await indexClient.Indices
-                .PutMappingAsync(new PutMappingRequest(newIndex.IndexName)
-                {
-                    Properties = newIndexStrategy
-                        .MapAnnotatedProperties(new PropertiesDescriptor<IElasticSearchModel>()).Value
-                }, cancellationToken);
+        //if (oldIndexName == newIndex.IndexName)
+        //{
+        //    var updateMappingResponse = await indexClient.Indices
+        //        .PutMappingAsync(new PutMappingRequest(newIndex.IndexName)
+        //        {
+        //            Properties = newIndexStrategy
+        //                .MapAnnotatedProperties(new PropertiesDescriptor<IElasticSearchModel>()).Value
+        //        }, cancellationToken);
 
-            if (!updateMappingResponse.IsValid)
-            {
+        //    if (!updateMappingResponse.IsValid)
+        //    {
 
-            }
-        }
-        else
-        {
-            await DeleteIndexInternalAsync(oldIndexName, cancellationToken);
-            await CreateIndexInternalAsync(newConfiguration.IndexName, newIndexStrategy, cancellationToken);
-        }
+        //    }
+        //}
+        //else
+        //{
+        await DeleteIndexInternalAsync(oldIndexName, cancellationToken);
+        await newIndexStrategy.CreateIndexInternalAsync(indexClient, newConfiguration.IndexName, cancellationToken);
+        //}
     }
 
     private async Task DeleteIndexInternalAsync(string indexName, CancellationToken cancellationToken)
@@ -67,22 +66,6 @@ public sealed class ElasticSearchIndexClientService(
 
         var deleteIndexResponse = await indexClient.Indices.DeleteAsync(indexName, null, cancellationToken);
         if (!deleteIndexResponse.IsValid)
-        {
-            // TODO
-        }
-    }
-
-    private async Task CreateIndexInternalAsync(string indexName, IElasticSearchIndexingStrategy strategy,
-        CancellationToken cancellationToken)
-    {
-        var createResponse = await indexClient.Indices
-                .CreateAsync(indexName, c => c
-                    .Map(m => m
-                        .Dynamic(false)
-                        .Properties<IElasticSearchModel>(p => strategy
-                            .MapAnnotatedProperties(p))), cancellationToken);
-
-        if (!createResponse.IsValid)
         {
             // TODO
         }

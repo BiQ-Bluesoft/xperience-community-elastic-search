@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-using Kentico.Xperience.ElasticSearch.Indexing.Models;
+﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 using Nest;
 
@@ -57,89 +55,15 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
         return bulkResponse.Items.Count(x => x.IsValid);
     }
 
-    public IPromise<IProperties> MapAnnotatedProperties(PropertiesDescriptor<IElasticSearchModel> descriptor)
+    public async Task CreateIndexInternalAsync(ElasticClient indexClient, string indexName, CancellationToken cancellationToken)
     {
-        var type = typeof(TSearchModel);
+        var createResponse = await indexClient.Indices
+                .CreateAsync(indexName, c => c
+                    .Map<TSearchModel>(m => m.AutoMap()), cancellationToken);
 
-        foreach (var prop in type.GetProperties())
+        if (!createResponse.IsValid)
         {
-
-            // Ignore Attribute
-            var ignoreAttr = prop.GetCustomAttribute<IgnoreAttribute>();
-            if (ignoreAttr != null)
-            {
-                continue;
-            }
-
-            // Text Attribute
-            var textAttr = prop.GetCustomAttribute<TextAttribute>();
-            if (textAttr != null)
-            {
-                descriptor.Text(t => t
-                    .Name(textAttr.Name ?? prop.Name)
-                    .Analyzer(textAttr.Analyzer)
-                    .SearchAnalyzer(textAttr.SearchAnalyzer)
-                );
-                continue;
-            }
-
-            // Keyword Attribute
-            var keywordAttr = prop.GetCustomAttribute<KeywordAttribute>();
-            if (keywordAttr != null)
-            {
-                descriptor.Keyword(k => k.Name(keywordAttr.Name ?? prop.Name));
-                continue;
-            }
-
-            // Number Attribute
-            var numberAttr = prop.GetCustomAttribute<NumberAttribute>();
-            if (numberAttr != null)
-            {
-                descriptor.Number(n => n
-                    .Name(numberAttr.Name ?? prop.Name)
-                );
-                continue;
-            }
-
-            // Date Attribute
-            var dateAttr = prop.GetCustomAttribute<DateAttribute>();
-            if (dateAttr != null)
-            {
-                descriptor.Date(d => d
-                    .Name(dateAttr.Name ?? prop.Name)
-                    .Format(dateAttr.Format)
-                );
-                continue;
-            }
-
-            // GeoPoint Attribute
-            var geoAttr = prop.GetCustomAttribute<GeoPointAttribute>();
-            if (geoAttr != null)
-            {
-                descriptor.GeoPoint(d => d
-                    .Name(geoAttr.Name ?? prop.Name)
-                );
-                continue;
-            }
-
-            // Join Attribute
-            var joinAttr = prop.GetCustomAttribute<JoinAttribute>();
-            if (joinAttr != null)
-            {
-                descriptor.Join(j => j
-                    .Name(joinAttr.Name ?? prop.Name));
-                continue;
-            }
-
-            // Completion Attribute
-            var completionAttr = prop.GetCustomAttribute<CompletionAttribute>();
-            if (completionAttr != null)
-            {
-                descriptor.Completion(c => c
-                    .Name(completionAttr.Name ?? prop.Name));
-            }
+            //TODO
         }
-
-        return descriptor;
     }
 }

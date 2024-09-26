@@ -7,21 +7,21 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.Models;
 /// </summary>
 public class BaseElasticSearchModel : IElasticSearchModel
 {
-    [Text(Name = "url")]
+    [Text]
     public string? Url { get; set; } = string.Empty;
 
-    [Text(Name = "contentTypeName")]
+    [Text]
     public string ContentTypeName { get; set; } = string.Empty;
 
-    [Text(Name = "languageName")]
+    [Text]
     public string LanguageName { get; set; } = string.Empty;
 
-    [Keyword(Name = "itemGuid")]
+    [Keyword]
     public string ItemGuid { get; set; } = string.Empty;
 
-    [Keyword(Name = "objectId")]
+    [Keyword]
     public string ObjectID { get; set; } = string.Empty;
 
-    [Text(Name = "name")]
+    [Text]
     public string Name { get; set; } = string.Empty;
 }
