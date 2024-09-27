@@ -1,6 +1,6 @@
 # Usage Guide
 
-This library supports using Azure.Search to index both unstructured and high structured, interrelated content in an Xperience by Kentico solution. This indexed content can then be programmatically queried and displayed in a website channel.
+This library supports using Elastic.Search to index both unstructured and high structured, interrelated content in an Xperience by Kentico solution. This indexed content can then be programmatically queried and displayed in a website channel.
 
 Below are the steps to integrate the library into your solution.
 
@@ -13,7 +13,7 @@ See [Custom index strategy](Custom-index-strategy.md)
 When starting your application for the first time after adding this library to your solution, a custom module and custom module classes will automatically be created
 to support managing search index configuration within the administration UI.
 
-If you do not see new items added to your [CI repository](https://docs.xperience.io/x/FAKQC) for the new auto-generated Azure search data types, stop your application and perform a [CI store](https://docs.xperience.io/xp/developers-and-admins/ci-cd/continuous-integration#ContinuousIntegration-Storeobjectdatatotherepository) to add the library's custom module configuration to the CI repository.
+If you do not see new items added to your [CI repository](https://docs.xperience.io/x/FAKQC) for the new auto-generated Elastic search data types, stop your application and perform a [CI store](https://docs.xperience.io/xp/developers-and-admins/ci-cd/continuous-integration#ContinuousIntegration-Storeobjectdatatotherepository) to add the library's custom module configuration to the CI repository.
 
 You should now be able to run a [CI restore](https://docs.xperience.io/xp/developers-and-admins/ci-cd/continuous-integration#ContinuousIntegration-Restorerepositoryfilestothedatabase).
 Attempting to run a CI restore without the CI files in the CI repository will result in a SQL error during the restore.
@@ -40,16 +40,16 @@ You can disable indexing. This might be useful if there are any problems with di
 and your application. You can do so in the `appsettings.json`. This option defaults to true and therefore does not need to be specified when you want to enable indexing.
 
   ```json
-   "CMSAzureSearch": {
-       "SearchServiceEnabled" : false,         // Add this line to disable indexing
-       "SearchServiceEndPoint": "<your application url>",
-       "SearchServiceAdminApiKey": "<your application admin key>",
-       "SearchServiceQueryApiKey": "<your application query key>"
-   }
+  "CMSElasticSearch": {
+    "SearchServiceEnabled": false,                    // Add this line to disable indexing
+    "SearchServiceEndPoint": "<your_index_application_url>",
+    "SearchServiceUsername": "<your_index_application_username>",
+    "SearchServicePassword": "<your_index_application_password>"
+  }
    ```
 
 This disables reindexing through the rebuild hook and after web page and content item events. The administration UI module is still accessible, but does not show any data.
-Disabling indexing does not delete AzureSearch data from database. Already indexed data can still be accessed from your application.
+Disabling indexing does not delete ElasticSearch data from database. Already indexed data can still be accessed from your application.
 
 ## Upgrades and Uninstalling
 

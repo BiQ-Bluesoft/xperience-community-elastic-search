@@ -1,38 +1,36 @@
-# Use OData geo-spatial functions in Azure AI Search
+# Use OData geo-spatial functions in Elastic AI Search
 
-Azure AI Search supports geo-spatial queries in OData filter expressions via the geo.distance and geo.intersects functions. The geo.distance function returns the distance in kilometers between two points, one being a field or range variable, and one being a constant passed as part of the filter. The geo.intersects function returns true if a given point is within a given polygon, where the point is a field or range variable and the polygon is specified as a constant passed as part of the filter.
+Elastic AI Search supports geo-spatial queries in OData filter expressions via the geo_distance and geo_polygon functions. The geo_distance query returns documents that are within a certain distance from a given point. The geo_polygon query returns documents that are within a given polygon, where the point is defined as a field in the document.
 
 ## Create a strategy
 
-Azure AI Search supports various queries in OData filter expressions. We can create a custom `BaseAzureSearchIndexingStrategy` and `GeoLocationSearchModel` to implement geo-spatial queries. 
+Elastic AI Search supports various queries in OData filter expressions. We can create a custom `BaseElasticSearchIndexingStrategy` and `GeoLocationSearchModel` to implement geo-spatial queries. 
 
 ```csharp
-public class GeoLocationSearchModel : BaseAzureSearchModel
+public class GeoLocationSearchModel : BaseElasticSearchModel
 {
-    [SearchableField]
+    [Text]
     public string Title { get; set; }
 
-    [SimpleField(IsSortable = true, IsFilterable = true, IsKey = false)]
-    public GeoPoint GeoLocation { get; set; }
+    [GeoPoint]
+    public GeoLocation GeoLocation { get; set; }
 
-    [SearchableField(IsSortable = true, IsFilterable = true, IsFacetable = true)]
+    [Text]
     public string Location { get; set; }
 }
 ```
 
-Note that `GeoPoint` is defined in `Azure.Core.GeoJson` which is part of `Azure.Search.Documents` NuGet package
-
-Let's say we specified `CafePage` in the admin ui.
+Let's say we specified `CafePage` in the admin UI.
 Now we implement how we want to save CafePage page in our strategy.
 
 ```csharp
-public class GeoLocationSearchStrategy : BaseAzureSearchIndexingStrategy<GeoLocationSearchModel>
+public class GeoLocationSearchStrategy : BaseElasticSearchIndexingStrategy<GeoLocationSearchModel>
 {
     private readonly StrategyHelper strategyHelper;
 
     public GeoLocationSearchStrategy(StrategyHelper strategyHelper) => this.strategyHelper = strategyHelper;
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new GeoLocationSearchModel();
 
@@ -59,7 +57,7 @@ public class GeoLocationSearchStrategy : BaseAzureSearchIndexingStrategy<GeoLoca
 
                 //We can use this value later to sort by distance from the user accessing our search page.
                 //Example for this scenario is shown in DancingGoatSearchService.GeoSearch
-                result.GeoLocation = new GeoPoint((double)page.CafeLocationLatitude, (double)page.CafeLocationLongitude);
+                result.GeoLocation = new GeoLocation((double)page.CafeLocationLatitude, (double)page.CafeLocationLongitude);
             }
             else
             {
@@ -79,78 +77,85 @@ public class GeoLocationSearchStrategy : BaseAzureSearchIndexingStrategy<GeoLoca
 
 ## Create a service which uses Geo Location
 
-Add an OrderBy option to `SearchOptions`
+Add an OrderBy option to query.
 
 ```csharp
 public class GeoSearchService
 {
-    private readonly IAzureSearchQueryClientService searchClientService;
+    private readonly IElasticSearchQueryClientService searchClientService;
 
-    public GeoSearchService(IAzureSearchQueryClientService searchClientService) => this.searchClientService = searchClientService;
+    public GeoSearchService(IElasticSearchQueryClientService searchClientService) => this.searchClientService = searchClientService;
 
     public async Task<GeoLocationSearchViewModel> GeoSearch(
-    string indexName,
-    string searchText,
-    double latitude,
-    double longitude,
-    bool sortByDistance = true,
-    int page = 1,
-    int pageSize = 10
-    )
-{
-    var index = searchClientService.CreateSearchClientForQueries(indexName);
-
-    page = Math.Max(page, 1);
-    pageSize = Math.Max(1, pageSize);
-
-    var options = new SearchOptions
+        string indexName,
+        string searchText,
+        double latitude,
+        double longitude,
+        bool sortByDistance = true,
+        int page = 1,
+        int pageSize = 10)
     {
-        IncludeTotalCount = true,
-        Size = pageSize,
-        Skip = (page - 1) * pageSize
-    };
+        var index = searchClientService.CreateSearchClientForQueries(indexName);
 
-    if (sortByDistance)
-    {
-        options.OrderBy.Add($"geo.distance({nameof(GeoLocationSearchModel.GeoLocation)}, geography'POINT({longitude} {latitude})') asc");
-    }
+        page = Math.Max(page, 1);
+        pageSize = Math.Max(1, pageSize);
 
-    options.Select.Add(nameof(GeoLocationSearchModel.Title));
-    options.Select.Add(nameof(GeoLocationSearchModel.Url));
-    options.Select.Add(nameof(GeoLocationSearchModel.Location));
+        var response = await index.SearchAsync<GeoLocationSearchModel>(s => s
+            .From((page - 1) * pageSize)
+            .Size(pageSize)
+            .Source(src => src
+                .Includes(i => i
+                    .Fields(f => f.Title, f => f.Url, f => f.Location)))
+            .Query(q => q
+                .MultiMatch(mm => mm
+                    .Fields(f => f
+                        .Field(p => p.Title)
+                        .Field(p => p.Url))
+                    .Query(searchText)))
+            .TrackTotalHits(true)
+            .Sort(sort =>
+            {
+                if (sortByDistance)
+                {
+                    sort.GeoDistance(g => g
+                        .Field(p => p.GeoLocation)
+                        .DistanceType(GeoDistanceType.Arc)
+                        .Order(SortOrder.Ascending)
+                        .Points(new GeoLocation(latitude, longitude)));
+                }
+                return sort;
+            }));
 
-    var response = await index.SearchAsync<GeoLocationSearchModel>(searchText, options);
-
-    return new GeoLocationSearchViewModel
-    {
-        Hits = response.Value.GetResults().Select(x => new GeoLocationSearchResult()
+        return new GeoLocationSearchViewModel
         {
-            Title = x.Document.Title,
-            Url = x.Document.Url,
-            Location = x.Document.Location,
-        }),
-        TotalHits = (int)response.Value.TotalCount,
-        Query = searchText,
-        TotalPages = (int)response.Value.TotalCount <= 0 ? 0 : ((int)response.Value.TotalCount - 1) / pageSize + 1,
-        PageSize = pageSize,
-        Page = page
-    };
-}
+            Hits = response.Hits.Select(x => new GeoLocationSearchResult()
+            {
+                Title = x.Source.Title,
+                Url = x.Source.Url,
+                Location = x.Source.Location,
+            }),
+            TotalHits = (int)response.Total,
+            Query = searchText,
+            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
+            PageSize = pageSize,
+            Page = page
+        };
+    }
 }
 ```
 
-Map Retrieved SearchModel data to a more simple `GeoLocationSearchResult`
+Map Retrieved SearchModel data to a more simple `GeoLocationSearchResult`.
 
 ```csharp
 public class GeoLocationSearchResult
 {
-    public string Title { get; set; } = "";
-    public string Url { get; set; } = "";
-    public string Location { get; set; } = "";
+    public string Title { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
 }
 ```
 
-Create a ViewModel
+Create a ViewModel.
 
 ```csharp
 public class GeoLocationSearchViewModel

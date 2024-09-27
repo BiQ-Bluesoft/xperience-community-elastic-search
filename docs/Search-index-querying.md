@@ -9,7 +9,7 @@ To index all existing content, rebuild the index in Xperience's Administration w
 ## Create a search model
 
 ```csharp
-public class ExampleSearchModel : BaseAzureSearchModel
+public class ExampleSearchModel : BaseElasticSearchModel
 {
     public string Title { get; set; }
     public string Content { get; set; }
@@ -18,16 +18,16 @@ public class ExampleSearchModel : BaseAzureSearchModel
 
 ## Create a search service
 
-Execute a search with custom Azure `SearchOptions` using the `IAzureSearchQueryClientService`. Specify Search options and select data which will be retrieved from the Azure Index.
+Execute a search with custom Elastic `SearchOptions` using the `IElasticSearchQueryClientService`. Specify Search options and select data which will be retrieved from the Elastic Index.
 
 ```csharp
 public class ExampleSearchService
 {
-    private readonly IAzureSearchQueryClientService searchClientService;
+    private readonly IElasticSearchQueryClientService searchClientService;
 
-    public ExampleSearchService(IAzureSearchQueryClientService searchClientService) => this.searchClientService = searchClientService;
+    public ExampleSearchService(IElasticSearchQueryClientService searchClientService) => this.searchClientService = searchClientService;
 
-    public async Task<ExampleSearchViewModel> GlobalSearch(
+        public async Task<DancingGoatSearchViewModel> GlobalSearch(
         string indexName,
         string searchText,
         int page = 1,
@@ -38,27 +38,29 @@ public class ExampleSearchService
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var options = new SearchOptions()
-        {
-            IncludeTotalCount = true,
-            Size = pageSize,
-            Skip = (page - 1) * pageSize
-        };
-        options.Select.Add(nameof(DancingGoatSearchModel.Title));
-        options.Select.Add(nameof(DancingGoatSearchModel.Url));
+        var response = await index.SearchAsync<DancingGoatSearchModel>(s => s
+            .From((page - 1) * pageSize)
+            .Size(pageSize)
+            .Source(src => src
+                .Includes(i => i
+                    .Fields(f => f.Title, f => f.Url)))
+            .Query(q => q
+                .MultiMatch(mm => mm
+                    .Fields(f => f
+                        .Field(p => p.Title)
+                        .Field(p => p.Url))
+                    .Query(searchText))));
 
-        var response = await index.SearchAsync<ExampleSearchModel>(searchText, options);
-
-        return new ExampleSearchViewModel()
+        return new DancingGoatSearchViewModel()
         {
-            Hits = response.Value.GetResults().Select(x => new SearchResultModel()
+            Hits = response.Hits.Select(x => new DancingGoatSearchResult()
             {
-                Title = x.Document.Title,
-                Url = x.Document.Url,
+                Title = x.Source.Title,
+                Url = x.Source.Url,
             }),
-            TotalHits = (int)response.Value.TotalCount,
+            TotalHits = (int)response.Total,
             Query = searchText,
-            TotalPages = (int)response.Value.TotalCount <= 0 ? 0 : ((int)response.Value.TotalCount - 1) / pageSize + 1,
+            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
             PageSize = pageSize,
             Page = page
         };
@@ -71,8 +73,8 @@ Map Retrieved SearchModel data to a more simple `SearchResultModel`
 ```csharp
 public class SearchResultModel
 {
-    public string Title { get; set; } = "";
-    public string Url { get; set; } = "";
+    public string Title { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
 }
 ```
 

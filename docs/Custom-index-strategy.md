@@ -5,35 +5,66 @@ content model and search experience. Below we will look at the steps and feature
 
 ## Implement an index strategy type
 
-Define a custom `BaseAzureSearchIndexingStrategy<TSearchModel>>` implementation to customize how page or content items are processed for indexing.
+Define a custom `BaseElasticSearchIndexingStrategy<TSearchModel>>` implementation to customize how page or content items are processed for indexing.
 
-Your custom implemention of `BaseAzureSearchIndexingStrategy<TSearchModel>>` can use dependency injection to define services and configuration used for gathering the content to be indexed. `BaseAzureSearchIndexingStrategy<TSearchModel>>` implements `IAzureSearchIndexingStrategy` and will be [registered as a transient](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection#transient) in the DI container.
+Your custom implemention of `BaseElasticSearchIndexingStrategy<TSearchModel>>` can use dependency injection to define services and configuration used for gathering the content to be indexed. `BaseElasticSearchIndexingStrategy<TSearchModel>>` implements `IElasticSearchIndexingStrategy` and will be [registered as a transient](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection#transient) in the DI container.
 
 ## Create a SearchModel
 
-Define a custom `BaseAzureSearchModel` with attribute decorators which will be used to create an index in the Azure administration. Read more about these decorator attributes in Azure .NET sdk documentation
+Define a custom search model with attribute decorators by extending the `BaseElasticSearchModel` provided by the library, which will be used to create an index in the Elastic administration. Read more about these decorator attributes in Elastic Nest Client [documentation](https://www.elastic.co/guide/en/elasticsearch/client/net-api/2.x/attribute-mapping.html).
+Specify which attribute should be used as a key. You can also use any attribute from the `BaseElasticSearchModel`.
 
-Use this model as a type parameter of your `BaseAzureSearchIndexingStrategy`.
+```csharp
+public class BaseElasticSearchModel : IElasticSearchModel
+{
+    [Text]
+    public string? Url { get; set; } = string.Empty;
+
+    [Text]
+    public string ContentTypeName { get; set; } = string.Empty;
+
+    [Text]
+    public string LanguageName { get; set; } = string.Empty;
+
+    [Keyword]
+    public string ItemGuid { get; set; } = string.Empty;
+
+    [Keyword]
+    public string ObjectID { get; set; } = string.Empty;
+
+    [Text]
+    public string Name { get; set; } = string.Empty;
+}
+```
+
+```csharp
+[ElasticsearchType(IdProperty = nameof(base.ItemGuid))] // specify key attribute
+public class SimpleSearchModel : BaseElasticSearchModel
+{
+    [Text]
+    public string Title { get; set; }
+}
+```
+
+Use this model as a type parameter of your `BaseElasticSearchIndexingStrategy`.
 
 ## Specify a mapping process
 
-Override the `SemanticRankingConfiguration CreateSemanticRankingConfigurationOrNull()` method to Add semantic ranking to your index. See Azure AI Search documentation for this.
+Override the `Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)` method and define a process for mapping custom properties of each content item event provided to your custom implementation of `BaseElasticSearchModel`. Properties defined in the `BaseElasticSearchModel` base class will be mapped automatically. Retrieve your implementation of `BaseElasticSearchModel` from `Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)`.
 
-Override the `Task<IAzureSearchModel?> MapToAzureSearchModelOrNull(IIndexEventItemModel item)` method and define a process for mapping custom properties of each content item event provided to your custom implementation of `BaseAzureSearchModel`. Properties defined in the `BaseAzureSearchModel` base class will be mapped automatically. Retrieve your implementation of `BaseAzureSearchModel` from `Task<IAzureSearchModel?> MapToAzureSearchModelOrNull(IIndexEventItemModel item)`.
+The method is given an `IIndexEventItemModel` which is a abstraction of any item being processed for indexing, which includes both `IndexEventWebPageItemModel` for web page items and `IndexEventReusableItemModel` for reusable content items. Every item specified in the admin UI is rebuilt. In the UI you need to specify one or more language, channel name, indexingStrategy and paths with content types. This strategy than evaluates all web page items specified in the administration.
 
-The method is given an `IIndexEventItemModel` which is a abstraction of any item being processed for indexing, which includes both `IndexEventWebPageItemModel` for web page items and `IndexEventReusableItemModel` for reusable content items. Every item specified in the admin ui is rebuilt. In the UI you need to specify one or more language, channel name, indexingStrategy and paths with content types. This strategy than evaluates all web page items specified in the administration.
-
-Let's say we specified `ArticlePage` in the admin ui.
+Let's say we specified `ArticlePage` in the admin UI.
 Now we implement how we want to save ArticlePage page in our strategy.
 
 The SearchModel is indexed representation of the webpageitem.
 
-You specify what fields should be indexed in the SearchModel by specifying the type parameter `TSearchModel` of the `BaseAzureSearchIndexingStrategy`. The properties of this class are used to create columns of your index. You later retrieve data from the SearchModel based on your implementation.
+You specify what fields should be indexed in the SearchModel by specifying the type parameter `TSearchModel` of the `BaseElasticSearchIndexingStrategy`. The properties of this class are used to create columns of your index. You later retrieve data from the SearchModel based on your implementation.
 
 ```csharp
-public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<SimpleSearchModel>
+public class ExampleSearchIndexingStrategy : BaseElasticSearchIndexingStrategy<SimpleSearchModel>
 {
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new SimpleSearchModel();
 
@@ -72,43 +103,14 @@ public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<Sim
 }
 ```
 
-Some properties of the `IIndexEventItemModel` are added to the indexed data by default by the library and these can be found in the `BaseAzureSearchModel` class.
+Some properties of the `IIndexEventItemModel` are added to the indexed data by default by the library and these can be found in the `BaseElasticSearchModel` class.
+
+
+
+The `Url` field is a relative path by default. You can change this by adding this field manually in the `MapToElasticSearchModelOrNull` method.
 
 ```csharp
-public class BaseAzureSearchModel : IAzureSearchModel
-{
-    [SearchableField(IsSortable = true, IsFilterable = true, IsFacetable = true)]
-    public string? Url { get; set; } = "";
-
-    [SearchableField(IsFacetable = true, IsFilterable = true)]
-    public string ContentTypeName { get; set; } = "";
-
-    [SearchableField(IsSortable = true, IsFacetable = true, IsFilterable = true)]
-    public string LanguageName { get; set; } = "";
-
-    [SimpleField(IsKey = false)]
-    public string ItemGuid { get; set; } = "";
-
-    [SimpleField(IsKey = true)]
-    public string ObjectID { get; set; } = "";
-
-    [SimpleField(IsKey = false)]
-    public string Name { get; set; } = "";
-}
-```
-
-```csharp
-public class SimpleSearchModel : BaseAzureSearchModel
-{
-    [SearchableField]
-    public string Title { get; set; }
-}
-```
-
-The `Url` field is a relative path by default. You can change this by adding this field manually in the `MapToAzureSearchModelOrNull` method.
-
-```csharp
-public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
 {
     //...
 
@@ -127,7 +129,7 @@ public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndex
         }
         catch (Exception)
         {
-            // Retrieve can throw an exception when processing a page update AzureSearchQueueItem
+            // Retrieve can throw an exception when processing a page update ElasticSearchQueueItem
             // and the page was deleted before the update task has processed. In this case, upsert an
             // empty URL
         }
@@ -142,7 +144,7 @@ public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndex
 It is up to your implementation how do you want to retrieve the content or data to be indexed, however any web page item could be retrieved using a generic `GetPage<T>` method. In the example below, you specify that you want to retrieve `ArticlePage` item in the provided language on the channel using provided id and content type.
 
 ```csharp
-public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<SimpleSearchModel>
+public class ExampleSearchIndexingStrategy : BaseElasticSearchIndexingStrategy<SimpleSearchModel>
 {
     // Other fields defined in previous examples
     // ...
@@ -159,7 +161,7 @@ public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<Sim
         this.queryExecutor = queryExecutor;
     }
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
     {
         // Implementation detailed in previous examples, including GetPage<T> call
         // ...
@@ -192,10 +194,10 @@ a reindex of the original web page item, you can override the `Task<IEnumerable<
 
 In our example an `ArticlePage` web page item has a `ArticlePageArticle` field which represents a reference to related reusable content items that contain the full article content. We include content from the reusable item in our indexed web page, so changes to the reusable item should result in the index being updated for the web page item.
 
-All items returned from either `FindItemsToReindex` method will be passed to `public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)` for indexing.
+All items returned from either `FindItemsToReindex` method will be passed to `public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)` for indexing.
 
 ```csharp
-public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<SimpleSearchModel>
+public class ExampleSearchIndexingStrategy : BaseElasticSearchIndexingStrategy<SimpleSearchModel>
 {
     // Other fields defined in previous examples
     // ...
@@ -214,7 +216,7 @@ public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<Sim
         this.queryExecutor = queryExecutor;
     }
 
-    public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         // Implementation detailed in previous examples, including GetPage<T> call
         // ...
@@ -276,7 +278,7 @@ public class ExampleSearchIndexingStrategy : BaseAzureSearchIndexingStrategy<Sim
 }
 ```
 
-Note that we are not preparing the AzureSearch `BaseAzureSearchModel` in `FindItemsToReindex`, but instead are generating a collection of
+Note that we are not preparing the ElasticSearch `BaseElasticSearchModel` in `FindItemsToReindex`, but instead are generating a collection of
 additional items that will need reindexing based on the modification of a related `IIndexEventItemModel`.
 
 ## Helper methods
@@ -323,7 +325,7 @@ We register this service as Transient in the `Program.cs`
 services.AddTransient<StrategyHelper>();
 ```
 
-Now we can add it to constructor of our custom `BaseAzureSearchIndexingStrategy` implementations.
+Now we can add it to constructor of our custom `BaseElasticSearchIndexingStrategy` implementations.
 
 ## Indexing web page content
 
@@ -331,19 +333,19 @@ See [Scraping web page content](Scraping-web-page-content.md)
 
 ## DI Registration
 
-Finally, add this library to the application services, registering your custom `BaseAzureSearchIndexingStrategy` and AzureSearch
+Finally, add this library to the application services, registering your custom `BaseElasticSearchIndexingStrategy` and ElasticSearch
 
 ```csharp
 // Program.cs
 
 // Registers all services and uses default indexing behavior (no custom data will be indexed)
-services.AddKenticoAzureSearch(configuration);
+services.AddKenticoElasticSearch(configuration);
 
 // or
 
 // Registers all services and enables custom indexing behavior
-services.AddKenticoAzureSearch(builder =>
+services.AddKenticoElasticSearch(builder =>
 {
-    builder.RegisterStrategy<GlobalAzureSearchStrategy, GlobalSearchModel>("DefaultStrategy");
+    builder.RegisterStrategy<GlobalElasticSearchStrategy, GlobalSearchModel>("DefaultStrategy");
 }, configuration);
 ```

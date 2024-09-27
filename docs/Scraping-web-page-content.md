@@ -3,7 +3,7 @@
 Below is an example of how you can create a web page scraper to index the content of a web page item that might be rendered
 using the Page Builder or related content.
 
-> Your `HttpClient.BaseAddress` needs to match the web page item's website channel baseUrl. In this example, the crawler only supports 1 website channel with a base URL stored in `appsettings.json`. You can extend this to pull this value dynamically from the channel settings of the solution. See `DefaultAzureSearchClient.GetAllWebsiteChannels` for an example query.
+> Your `HttpClient.BaseAddress` needs to match the web page item's website channel baseUrl. In this example, the crawler only supports 1 website channel with a base URL stored in `appsettings.json`. You can extend this to pull this value dynamically from the channel settings of the solution. See `DefaultElasticSearchClient.GetAllWebsiteChannels` for an example query.
 
 ## Scraping services
 
@@ -47,7 +47,7 @@ public class WebCrawlerService
                 ex,
                 $"Tree Path: {page.SystemFields.WebPageItemTreePath}");
         }
-        return "";
+        return string.Empty;
     }
 
     public async Task<string> CrawlPage(string url)
@@ -65,7 +65,7 @@ public class WebCrawlerService
                 ex,
                 $"Url: {url}");
         }
-        return "";
+        return string.Empty;
     }
 }
 ```
@@ -126,8 +126,8 @@ public class WebScraperHtmlSanitizer
         textContent = HTMLHelper.RegexHtmlToTextWhiteSpace.Replace(textContent, " ");
         textContent = textContent.Trim();
 
-        string title = doc.Head?.QuerySelector("title")?.TextContent ?? "";
-        string description = doc.Head?.QuerySelector("meta[name='description']")?.GetAttribute("content") ?? "";
+        string title = doc.Head?.QuerySelector("title")?.TextContent ?? string.Empty;
+        string description = doc.Head?.QuerySelector("meta[name='description']")?.GetAttribute("content") ?? string.Empty;
 
         return string.Join(
             " ",
@@ -172,7 +172,7 @@ public ExampleSearchIndexingStrategy(
     this.strategyHelper = strategyHelper;
 }
 
-public override async Task<IAzureSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+public override async Task<IAzureSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
 {
     var result = new CustomSearchModel();
 
