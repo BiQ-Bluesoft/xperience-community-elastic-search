@@ -41,13 +41,12 @@ build:
   dependencies:
     - dotnet-format
   before_script:
-    - echo "Installing Node js version:"
-    - echo $NODE_VERSION
     - nvm install $NODE_VERSION
     - nvm use $NODE_VERSION
     - nvm --version
+    - node --version
+    - npm --version
     - npm cache clean --force
-    - echo "Node js successfully installed."
   script:
     - dotnet restore --locked-mode
     - dotnet build --configuration Release --no-restore
