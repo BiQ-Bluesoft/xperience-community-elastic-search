@@ -8,6 +8,7 @@ namespace DancingGoat.Search;
 [ApiController]
 public class SearchController(DancingGoatSearchService searchService) : Controller
 {
+    [HttpGet(nameof(Index))]
     public async Task<IActionResult> Index(string? query, int? pageSize, int? page, string? indexName)
     {
         var results = await searchService.GlobalSearch(indexName ?? "advanced", query, page ?? 1, pageSize ?? 10);
