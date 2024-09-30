@@ -30,7 +30,7 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
 
             if (!createAliasResponse.IsValid)
             {
-                // TODO Discuss whether exception should be thrown or logging the error is enough.
+                // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
                     nameof(EditAliasAsync),
                     "ELASTIC_SEARCH",
@@ -63,7 +63,7 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
                 }, cancellationToken);
                 if (!deleteAliasResponse.IsValid)
                 {
-                    // TODO Discuss whether exception should be thrown or logging the error is enough.
+                    // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                     eventLogService.LogError(
                         nameof(DeleteAliasAsync),
                         "ELASTIC_SEARCH",

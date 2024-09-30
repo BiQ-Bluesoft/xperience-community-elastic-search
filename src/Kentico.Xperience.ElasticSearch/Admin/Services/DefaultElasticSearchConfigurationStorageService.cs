@@ -221,7 +221,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         return indexInfos.Select(index =>
         {
-            // TODO Report as bug in Azure search as well
+            // Additional work -  Report as bug in Azure search as well
             var contentTypesInfoItems = contentTypeProvider
                 .Get()
                 .WhereEquals(nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId), index.ElasticSearchIndexItemId)

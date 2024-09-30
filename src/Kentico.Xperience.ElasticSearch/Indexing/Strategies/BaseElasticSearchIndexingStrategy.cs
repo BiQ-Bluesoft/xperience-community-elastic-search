@@ -52,7 +52,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
             var failedItems = bulkResponse.ItemsWithErrors;
             foreach (var item in failedItems)
             {
-                // TODO Discuss whether exception should be thrown or logging the error is enough.
+                // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
                     nameof(UploadDocumentsAsync),
                     "ELASTIC_SEARCH",
@@ -71,7 +71,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
 
         if (!createResponse.IsValid)
         {
-            // TODO Discuss whether exception should be thrown or logging the error is enough.
+            // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(
                 nameof(CreateIndexInternalAsync),
                 "ELASTIC_SEARCH",

@@ -53,7 +53,7 @@ public sealed class ElasticSearchIndexClientService(
         var deleteIndexResponse = await indexClient.Indices.DeleteAsync(indexName, null, cancellationToken);
         if (!deleteIndexResponse.IsValid)
         {
-            // TODO Discuss whether exception should be thrown or logging the error is enough.
+            // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(
                 nameof(DeleteIndexInternalAsync),
                 "ELASTIC_SEARCH",

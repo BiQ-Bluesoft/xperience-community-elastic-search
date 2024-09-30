@@ -61,7 +61,7 @@ internal class DefaultElasticSearchClient(
             var countResponse = await indexClient.CountAsync<IElasticSearchModel>(c => c.Index(index.IndexName), cancellationToken);
             if (!countResponse.IsValid)
             {
-                // TODO Discuss whether exception should be thrown or logging the error is enough.
+                // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
                     nameof(GetStatisticsAsync),
                     "ELASTIC_SEARCH",
@@ -126,7 +126,7 @@ internal class DefaultElasticSearchClient(
 
         if (!bulkDeleteResponse.IsValid)
         {
-            // TODO Discuss whether exception should be thrown or logging the error is enough.
+            // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(nameof(DeleteRecordsInternalAsync),
                 "ELASTIC_SEARCH",
                 $"Unable to delete records with guids: {itemGuids} from index with name {indexName}. Operation failed with error: {bulkDeleteResponse.OriginalException}");
