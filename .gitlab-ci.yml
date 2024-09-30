@@ -1,0 +1,74 @@
+stages:
+  - format
+  - build
+  - test
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+  DOTNET_NOLOGO: "1"
+  SIGN_FILE: "false"
+  PROJECT_NAME: "Kentico.Xperience.ElasticSearch"
+
+before_script:
+  - apt-get update -y && apt-get install -y curl
+
+# Dotnet format stage
+dotnet-format:
+  stage: format
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  script:
+    - dotnet format --exclude ./examples/** --verify-no-changes
+  only:
+    changes:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.props"
+      - "**/*.targets"
+      - "**/*.sln"
+      - "**/Client/**/*.json"
+      - "**/*.tsx"
+      - "**/*.js"
+
+# Build stage
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  dependencies:
+    - dotnet-format
+  before_script:
+    - curl -sL https://deb.nodesource.com/setup_20.x | bash -
+    - apt-get install -y nodejs
+    - npm install -g npx
+  script:
+    - dotnet restore --locked-mode
+    - dotnet build --configuration Release --no-restore
+  only:
+    changes:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.props"
+      - "**/*.targets"
+      - "**/*.sln"
+      - "**/Client/**/*.json"
+      - "**/*.tsx"
+      - "**/*.js"
+
+# Test stage
+test:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  dependencies:
+    - build
+  script:
+    - dotnet test --configuration Release --no-build --no-restore
+  only:
+    changes:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.props"
+      - "**/*.targets"
+      - "**/*.sln"
+      - "**/Client/**/*.json"
+      - "**/*.tsx"
+      - "**/*.js"
