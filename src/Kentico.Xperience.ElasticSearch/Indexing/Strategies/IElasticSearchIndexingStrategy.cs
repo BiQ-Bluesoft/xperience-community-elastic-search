@@ -34,5 +34,5 @@ public interface IElasticSearchIndexingStrategy
     /// Expects an <see cref="IEnumerable{IElasticSearchModel}"/> created in <see cref="MapToElasticSearchModelOrNull"/>
     /// </summary>
     /// <returns>Number of uploaded documents</returns>
-    Task<int> UploadDocuments(IEnumerable<IElasticSearchModel> models, ElasticClient searchClient, string indexName);
+    Task<int> UploadDocumentsAsync(IEnumerable<IElasticSearchModel> models, ElasticClient searchClient, string indexName);
 }

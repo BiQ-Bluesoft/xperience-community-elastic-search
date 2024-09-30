@@ -120,7 +120,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         var aliasInfo = new ElasticSearchIndexAliasItemInfo()
         {
-            ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName ?? "",
+            ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName ?? string.Empty,
         };
 
         var indexIds = indexProvider
@@ -221,7 +221,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         return indexInfos.Select(index =>
         {
-            // TODO Report as bug in Azure search
+            // TODO Report as bug in Azure search as well
             var contentTypesInfoItems = contentTypeProvider
                 .Get()
                 .WhereEquals(nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId), index.ElasticSearchIndexItemId)
@@ -283,10 +283,10 @@ internal class DefaultElasticSearchConfigurationStorageService(
         contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId)} = {configuration.Id}"));
         indexAliasIndexProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexAliasIndexItemInfo.ElasticSearchIndexAliasIndexItemIndexItemId)} = {configuration.Id}"));
 
-        indexInfo.ElasticSearchIndexItemRebuildHook = configuration.RebuildHook ?? "";
-        indexInfo.ElasticSearchIndexItemStrategyName = configuration.StrategyName ?? "";
-        indexInfo.ElasticSearchIndexItemChannelName = configuration.ChannelName ?? "";
-        indexInfo.ElasticSearchIndexItemIndexName = configuration.IndexName ?? "";
+        indexInfo.ElasticSearchIndexItemRebuildHook = configuration.RebuildHook ?? string.Empty;
+        indexInfo.ElasticSearchIndexItemStrategyName = configuration.StrategyName ?? string.Empty;
+        indexInfo.ElasticSearchIndexItemChannelName = configuration.ChannelName ?? string.Empty;
+        indexInfo.ElasticSearchIndexItemIndexName = configuration.IndexName ?? string.Empty;
 
         indexProvider.Set(indexInfo);
 

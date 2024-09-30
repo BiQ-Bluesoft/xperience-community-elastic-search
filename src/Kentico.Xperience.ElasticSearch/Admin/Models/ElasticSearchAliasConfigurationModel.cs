@@ -8,9 +8,7 @@ public class ElasticSearchAliasConfigurationModel
 {
     public int Id { get; set; }
 
-    [TextInputComponent(
-        Label = "Alias Name",
-        Order = 1)]
+    [TextInputComponent(Label = "Alias Name", Order = 1)]
     [Required]
     [MinLength(1)]
     [MaxLength(128)]

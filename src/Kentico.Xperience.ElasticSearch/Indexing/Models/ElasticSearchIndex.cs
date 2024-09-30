@@ -51,9 +51,9 @@ public sealed class ElasticSearchIndex
 
         var strategy = typeof(BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>);
 
-        if (strategies.ContainsKey(indexConfiguration.StrategyName))
+        if (strategies.TryGetValue(indexConfiguration.StrategyName, out var value))
         {
-            strategy = strategies[indexConfiguration.StrategyName];
+            strategy = value;
         }
 
         ElasticSearchIndexingStrategyType = strategy;

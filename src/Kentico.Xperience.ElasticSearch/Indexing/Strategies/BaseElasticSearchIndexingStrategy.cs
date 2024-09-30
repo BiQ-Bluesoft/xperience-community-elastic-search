@@ -1,4 +1,6 @@
-﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
+﻿using CMS.Core;
+
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 using Nest;
 
@@ -10,6 +12,8 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 /// </summary>
 public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchIndexingStrategy where TSearchModel : class, IElasticSearchModel, new()
 {
+    private readonly IEventLogService eventLogService = Service.Resolve<IEventLogService>();
+
     /// <inheritdoc />
     public virtual Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
@@ -33,7 +37,7 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
     public virtual async Task<IEnumerable<IIndexEventItemModel>> FindItemsToReindex(IndexEventReusableItemModel changedItem) => await Task.FromResult(new List<IIndexEventItemModel>());
 
     /// <inheritdoc />
-    public async Task<int> UploadDocuments(IEnumerable<IElasticSearchModel> models, ElasticClient searchClient, string indexName)
+    public async Task<int> UploadDocumentsAsync(IEnumerable<IElasticSearchModel> models, ElasticClient searchClient, string indexName)
     {
         var bulkDescriptor = new BulkDescriptor();
         foreach (var model in models)
@@ -43,18 +47,22 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
                 .Document(model));
         }
         var bulkResponse = await searchClient.BulkAsync(bulkDescriptor);
-        if (!bulkResponse.IsValid)
+        if (bulkResponse.Errors)
         {
             var failedItems = bulkResponse.ItemsWithErrors;
             foreach (var item in failedItems)
             {
-                // TODO
-                Console.WriteLine($"Operation {item.Operation} failed for document {item.Id} with error: {item.Error?.Reason}");
+                // TODO Discuss whether exception should be thrown or logging the error is enough.
+                eventLogService.LogError(
+                    nameof(UploadDocumentsAsync),
+                    "ELASTIC_SEARCH",
+                    $"Unable to upload document {item.Id} to index with name {indexName}. Operation failed errors: {item.Error?.Reason}");
             }
         }
         return bulkResponse.Items.Count(x => x.IsValid);
     }
 
+    /// <inheritdoc />
     public async Task CreateIndexInternalAsync(ElasticClient indexClient, string indexName, CancellationToken cancellationToken)
     {
         var createResponse = await indexClient.Indices
@@ -63,7 +71,11 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
 
         if (!createResponse.IsValid)
         {
-            //TODO
+            // TODO Discuss whether exception should be thrown or logging the error is enough.
+            eventLogService.LogError(
+                nameof(CreateIndexInternalAsync),
+                "ELASTIC_SEARCH",
+                $"Unable to create index with name: {indexName}. Operation failed with error: {createResponse.OriginalException}");
         }
     }
 }

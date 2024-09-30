@@ -55,10 +55,7 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
         /// <exception cref="InvalidOperationException" />
         internal void AddAlias(ElasticSearchIndexAlias alias)
         {
-            if (alias == null)
-            {
-                throw new ArgumentNullException(nameof(alias));
-            }
+            ArgumentNullException.ThrowIfNull(alias);
 
             if (registeredAliases.Exists(i => i.AliasName.Equals(alias.AliasName, StringComparison.OrdinalIgnoreCase) || alias.Identifier == i.Identifier))
             {

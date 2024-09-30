@@ -50,7 +50,7 @@ internal abstract class BaseIndexAliasEditPage(
             if (edited)
             {
                 ElasticSearchIndexAliasStore.SetAliases(StorageService);
-                await elasticSearchIndexAliasService.EditAlias(oldAliasName, configuration.AliasName, configuration.IndexNames, default);
+                await elasticSearchIndexAliasService.EditAliasAsync(oldAliasName, configuration.AliasName, configuration.IndexNames, default);
 
                 return new ModificationResponse(ModificationResult.Success);
             }

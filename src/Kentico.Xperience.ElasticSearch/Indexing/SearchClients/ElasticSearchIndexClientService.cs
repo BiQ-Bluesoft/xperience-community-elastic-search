@@ -1,5 +1,6 @@
-﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
-using Kentico.Xperience.ElasticSearch.Indexing.Models;
+﻿using CMS.Core;
+
+using Kentico.Xperience.ElasticSearch.Admin.Models;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,8 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 public sealed class ElasticSearchIndexClientService(
     ElasticClient indexClient,
-    IServiceProvider serviceProvider) : IElasticSearchIndexClientService
+    IServiceProvider serviceProvider,
+    IEventLogService eventLogService) : IElasticSearchIndexClientService
 {
 
     /// <inheritdoc />
@@ -29,6 +31,7 @@ public sealed class ElasticSearchIndexClientService(
         return indexClient;
     }
 
+    /// <inheritdoc />
     public async Task EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration,
         CancellationToken cancellationToken)
     {
@@ -36,25 +39,8 @@ public sealed class ElasticSearchIndexClientService(
             throw new InvalidOperationException($"Registered index with name '{oldIndexName}' doesn't exist.");
         var newIndexStrategy = serviceProvider.GetRequiredStrategy(newIndex);
 
-        //if (oldIndexName == newIndex.IndexName)
-        //{
-        //    var updateMappingResponse = await indexClient.Indices
-        //        .PutMappingAsync(new PutMappingRequest(newIndex.IndexName)
-        //        {
-        //            Properties = newIndexStrategy
-        //                .MapAnnotatedProperties(new PropertiesDescriptor<IElasticSearchModel>()).Value
-        //        }, cancellationToken);
-
-        //    if (!updateMappingResponse.IsValid)
-        //    {
-
-        //    }
-        //}
-        //else
-        //{
         await DeleteIndexInternalAsync(oldIndexName, cancellationToken);
         await newIndexStrategy.CreateIndexInternalAsync(indexClient, newConfiguration.IndexName, cancellationToken);
-        //}
     }
 
     private async Task DeleteIndexInternalAsync(string indexName, CancellationToken cancellationToken)
@@ -67,7 +53,11 @@ public sealed class ElasticSearchIndexClientService(
         var deleteIndexResponse = await indexClient.Indices.DeleteAsync(indexName, null, cancellationToken);
         if (!deleteIndexResponse.IsValid)
         {
-            // TODO
+            // TODO Discuss whether exception should be thrown or logging the error is enough.
+            eventLogService.LogError(
+                nameof(DeleteIndexInternalAsync),
+                "ELASTIC_SEARCH",
+                $"Unable to delete index with name: {indexName}. Operation failed with error: {deleteIndexResponse.OriginalException}");
         }
     }
 }

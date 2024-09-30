@@ -68,7 +68,7 @@ internal class DefaultElasticSearchTaskProcessor(
 
                 if (ElasticSearchIndexStore.Instance.GetIndex(group.Key) is { } index)
                 {
-                    previousBatchResults.SuccessfulOperations += await elasticSearchClient.DeleteRecords(deleteIds, group.Key, cancellationToken);
+                    previousBatchResults.SuccessfulOperations += await elasticSearchClient.DeleteRecordsAsync(deleteIds, group.Key, cancellationToken);
                     previousBatchResults.SuccessfulOperations += await elasticSearchClient.UpsertRecords(upsertData, group.Key, cancellationToken);
 
                     if (group.Any(t => t.TaskType == ElasticSearchTaskType.PUBLISH_INDEX) && !previousBatchResults.PublishedIndices.Any(x => x.IndexName == index.IndexName))

@@ -84,10 +84,10 @@ public class ElasticSearchIndexConfigurationFormComponent : FormComponent<Elasti
 
     protected override async Task ConfigureClientProperties(ElasticSearchIndexConfigurationComponentClientProperties properties)
     {
-        var allWebsiteContentTypes = DataClassInfoProvider.ProviderObject
+        var allWebsiteContentTypes = (await DataClassInfoProvider.ProviderObject
               .Get()
-              .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Website")
-              .GetEnumerableTypedResult()
+              .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), ClassContentTypeType.WEBSITE)
+              .GetEnumerableTypedResultAsync())
               .Select(x => new ElasticSearchIndexContentType(x.ClassName, x.ClassDisplayName));
 
         properties.Value = Value ?? [];

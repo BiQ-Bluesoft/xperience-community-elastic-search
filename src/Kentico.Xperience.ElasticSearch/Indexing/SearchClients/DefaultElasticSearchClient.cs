@@ -27,10 +27,11 @@ internal class DefaultElasticSearchClient(
     IInfoProvider<ChannelInfo> channelProvider,
     IConversionService conversionService,
     IProgressiveCache cache,
-    ElasticClient searchIndexClient) : IElasticSearchClient
+    ElasticClient searchIndexClient,
+    IEventLogService eventLogService) : IElasticSearchClient
 {
     /// <inheritdoc />
-    public async Task<int> DeleteRecords(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
+    public async Task<int> DeleteRecordsAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(indexName))
         {
@@ -42,12 +43,12 @@ internal class DefaultElasticSearchClient(
             return await Task.FromResult(0);
         }
 
-        return await DeleteRecordsInternal(itemGuids, indexName, cancellationToken);
+        return await DeleteRecordsInternalAsync(itemGuids, indexName, cancellationToken);
     }
 
 
     /// <inheritdoc/>
-    public async Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatistics(CancellationToken cancellationToken)
+    public async Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(CancellationToken cancellationToken)
     {
         var indices = ElasticSearchIndexStore.Instance.GetAllIndices();
 
@@ -60,7 +61,11 @@ internal class DefaultElasticSearchClient(
             var countResponse = await indexClient.CountAsync<IElasticSearchModel>(c => c.Index(index.IndexName), cancellationToken);
             if (!countResponse.IsValid)
             {
-                // TODO
+                // TODO Discuss whether exception should be thrown or logging the error is enough.
+                eventLogService.LogError(
+                    nameof(GetStatisticsAsync),
+                    "ELASTIC_SEARCH",
+                    $"Unable to fetch statistics for index with name {index.IndexName}. Operation failed with error: {countResponse.OriginalException}");
             }
 
             stats.Add(new ElasticSearchIndexStatisticsViewModel()
@@ -82,7 +87,7 @@ internal class DefaultElasticSearchClient(
         }
 
         var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetRequiredIndex(indexName);
-        return RebuildInternal(elasticSearchIndex, cancellationToken);
+        return RebuildInternalAsync(elasticSearchIndex, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -109,10 +114,10 @@ internal class DefaultElasticSearchClient(
             return Task.FromResult(0);
         }
 
-        return UpsertRecordsInternal(models, indexName, cancellationToken);
+        return UpsertRecordsInternalAsync(models, indexName, cancellationToken);
     }
 
-    private async Task<int> DeleteRecordsInternal(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
+    private async Task<int> DeleteRecordsInternalAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
     {
         var bulkDeleteResponse = await searchIndexClient.BulkAsync(new BulkRequest(indexName)
         {
@@ -121,13 +126,16 @@ internal class DefaultElasticSearchClient(
 
         if (!bulkDeleteResponse.IsValid)
         {
-            // TODO
+            // TODO Discuss whether exception should be thrown or logging the error is enough.
+            eventLogService.LogError(nameof(DeleteRecordsInternalAsync),
+                "ELASTIC_SEARCH",
+                $"Unable to delete records with guids: {itemGuids} from index with name {indexName}. Operation failed with error: {bulkDeleteResponse.OriginalException}");
         }
 
         return bulkDeleteResponse.Items.Count(item => item.Status == 200);
     }
 
-    private async Task RebuildInternal(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
+    private async Task RebuildInternalAsync(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
     {
         var indexedItems = new List<IIndexEventItemModel>();
 
@@ -152,7 +160,7 @@ internal class DefaultElasticSearchClient(
 
                         foreach (var page in webpages)
                         {
-                            var item = await MapToEventItem(page);
+                            var item = await MapToEventItemAsync(page);
                             indexedItems.Add(item);
                         }
                     }
@@ -178,7 +186,7 @@ internal class DefaultElasticSearchClient(
 
                 foreach (var reusableItem in reusableItems)
                 {
-                    var item = await MapToEventReusableItem(reusableItem);
+                    var item = await MapToEventReusableItemAsync(reusableItem);
                     indexedItems.Add(item);
                 }
             }
@@ -188,13 +196,13 @@ internal class DefaultElasticSearchClient(
         indexedItems.ForEach(item => ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(item, ElasticSearchTaskType.PUBLISH_INDEX, elasticSearchIndex.IndexName)));
     }
 
-    private async Task<IndexEventWebPageItemModel> MapToEventItem(IWebPageContentQueryDataContainer content)
+    private async Task<IndexEventWebPageItemModel> MapToEventItemAsync(IWebPageContentQueryDataContainer content)
     {
-        var languages = await GetAllLanguages();
+        var languages = await GetAllLanguagesAsync();
 
         var languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? string.Empty;
 
-        var websiteChannels = await GetAllWebsiteChannels();
+        var websiteChannels = await GetAllWebsiteChannelsAsync();
 
         var channelName = websiteChannels.FirstOrDefault(c => c.WebsiteChannelID == content.WebPageItemWebsiteChannelID).ChannelName ?? string.Empty;
 
@@ -214,9 +222,9 @@ internal class DefaultElasticSearchClient(
         return item;
     }
 
-    private async Task<IndexEventReusableItemModel> MapToEventReusableItem(IContentQueryDataContainer content)
+    private async Task<IndexEventReusableItemModel> MapToEventReusableItemAsync(IContentQueryDataContainer content)
     {
-        var languages = await GetAllLanguages();
+        var languages = await GetAllLanguagesAsync();
 
         var languageName = languages.FirstOrDefault(l => l.ContentLanguageID == content.ContentItemCommonDataContentLanguageID)?.ContentLanguageName ?? string.Empty;
 
@@ -233,7 +241,7 @@ internal class DefaultElasticSearchClient(
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternal(IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken)
+    private async Task<int> UpsertRecordsInternalAsync(IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken)
     {
         var upsertedCount = 0;
         var searchClient = await elasticSearchIndexClientService.InitializeIndexClient(indexName, cancellationToken);
@@ -243,12 +251,12 @@ internal class DefaultElasticSearchClient(
 
         var strategy = serviceProvider.GetRequiredStrategy(elasticIndex);
 
-        upsertedCount += await strategy.UploadDocuments(models, searchClient, indexName);
+        upsertedCount += await strategy.UploadDocumentsAsync(models, searchClient, indexName);
 
         return upsertedCount;
     }
 
-    private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguages() =>
+    private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguagesAsync() =>
         cache.LoadAsync(async cs =>
         {
             var results = await languageProvider.Get().GetEnumerableTypedResultAsync();
@@ -256,9 +264,9 @@ internal class DefaultElasticSearchClient(
             cs.GetCacheDependency = () => CacheHelper.GetCacheDependency($"{ContentLanguageInfo.OBJECT_TYPE}|all");
 
             return results;
-        }, new CacheSettings(5, nameof(DefaultElasticSearchClient), nameof(GetAllLanguages)));
+        }, new CacheSettings(5, nameof(DefaultElasticSearchClient), nameof(GetAllLanguagesAsync)));
 
-    private Task<IEnumerable<(int WebsiteChannelID, string ChannelName)>> GetAllWebsiteChannels() =>
+    private Task<IEnumerable<(int WebsiteChannelID, string ChannelName)>> GetAllWebsiteChannelsAsync() =>
         cache.LoadAsync(async cs =>
         {
 
@@ -280,5 +288,5 @@ internal class DefaultElasticSearchClient(
             }
 
             return items.AsEnumerable();
-        }, new CacheSettings(5, nameof(DefaultElasticSearchClient), nameof(GetAllWebsiteChannels)));
+        }, new CacheSettings(5, nameof(DefaultElasticSearchClient), nameof(GetAllWebsiteChannelsAsync)));
 }

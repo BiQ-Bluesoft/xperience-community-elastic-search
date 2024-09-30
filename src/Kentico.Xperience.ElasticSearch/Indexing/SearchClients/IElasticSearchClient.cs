@@ -20,7 +20,7 @@ public interface IElasticSearchClient
     /// <exception cref="ObjectDisposedException" />
     /// <exception cref="OverflowException" />
     /// <returns>The number of records deleted.</returns>
-    Task<int> DeleteRecords(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken);
+    Task<int> DeleteRecordsAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets the indices of the ElasticSearch application with basic statistics.
@@ -29,7 +29,7 @@ public interface IElasticSearchClient
     /// 
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ObjectDisposedException" />
-    Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatistics(CancellationToken cancellationToken);
+    Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Updates the ElasticSearch index with the dynamic data in each object of the passed <paramref name="models"/>.

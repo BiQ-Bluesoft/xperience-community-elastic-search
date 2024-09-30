@@ -9,9 +9,7 @@ public class ElasticSearchConfigurationModel
 {
     public int Id { get; set; }
 
-    [TextInputComponent(
-        Label = "Index Name",
-        Order = 1)]
+    [TextInputComponent(Label = "Index Name", Order = 1)]
     [Required]
     [MinLength(1)]
     [MaxLength(128)]

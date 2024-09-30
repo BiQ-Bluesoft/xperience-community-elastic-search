@@ -4,6 +4,7 @@ using Nest;
 
 namespace DancingGoat.Search.Models;
 
+[ElasticsearchType(IdProperty = nameof(base.ItemGuid))]
 public class GeoLocationSearchModel : BaseElasticSearchModel
 {
     [Text(Name = "title")]

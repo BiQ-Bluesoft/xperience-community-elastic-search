@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-using Kentico.Xperience.ElasticSearch.Admin;
+﻿using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Aliasing;
 
@@ -99,18 +97,13 @@ public interface IElasticSearchBuilder
     IElasticSearchBuilder RegisterStrategy<TStrategy, TSearchModel>(string strategyName) where TStrategy : BaseElasticSearchIndexingStrategy<TSearchModel> where TSearchModel : class, IElasticSearchModel, new();
 }
 
-internal class ElasticSearchBuilder : IElasticSearchBuilder
+internal class ElasticSearchBuilder(IServiceCollection serviceCollection) : IElasticSearchBuilder
 {
-    private readonly IServiceCollection serviceCollection;
-    private const string ErrorMessage = "Exactly one field in your index must serve as the document key (IsKey = true). It must be a string, and it must uniquely identify each document. It's also required to have IsHidden = false.";
-
     /// <summary>
     /// If true, the <see cref="BaseElasticSearchIndexingStrategy{BaseElasticSearchModel}" /> will be available as an explicitly selectable indexing strategy
     /// within the Admin UI. Defaults to <c>true</c>
     /// </summary>
     public bool IncludeDefaultStrategy { get; set; } = true;
-
-    public ElasticSearchBuilder(IServiceCollection serviceCollection) => this.serviceCollection = serviceCollection;
 
     /// <summary>
     /// Registers the <see cref="IElasticSearchIndexingStrategy"/> strategy <typeparamref name="TStrategy" /> in DI and
@@ -122,34 +115,9 @@ internal class ElasticSearchBuilder : IElasticSearchBuilder
     /// <returns></returns>
     public IElasticSearchBuilder RegisterStrategy<TStrategy, TSearchModel>(string strategyName) where TStrategy : BaseElasticSearchIndexingStrategy<TSearchModel> where TSearchModel : class, IElasticSearchModel, new()
     {
-        ValidateIndexSearchModelProperties<TSearchModel>();
-
         StrategyStorage.AddStrategy<TStrategy>(strategyName);
         serviceCollection.AddTransient<TStrategy>();
 
         return this;
-    }
-
-    private void ValidateIndexSearchModelProperties<TSearchModel>() where TSearchModel : IElasticSearchModel, new()
-    {
-        var type = typeof(TSearchModel);
-
-        var propertiesWithAttributes = type.GetProperties().Select(x => new
-        {
-            Attribute = x.GetCustomAttributes<ElasticsearchPropertyAttributeBase>().SingleOrDefault()
-                ?? throw new InvalidOperationException(ErrorMessage),
-            Type = x.PropertyType
-        });
-
-        //// Check for the "key" field, which typically uses the [Keyword] attribute for IDs in Elasticsearch
-        //var keyAttribute = propertiesWithAttributes.SingleOrDefault(x =>
-        //    x.Attribute is KeywordAttribute keywordAttr && keywordAttr.Name == "id") // Assuming 'id' is the key name
-        //    ?? throw new InvalidOperationException(ErrorMessage);
-
-        //// Validate that the key is a string type and is not hidden (though hiding isn't a common concept in Elasticsearch)
-        //if (keyAttribute.Type != typeof(string))
-        //{
-        //    throw new InvalidOperationException(ErrorMessage);
-        //}
     }
 }

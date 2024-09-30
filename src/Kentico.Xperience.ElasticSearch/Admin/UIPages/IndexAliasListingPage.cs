@@ -149,7 +149,7 @@ internal class IndexAliasListingPage(
             {
                 ElasticSearchIndexAliasStore.SetAliases(configurationStorageService);
 
-                await elasticSearchIndexAliasService.DeleteAlias(alias.AliasName, cancellationToken);
+                await elasticSearchIndexAliasService.DeleteAliasAsync(alias.AliasName, cancellationToken);
             }
             else
             {

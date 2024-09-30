@@ -11,7 +11,7 @@ internal class ReusableContentOptionsProvider : IGeneralSelectorDataProvider
         // Prepares a query for retrieving objects
         var itemQuery = DataClassInfoProvider.ProviderObject
             .Get()
-            .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable");
+            .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), ClassContentTypeType.REUSABLE);
 
         // If a search term is entered, only loads data whose first name starts with the term
         if (!string.IsNullOrEmpty(searchTerm))
@@ -47,7 +47,7 @@ internal class ReusableContentOptionsProvider : IGeneralSelectorDataProvider
     {
         var itemQuery = DataClassInfoProvider.ProviderObject
             .Get()
-            .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), "Reusable");
+            .WhereEquals(nameof(DataClassInfo.ClassContentTypeType), ClassContentTypeType.REUSABLE);
 
         var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
         {

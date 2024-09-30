@@ -100,7 +100,7 @@ internal class IndexListingPage(
 
         var result = await base.LoadData(settings, cancellationToken);
 
-        var statistics = await elasticSearchClient.GetStatistics(default);
+        var statistics = await elasticSearchClient.GetStatisticsAsync(default);
         // Add statistics for indexes that are registered but not created in ElasticSearch
         AddMissingStatistics(ref statistics);
 

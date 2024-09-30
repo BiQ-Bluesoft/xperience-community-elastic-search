@@ -1,11 +1,15 @@
-﻿using Nest;
+﻿using CMS.Core;
+
+using Nest;
 
 namespace Kentico.Xperience.ElasticSearch.Aliasing
 {
-    internal class ElasticSearchIndexAliasService(ElasticClient indexClient) : IElasticSearchIndexAliasService
+    internal class ElasticSearchIndexAliasService(
+        ElasticClient indexClient,
+        IEventLogService eventLogService) : IElasticSearchIndexAliasService
     {
         /// <inheritdoc />
-        public async Task EditAlias(string oldAliasName, string newAliasName, IEnumerable<string> newAliasIndices,
+        public async Task EditAliasAsync(string oldAliasName, string newAliasName, IEnumerable<string> newAliasIndices,
             CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(oldAliasName))
@@ -13,7 +17,7 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
                 throw new ArgumentNullException(nameof(oldAliasName));
             }
 
-            await DeleteAlias(oldAliasName, cancellationToken);
+            await DeleteAliasAsync(oldAliasName, cancellationToken);
 
             var createAliasResponse = await indexClient.Indices.BulkAliasAsync(alias =>
             {
@@ -23,14 +27,22 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
                 }
                 return alias;
             }, cancellationToken);
+
             if (!createAliasResponse.IsValid)
             {
-                //TODO
+                // TODO Discuss whether exception should be thrown or logging the error is enough.
+                eventLogService.LogError(
+                    nameof(EditAliasAsync),
+                    "ELASTIC_SEARCH",
+                    $"Unable to edit alias with name: {oldAliasName}\n" +
+                    $"- new alias name: {newAliasName}\n" +
+                    $"- new indices: {newAliasIndices}." +
+                    $"Operation failed with error: {createAliasResponse.OriginalException}");
             }
         }
 
         /// <inheritdoc />
-        public async Task DeleteAlias(string aliasName, CancellationToken cancellationToken)
+        public async Task DeleteAliasAsync(string aliasName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(aliasName))
             {
@@ -51,7 +63,11 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
                 }, cancellationToken);
                 if (!deleteAliasResponse.IsValid)
                 {
-                    //TODO
+                    // TODO Discuss whether exception should be thrown or logging the error is enough.
+                    eventLogService.LogError(
+                        nameof(DeleteAliasAsync),
+                        "ELASTIC_SEARCH",
+                        $"Unable to delete alias with name: {aliasName}. Operation failed with error: {deleteAliasResponse.OriginalException}");
                 }
             }
         }

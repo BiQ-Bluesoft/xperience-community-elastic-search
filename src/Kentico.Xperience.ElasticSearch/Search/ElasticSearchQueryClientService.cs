@@ -14,6 +14,7 @@ public sealed class ElasticSearchQueryClientService(ElasticSearchOptions setting
         var elasticSettings = new ConnectionSettings(new Uri(settings.SearchServiceEndPoint))
             .DefaultIndex(indexName)
             .BasicAuthentication(settings.SearchServiceUsername, settings.SearchServicePassword);
+
         return new ElasticClient(elasticSettings);
     }
 }

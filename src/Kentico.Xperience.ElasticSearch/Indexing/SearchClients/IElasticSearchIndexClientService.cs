@@ -18,6 +18,15 @@ public interface IElasticSearchIndexClientService
     /// <exception cref="InvalidOperationException" />
     Task<ElasticClient> InitializeIndexClient(string indexName, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Edits the ElasticSearch index.
+    /// </summary>
+    /// <param name="oldIndexName">The name of index to edit.</param>
+    /// <param name="newConfiguration">New index configuration.</param>
+    /// <param name="cancellationToken">The cancellation token for the task.</param>
+    /// <exception cref="InvalidOperationException" />
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="OperationCanceledException" />
     Task EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration,
             CancellationToken cancellationToken);
 }
