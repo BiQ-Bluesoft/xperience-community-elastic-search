@@ -38,12 +38,11 @@ dotnet-format:
 build:
   stage: build
   image: mcr.microsoft.com/dotnet/sdk:8.0
+  services:
+    - node:22.8.0
   dependencies:
     - dotnet-format
   before_script:
-    - nvm install $NODE_VERSION
-    - nvm use $NODE_VERSION
-    - nvm --version
     - node --version
     - npm --version
     - npm cache clean --force
