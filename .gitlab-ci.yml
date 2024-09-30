@@ -1,10 +1,11 @@
+image: node:latest
+
 stages:
   - format
   - build
   - test
 
 variables:
-  NODE_VERSION: "22.8.0"
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
   DOTNET_NOLOGO: "1"
@@ -16,10 +17,6 @@ dotnet-format:
   stage: format
   image: mcr.microsoft.com/dotnet/sdk:8.0
   script:
-    - echo "Running dotnet clean"
-    - dotnet nuget locals all --clear
-    - echo "Running dotnet restore"
-    - dotnet restore --locked-mode
     - echo "Running dotnet format..."
     - dotnet format --exclude ./examples/** --verify-no-changes
   only:
@@ -38,14 +35,11 @@ dotnet-format:
 build:
   stage: build
   image: mcr.microsoft.com/dotnet/sdk:8.0
-  services:
-    - name: node:22.8.0
   dependencies:
     - dotnet-format
   before_script:
     - node --version
     - npm --version
-    - npm cache clean --force
   script:
     - dotnet restore --locked-mode
     - dotnet build --configuration Release --no-restore
