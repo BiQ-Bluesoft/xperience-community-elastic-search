@@ -27,6 +27,13 @@ public interface IElasticSearchIndexingStrategy
     /// <returns>Items that should be passed to <see cref="MapToElasticSearchModelOrNull"/> for indexing</returns>
     Task<IEnumerable<IIndexEventItemModel>> FindItemsToReindex(IndexEventReusableItemModel changedItem);
 
+    /// <summary>
+    /// Creates ElasticSearch index based on class paramater.
+    /// </summary>
+    /// <param name="indexClient">Index client.</param>
+    /// <param name="indexName">Name of the index that should be cretaed.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Task representing asynchronnous operation.</returns>
     Task CreateIndexInternalAsync(ElasticClient indexClient, string indexName, CancellationToken cancellationToken);
 
     /// <summary>
