@@ -39,7 +39,7 @@ build:
   stage: build
   image: mcr.microsoft.com/dotnet/sdk:8.0
   services:
-    - node:22.8.0
+    - name: node:22.8.0
   dependencies:
     - dotnet-format
   before_script:
