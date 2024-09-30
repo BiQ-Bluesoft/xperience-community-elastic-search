@@ -16,6 +16,8 @@ dotnet-format:
   stage: format
   image: mcr.microsoft.com/dotnet/sdk:8.0
   script:
+    - echo "Running dotnet restore"
+    - dotnet restore --locked-mode
     - echo "Running dotnet format..."
     - dotnet format --exclude ./examples/** --verify-no-changes
   only:
