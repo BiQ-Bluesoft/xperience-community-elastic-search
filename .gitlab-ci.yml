@@ -45,6 +45,8 @@ build:
     - echo $NODE_VERSION
     - nvm install $NODE_VERSION
     - nvm use $NODE_VERSION
+    - nvm --version
+    - npm cache clean --force
     - echo "Node js successfully installed."
   script:
     - dotnet restore --locked-mode
