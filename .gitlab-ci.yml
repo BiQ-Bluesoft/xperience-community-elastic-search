@@ -4,7 +4,7 @@ stages:
   - test
 
 variables:
-  NODE_VERSION: "22.9.0"
+  NODE_VERSION: "22.8.0"
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
   DOTNET_NOLOGO: "1"
@@ -32,6 +32,7 @@ dotnet-format:
       - "**/Client/**/*.json"
       - "**/*.tsx"
       - "**/*.js"
+      - ".gitlab-ci.yml"
 
 # Build stage
 build:
@@ -58,6 +59,7 @@ build:
       - "**/Client/**/*.json"
       - "**/*.tsx"
       - "**/*.js"
+      - ".gitlab-ci.yml"
 
 # Test stage
 test:
@@ -77,3 +79,4 @@ test:
       - "**/Client/**/*.json"
       - "**/*.tsx"
       - "**/*.js"
+      - ".gitlab-ci.yml"
