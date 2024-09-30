@@ -67,10 +67,7 @@ public sealed class ElasticSearchIndexStore
     /// <exception cref="InvalidOperationException" />
     internal void AddIndex(ElasticSearchIndex index)
     {
-        if (index == null)
-        {
-            throw new ArgumentNullException(nameof(index));
-        }
+        ArgumentNullException.ThrowIfNull(index);
 
         if (registeredIndexes.Exists(i => i.IndexName.Equals(index.IndexName, StringComparison.OrdinalIgnoreCase) || index.Identifier == i.Identifier))
         {
