@@ -7,8 +7,6 @@ namespace Kentico.Xperience.ElasticSearch.Search;
 /// <inheritdoc />
 public sealed class ElasticSearchQueryClientService(ElasticSearchOptions settings) : IElasticSearchQueryClientService
 {
-    private readonly ElasticSearchOptions settings = settings;
-
     public ElasticClient CreateSearchClientForQueries(string indexName)
     {
         var elasticSettings = new ConnectionSettings(new Uri(settings.SearchServiceEndPoint))
