@@ -59,12 +59,12 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": ".NET: format (AzureSearch)",
+      "label": ".NET: format (ElasticSearch)",
       "command": "dotnet",
       "type": "process",
       "args": [
         "format",
-        "Kentico.Xperience.AzureSearch.sln",
+        "Kentico.Xperience.ElasticSearch.sln",
         "--exclude",
         "./examples/**"
       ],
@@ -102,45 +102,45 @@
     {
       "type": "npm",
       "script": "install",
-      "path": "src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "path": "src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "group": "build",
       "problemMatcher": [],
-      "label": "npm: install - src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "label": "npm: install - src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "detail": "install dependencies from package"
     },
     {
       "type": "npm",
       "script": "build",
-      "path": "src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "path": "src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "group": "build",
       "problemMatcher": [],
-      "label": "npm: build - src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "label": "npm: build - src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "detail": "webpack --mode=production",
       "dependsOn": [
-        "npm: install - src/Kentico.Xperience.AzureSearch/Admin/Client"
+        "npm: install - src/Kentico.Xperience.ElasticSearch/Admin/Client"
       ]
     },
     {
       "type": "npm",
       "script": "build:dev",
-      "path": "src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "path": "src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "group": "build",
       "problemMatcher": [],
-      "label": "npm: build:dev - src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "label": "npm: build:dev - src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "detail": "webpack --mode=development",
       "dependsOn": [
-        "npm: install - src/Kentico.Xperience.AzureSearch/Admin/Client"
+        "npm: install - src/Kentico.Xperience.ElasticSearch/Admin/Client"
       ]
     },
     {
       "type": "npm",
       "script": "start",
-      "path": "src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "path": "src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "problemMatcher": [],
-      "label": "npm: start - src/Kentico.Xperience.AzureSearch/Admin/Client",
+      "label": "npm: start - src/Kentico.Xperience.ElasticSearch/Admin/Client",
       "detail": "webpack serve --mode development",
       "dependsOn": [
-        "npm: install - src/Kentico.Xperience.AzureSearch/Admin/Client"
+        "npm: install - src/Kentico.Xperience.ElasticSearch/Admin/Client"
       ]
     }
   ]

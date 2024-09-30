@@ -30,13 +30,13 @@
     "editor.defaultFormatter": "ms-dotnettools.csharp"
   },
 
-  "dotnet.defaultSolution": "Kentico.Xperience.AzureSearch.sln",
+  "dotnet.defaultSolution": "Kentico.Xperience.ElasticSearch.sln",
 
   "files.associations": {
     ".azuredevops/**/*.yml": "azure-pipelines"
   },
 
-  "eslint.workingDirectories": ["./src/Kentico.Xperience.Algolia/Admin/Client"],
+  "eslint.workingDirectories": ["./src/Kentico.Xperience.ElasticSearch/Admin/Client"],
   "[aspnetcorerazor]": {
     "editor.defaultFormatter": "ms-dotnettools.csharp"
   }

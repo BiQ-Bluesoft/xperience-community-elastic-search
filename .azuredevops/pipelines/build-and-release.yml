@@ -48,10 +48,10 @@ stages:
             value: Release
 
           - name: ProjectFolder
-            value: src/Kentico.Xperience.AzureSearch
+            value: src/Kentico.Xperience.ElasticSearch
 
           - name: ProjectFilePath
-            value: src/Kentico.Xperience.AzureSearch/Kentico.Xperience.AzureSearch.csproj
+            value: src/Kentico.Xperience.ElasticSearch/Kentico.Xperience.ElasticSearch.csproj
 
         steps:
           - task: PowerShell@2
