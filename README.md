@@ -17,7 +17,7 @@ This integration enables you to create [ElasticSearch](https://www.elastic.co/) 
 Add the package to your application using the .NET CLI
 
 ```powershell
-dotnet add package NEST
+dotnet add package Kentico.Xperience.ElasticSearch
 ```
 
 ## Quick Start

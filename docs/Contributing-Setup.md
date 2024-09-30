@@ -41,10 +41,7 @@ SQL Server 2019 or newer compatible database
 
 ### Database Setup
 
-Running the sample project requires creating a new Xperience by Kentico database using the included template.
-
-Change directory in your console to `./examples/DancingGoat` and follow the instructions in the Xperience
-documentation on [creating a new database](https://docs.xperience.io/xp26/developers-and-admins/installation#Installation-CreatetheprojectdatabaseCreateProjectDatabase).
+Running the sample project requires creating a new Xperience by Kentico database. To create a database follow the instructions in the Xperience documentation on [creating a new database](https://docs.kentico.com/developers-and-admins/installation#create-the-project-database). Don't forget to update connection string in appsettings.json if neccessary.
 
 ### Admin Customization
 
@@ -59,14 +56,14 @@ To run the Sample app Admin customization in development mode, add the following
 }
 ```
 
-Then start Webpack dev server by running the scripts found in `~/src/Kentico.Xperience.AzureSearch/Admin/Client/package.json`
+Then start Webpack dev server by running the scripts found in `~/src/Kentico.Xperience.ElasticSearch/Admin/Client/package.json`
 
-- Use VS Code to run the [pre-defined task](https://code.visualstudio.com/Docs/editor/tasks) `npm: start - src/Kentico.Xperience.AzureSearch/Admin/Client`
+- Use VS Code to run the [pre-defined task](https://code.visualstudio.com/Docs/editor/tasks) `npm: start - src/Kentico.Xperience.ElasticSearch/Admin/Client`
 
 - If you are not using VS Code, you can run the scripts manually from the command line (optional)
 
   ```pwsh
-  cd .\src\Kentico.Xperience.AzureSearch\Admin\Client\
+  cd .\src\Kentico.Xperience.ElasticSearch\Admin\Client\
   npm install
   npm start
   ```
@@ -79,9 +76,9 @@ Then start Webpack dev server by running the scripts found in `~/src/Kentico.Xpe
    - `refactor/` - for restructuring of existing features
    - `fix/` - for bugfixes
 
-1. Run `dotnet format` against the `Kentico.Xperience.AzureSearch` solution
+1. Run `dotnet format` against the `Kentico.Xperience.ElasticSearch` solution
 
-   > use `.NET: format (AzureSearch)` VS Code task.
+   > use `.NET: format (ElasticSearch)` VS Code task.
 
 1. Commit changes, with a commit message preferably following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) convention.
 
