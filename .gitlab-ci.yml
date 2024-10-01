@@ -33,7 +33,7 @@ dotnet-format:
 build_admin_fe:
   stage: build
   interruptible: true
-  image: node:22.8.1-alpine
+  image: node:21.7.3-alpine
   dependencies:
     - dotnet-format
   script:
@@ -53,11 +53,6 @@ build_admin_fe:
       - "**/*.tsx"
       - "**/*.js"
       - ".gitlab-ci.yml"
-  retry: 2
-  cache:
-      key: $CI_JOB_NAME
-      paths:
-         - src/${PROJECT_NAME}/Admin/Client/.npm/
   artifacts:
     paths:
       - src/${PROJECT_NAME}/Admin/Client/dist
@@ -82,11 +77,6 @@ build_be:
       - "**/*.tsx"
       - "**/*.js"
       - ".gitlab-ci.yml"
-  retry: 2
-  cache:
-    key: $CI_JOB_NAME
-    paths:
-        - .nuget/
   artifacts:
     paths:
       - app
