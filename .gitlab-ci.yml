@@ -1,5 +1,3 @@
-image: node:latest
-
 stages:
   - format
   - build
@@ -32,14 +30,33 @@ dotnet-format:
       - ".gitlab-ci.yml"
 
 # Build stage
-build:
+build_admin_fe:
   stage: build
+  interruptible: true
+  image: node:22.8.0-alpine
+  dependencies:
+    - dotnet-format
+  script:
+    - cd src/${PROJECT_NAME}/Admin/Client
+    - node --version
+    - npm --version
+    - npm ci --cache .npm --prefer-offline
+    - npm run build
+  retry: 2
+  cache:
+      key: $CI_JOB_NAME
+      paths:
+         - src/${PROJECT_NAME}/Admin/Client/.npm/
+  artifacts:
+    paths:
+      - src/${PROJECT_NAME}/Admin/Client/dist
+
+build_be:
+  stage: build
+  interruptible: true
   image: mcr.microsoft.com/dotnet/sdk:8.0
   dependencies:
     - dotnet-format
-  before_script:
-    - node --version
-    - npm --version
   script:
     - dotnet restore --locked-mode
     - dotnet build --configuration Release --no-restore
@@ -54,13 +71,22 @@ build:
       - "**/*.tsx"
       - "**/*.js"
       - ".gitlab-ci.yml"
+  retry: 2
+  cache:
+    key: $CI_JOB_NAME
+    paths:
+        - .nuget/
+  artifacts:
+    paths:
+      - app
 
 # Test stage
 test:
   stage: test
   image: mcr.microsoft.com/dotnet/sdk:8.0
   dependencies:
-    - build
+    - build_admin_fe
+    - build_be
   script:
     - dotnet test --configuration Release --no-build --no-restore
   only:
