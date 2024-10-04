@@ -73,3 +73,40 @@ jobs:
 
       - name: Test Solution
         run: dotnet test --configuration Release --no-build --no-restore
+        
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            ./src/${{ env.PROJECT_NAME }}/bin/Release/
+            ./src/${{ env.PROJECT_NAME }}/obj/Release/
+
+  publish-nugget:
+    name: Publish NuGet Package to Feedz.io
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Install Node.js from package.json version"
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ./src/${{ env.PROJECT_NAME }}/Admin/Client/package.json
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+
+      - name: Pack NuGet package
+        run: dotnet pack ./src/${{ env.PROJECT_NAME }} --configuration Release -o ./nupkg
+
+      - name: Publish to Feedz.io
+        run: dotnet nuget push ./nupkg/*.nupkg --source https://f.feedz.io/bluesoft/elastic/nuget/index.json --api-key ${{ secrets.FEEDZ_API_KEY }}
