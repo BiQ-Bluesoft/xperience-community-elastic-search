@@ -1,7 +1,9 @@
 name: Build and Publish NuGet Package
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+        - IN-654-Elastic-search-from-azure
 
 jobs:
   build:
