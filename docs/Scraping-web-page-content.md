@@ -172,7 +172,7 @@ public ExampleSearchIndexingStrategy(
     this.strategyHelper = strategyHelper;
 }
 
-public override async Task<IAzureSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
+public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
 {
     var result = new CustomSearchModel();
 

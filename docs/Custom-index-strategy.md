@@ -161,7 +161,7 @@ public class ExampleSearchIndexingStrategy : BaseElasticSearchIndexingStrategy<S
         this.queryExecutor = queryExecutor;
     }
 
-    public override async Task<IElasticSearchModel> MapToAzureSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         // Implementation detailed in previous examples, including GetPage<T> call
         // ...
@@ -249,7 +249,7 @@ public class ExampleSearchIndexingStrategy : BaseElasticSearchIndexingStrategy<S
 
             foreach (var articlePage in result)
             {
-                // This will be a IIndexEventItemModel passed to our MapToAzureSearchModelOrNull method above
+                // This will be a IIndexEventItemModel passed to our MapToElasticSearchModelOrNull method above
                 reindexable.Add(new IndexEventWebPageItemModel(
                     page.SystemFields.WebPageItemID,
                     page.SystemFields.WebPageItemGUID,
