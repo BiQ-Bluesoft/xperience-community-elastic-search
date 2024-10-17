@@ -38,7 +38,6 @@ export const IndexedContentTemplate = ({
 }: IndexedContentPageProps): JSX.Element => {
   usePageCommand<void, PathDetailArguments>(Commands.ShowPathDetail);
 
-  console.log('IndexedContentTemplate');
   return (
     <RoutingContentPlaceholder>
       <Stack spacing={Spacing.XXL}>

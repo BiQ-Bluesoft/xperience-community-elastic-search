@@ -51,13 +51,11 @@ export const PathDetailTemplate = ({
     });
 
   const prepareRows = (rows: TableRow[] | undefined): TableRow[] => {
-    console.log('Path prepare rows: ', rows);
     if (rows === undefined) {
       return [];
     }
 
     const getCells = (row: TableRow): TableCell[] => {
-      console.log('Path get cells: ', row);
       const visibleCells: TableCell[] = [];
       row.cells.forEach((cell, index) => {
         if (columns[index].visible) {
@@ -83,7 +81,6 @@ export const PathDetailTemplate = ({
       : tableData.totalCount / templateParameters.pageSize;
 
   const pageHandler = (page: number): void => {
-    console.log('Path pageHandler: ', page);
     setTemplateParameters((previousParameters) => {
       return {
         ...previousParameters,
@@ -107,7 +104,6 @@ export const PathDetailTemplate = ({
     [templateParameters],
   );
 
-  console.log('PathDetailTemplate');
   return (
     <Stack spacing={Spacing.XL}>
       <Headline size={HeadlineSize.L}>
