@@ -8,7 +8,4 @@ namespace Kentico.Xperience.ElasticSearch.Resources;
 
 internal class ElasticSearchResources
 {
-    public ElasticSearchResources()
-    {
-    }
 }
