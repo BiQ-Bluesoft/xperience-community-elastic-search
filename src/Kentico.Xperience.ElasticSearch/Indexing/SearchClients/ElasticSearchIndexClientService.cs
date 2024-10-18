@@ -1,28 +1,28 @@
 ﻿using CMS.Core;
 
+using Elastic.Clients.Elasticsearch;
+
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Nest;
-
 namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 public sealed class ElasticSearchIndexClientService(
-    ElasticClient indexClient,
+    ElasticsearchClient indexClient,
     IServiceProvider serviceProvider,
     IEventLogService eventLogService) : IElasticSearchIndexClientService
 {
 
     /// <inheritdoc />
-    public async Task<ElasticClient> InitializeIndexClient(string indexName, CancellationToken cancellationToken)
+    public async Task<ElasticsearchClient> InitializeIndexClient(string indexName, CancellationToken cancellationToken)
     {
         var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName) ??
             throw new InvalidOperationException($"Registered index with name '{indexName}' doesn't exist.");
 
         var elasticSearchStrategy = serviceProvider.GetRequiredStrategy(elasticSearchIndex);
 
-        var indexExistsInElastic = (await indexClient.Indices.ExistsAsync(indexName, ct: cancellationToken))?.Exists ?? false;
+        var indexExistsInElastic = (await indexClient.Indices.ExistsAsync(indexName, cancellationToken))?.Exists ?? false;
         if (!indexExistsInElastic)
         {
             await elasticSearchStrategy.CreateIndexInternalAsync(indexClient, indexName, cancellationToken);
@@ -50,14 +50,14 @@ public sealed class ElasticSearchIndexClientService(
             throw new ArgumentNullException(nameof(indexName));
         }
 
-        var deleteIndexResponse = await indexClient.Indices.DeleteAsync(indexName, null, cancellationToken);
-        if (!deleteIndexResponse.IsValid)
+        var deleteIndexResponse = await indexClient.Indices.DeleteAsync(indexName, cancellationToken);
+        if (!deleteIndexResponse.IsValidResponse)
         {
             // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(
                 nameof(DeleteIndexInternalAsync),
                 "ELASTIC_SEARCH",
-                $"Unable to delete index with name: {indexName}. Operation failed with error: {deleteIndexResponse.OriginalException}");
+                $"Unable to delete index with name: {indexName}. Operation failed with error: {deleteIndexResponse.DebugInformation}");
         }
     }
 }

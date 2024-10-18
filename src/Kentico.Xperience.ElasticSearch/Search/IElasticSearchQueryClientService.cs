@@ -1,4 +1,4 @@
-using Nest;
+using Elastic.Clients.Elasticsearch;
 
 namespace Kentico.Xperience.ElasticSearch.Search;
 
@@ -7,5 +7,5 @@ namespace Kentico.Xperience.ElasticSearch.Search;
 /// </summary>
 public interface IElasticSearchQueryClientService
 {
-    ElasticClient CreateSearchClientForQueries(string indexName);
+    ElasticsearchClient CreateSearchClientForQueries(string indexName);
 }

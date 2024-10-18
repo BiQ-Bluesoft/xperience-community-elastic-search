@@ -48,7 +48,6 @@
 		<PackageReference Include="Elastic.Clients.Elasticsearch" />
 		<PackageReference Include="Kentico.Xperience.Admin" />
 		<PackageReference Include="Kentico.Xperience.WebApp" />
-		<PackageReference Include="NEST" />
 	</ItemGroup>
 
 	<ItemGroup>

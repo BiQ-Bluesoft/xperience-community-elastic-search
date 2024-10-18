@@ -1,18 +1,19 @@
-using Kentico.Xperience.ElasticSearch.Indexing;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 
-using Nest;
+using Kentico.Xperience.ElasticSearch.Indexing;
 
 namespace Kentico.Xperience.ElasticSearch.Search;
 
 /// <inheritdoc />
 public sealed class ElasticSearchQueryClientService(ElasticSearchOptions settings) : IElasticSearchQueryClientService
 {
-    public ElasticClient CreateSearchClientForQueries(string indexName)
+    public ElasticsearchClient CreateSearchClientForQueries(string indexName)
     {
-        var elasticSettings = new ConnectionSettings(new Uri(settings.SearchServiceEndPoint))
+        var elasticSettings = new ElasticsearchClientSettings(new Uri(settings.SearchServiceEndPoint))
             .DefaultIndex(indexName)
-            .BasicAuthentication(settings.SearchServiceUsername, settings.SearchServicePassword);
+            .Authentication(new BasicAuthentication(settings.SearchServiceUsername, settings.SearchServicePassword));
 
-        return new ElasticClient(elasticSettings);
+        return new ElasticsearchClient(elasticSettings);
     }
 }

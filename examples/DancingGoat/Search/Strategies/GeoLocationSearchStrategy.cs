@@ -2,10 +2,12 @@
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
+using Elastic.Clients.Elasticsearch;
+
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
-using Nest;
+using static Elastic.Clients.Elasticsearch.GeoLocation;
 
 namespace DancingGoat.Search;
 
@@ -45,7 +47,11 @@ public class GeoLocationSearchStrategy(
 
             //We can use this value later to sort by distance from the user accessing our search page.
             //Example for this scenario is shown in DancingGoatSearchService.GeoSearch
-            result.GeoLocation = new GeoLocation((double)page.CafeLocationLatitude, (double)page.CafeLocationLongitude);
+            result.GeoLocation = LatitudeLongitude(new LatLonGeoLocation
+            {
+                Lat = (double)page.CafeLocationLatitude,
+                Lon = (double)page.CafeLocationLongitude,
+            });
 
             var rawContent = await webCrawler.CrawlWebPage(page!);
             result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);

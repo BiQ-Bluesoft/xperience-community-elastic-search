@@ -4,15 +4,14 @@ using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Websites;
 
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.Core.Bulk;
+
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using Nest;
-
-using BulkRequest = Nest.BulkRequest;
 
 namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
@@ -27,7 +26,7 @@ internal class DefaultElasticSearchClient(
     IInfoProvider<ChannelInfo> channelProvider,
     IConversionService conversionService,
     IProgressiveCache cache,
-    ElasticClient searchIndexClient,
+    ElasticsearchClient searchIndexClient,
     IEventLogService eventLogService) : IElasticSearchClient
 {
     /// <inheritdoc />
@@ -58,14 +57,14 @@ internal class DefaultElasticSearchClient(
         {
             var indexClient = await elasticSearchIndexClientService.InitializeIndexClient(index.IndexName, cancellationToken);
 
-            var countResponse = await indexClient.CountAsync<IElasticSearchModel>(c => c.Index(index.IndexName), cancellationToken);
-            if (!countResponse.IsValid)
+            var countResponse = await indexClient.CountAsync<IElasticSearchModel>(c => c.Indices(index.IndexName), cancellationToken);
+            if (!countResponse.IsValidResponse)
             {
                 // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
                     nameof(GetStatisticsAsync),
                     "ELASTIC_SEARCH",
-                    $"Unable to fetch statistics for index with name {index.IndexName}. Operation failed with error: {countResponse.OriginalException}");
+                    $"Unable to fetch statistics for index with name {index.IndexName}. Operation failed with error: {countResponse.DebugInformation}");
             }
 
             stats.Add(new ElasticSearchIndexStatisticsViewModel()
@@ -98,7 +97,7 @@ internal class DefaultElasticSearchClient(
             throw new ArgumentNullException(nameof(indexName));
         }
 
-        await searchIndexClient.Indices.DeleteAsync(indexName, ct: cancellationToken);
+        await searchIndexClient.Indices.DeleteAsync(indexName, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -119,17 +118,21 @@ internal class DefaultElasticSearchClient(
 
     private async Task<int> DeleteRecordsInternalAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
     {
-        var bulkDeleteResponse = await searchIndexClient.BulkAsync(new BulkRequest(indexName)
-        {
-            Operations = itemGuids.Select(x => new BulkDeleteOperation<BaseElasticSearchModel>(x)).Cast<IBulkOperation>().ToList()
-        }, cancellationToken);
+        var bulkDeleteResponse = await searchIndexClient
+            .BulkAsync(bulk =>
+            {
+                foreach (var guid in itemGuids)
+                {
+                    bulk.Delete(guid, d => d.Index(indexName));
+                }
+            }, cancellationToken);
 
-        if (!bulkDeleteResponse.IsValid)
+        if (!bulkDeleteResponse.IsValidResponse)
         {
             // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(nameof(DeleteRecordsInternalAsync),
                 "ELASTIC_SEARCH",
-                $"Unable to delete records with guids: {itemGuids} from index with name {indexName}. Operation failed with error: {bulkDeleteResponse.OriginalException}");
+                $"Unable to delete records with guids: {itemGuids} from index with name {indexName}. Operation failed with error: {bulkDeleteResponse.DebugInformation}");
         }
 
         return bulkDeleteResponse.Items.Count(item => item.Status == 200);
@@ -192,7 +195,7 @@ internal class DefaultElasticSearchClient(
             }
         }
 
-        await searchIndexClient.Indices.DeleteAsync(elasticSearchIndex.IndexName, ct: cancellationToken ?? default);
+        await searchIndexClient.Indices.DeleteAsync(elasticSearchIndex.IndexName, cancellationToken ?? default);
         indexedItems.ForEach(item => ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(item, ElasticSearchTaskType.PUBLISH_INDEX, elasticSearchIndex.IndexName)));
     }
 

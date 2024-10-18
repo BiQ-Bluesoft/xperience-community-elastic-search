@@ -1,12 +1,12 @@
-﻿using Kentico.Xperience.ElasticSearch.Admin.Models;
-using Kentico.Xperience.ElasticSearch.Indexing.Models;
+﻿using Elastic.Clients.Elasticsearch;
 
-using Nest;
+using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
 /// <summary>
-/// Initializes <see cref="ElasticClient" /> instances.
+/// Initializes <see cref="ElasticsearchClient" /> instances.
 /// </summary>
 public interface IElasticSearchIndexClientService
 {
@@ -16,7 +16,7 @@ public interface IElasticSearchIndexClientService
     /// <param name="indexName">The code name of the index.</param>
     /// <param name="cancellationToken">The cancellation token for the task.</param>
     /// <exception cref="InvalidOperationException" />
-    Task<ElasticClient> InitializeIndexClient(string indexName, CancellationToken cancellationToken);
+    Task<ElasticsearchClient> InitializeIndexClient(string indexName, CancellationToken cancellationToken);
 
     /// <summary>
     /// Edits the ElasticSearch index.

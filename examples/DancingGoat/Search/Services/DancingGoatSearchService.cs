@@ -1,37 +1,40 @@
 ﻿using DancingGoat.Search.Models;
 
-using Kentico.Xperience.ElasticSearch.Search;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.Core.Search;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 
-using Nest;
+using Kentico.Xperience.ElasticSearch.Search;
 
 namespace DancingGoat.Search.Services;
 
 public class DancingGoatSearchService(IElasticSearchQueryClientService searchClientService)
 {
-    public async Task<DancingGoatSearchViewModel> GlobalSearch(
-        string indexName,
-        string searchText,
-        int page = 1,
-        int pageSize = 10)
+    public async Task<DancingGoatSearchViewModel> GlobalSearch(string indexName, string searchText, int page = 1, int pageSize = 10)
     {
         var index = searchClientService.CreateSearchClientForQueries(indexName);
 
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var response = await index.SearchAsync<DancingGoatSearchModel>(s => s
-            .From((page - 1) * pageSize)
-            .Size(pageSize)
-            .Source(src => src
-                .Includes(i => i
-                    .Fields(f => f.Title, f => f.Url)))
-            .Query(q => q
-                .MultiMatch(mm => mm
-                    .Fields(f => f
-                        .Field(p => p.Title)
-                        .Field(p => p.Url))
-                    .Query(searchText))));
+        var request = new SearchRequest()
+        {
+            From = (page - 1) * pageSize,
+            Size = pageSize,
+            Query = string.IsNullOrEmpty(searchText)
+                ? new MatchAllQuery()
+                : new MultiMatchQuery()
+                {
+                    Fields = new[]
+                    {
+                        nameof(DancingGoatSearchModel.Title).ToLower(),
+                    },
+                    Query = searchText,
+                },
+            TrackTotalHits = new TrackHits(true)
+        };
 
+        var response = await index.SearchAsync<DancingGoatSearchModel>(request);
         return new DancingGoatSearchViewModel()
         {
             Hits = response.Hits.Select(x => new DancingGoatSearchResult()
@@ -47,35 +50,38 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
         };
     }
 
-    public async Task<DancingGoatSearchViewModel> SimpleSearch(
-        string indexName,
-        string searchText,
-        int page = 1,
-        int pageSize = 10)
+    public async Task<DancingGoatSearchViewModel> SimpleSearch(string indexName, string searchText, int page = 1, int pageSize = 10)
     {
         var index = searchClientService.CreateSearchClientForQueries(indexName);
 
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var response = await index.SearchAsync<DancingGoatSimpleSearchModel>(s => s
-            .From((page - 1) * pageSize)
-            .Size(pageSize)
-            .Source(src => src
-                .Includes(i => i
-                    .Fields(f => f.Title, fields => fields.Url)))
-            .Query(q => q
-                .MultiMatch(mm => mm
-                    .Fields(f => f.Field(p => p.Title).Field(p => p.Url))
-                    .Query(searchText)))
-            .TrackTotalHits(true));
+        var request = new SearchRequest(indexName)
+        {
+            From = (page - 1) * pageSize,
+            Size = pageSize,
+            Query = string.IsNullOrEmpty(searchText)
+                ? new MatchAllQuery()
+                : new MultiMatchQuery()
+                {
+                    Fields = new[]
+                    {
+                        nameof(DancingGoatSimpleSearchModel.Title).ToLower(),
+                        nameof(DancingGoatSimpleSearchModel.Url).ToLower()
+                    },
+                    Query = searchText,
+                },
+            TrackTotalHits = new TrackHits(true)
+        };
 
+        var response = await index.SearchAsync<DancingGoatSimpleSearchModel>(request);
         return new DancingGoatSearchViewModel()
         {
-            Hits = response.Hits.Select(x => new DancingGoatSearchResult()
+            Hits = response.Documents.Select(x => new DancingGoatSearchResult()
             {
-                Title = x.Source.Title,
-                Url = x.Source.Url,
+                Title = x.Title,
+                Url = x.Url,
             }),
             TotalHits = (int)response.Total,
             Query = searchText,
@@ -100,32 +106,43 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var response = await index.SearchAsync<GeoLocationSearchModel>(s => s
-            .From((page - 1) * pageSize)
-            .Size(pageSize)
-            .Source(src => src
-                .Includes(i => i
-                    .Fields(f => f.Title, f => f.Url, f => f.Location)))
-            .Query(q => q
-                .MultiMatch(mm => mm
-                    .Fields(f => f
-                        .Field(p => p.Title)
-                        .Field(p => p.Url))
-                    .Query(searchText)))
-            .TrackTotalHits(true)
-            .Sort(sort =>
-            {
-                if (sortByDistance)
+        var request = new SearchRequest()
+        {
+            From = (page - 1) * pageSize,
+            Size = pageSize,
+            Query = string.IsNullOrEmpty(searchText)
+                ? new MatchAllQuery()
+                : new MultiMatchQuery()
                 {
-                    sort.GeoDistance(g => g
-                        .Field(p => p.GeoLocation)
-                        .DistanceType(GeoDistanceType.Arc)
-                        .Order(SortOrder.Ascending)
-                        .Points(new GeoLocation(latitude, longitude)));
+                    Fields = new[]
+                    {
+                        nameof(GeoLocationSearchModel.Title).ToLower(),
+                        nameof(GeoLocationSearchModel.Url).ToLower()
+                    },
+                    Query = searchText,
+                },
+            Sort = sortByDistance
+                ? new[]
+                {
+                    SortOptions.GeoDistance(new GeoDistanceSort
+                    {
+                        Field = Infer.Field<GeoLocationSearchModel>(p => p.GeoLocation),
+                        DistanceType = GeoDistanceType.Arc,
+                        Order = SortOrder.Asc,
+                        Location = new []
+                        {
+                            GeoLocation.LatitudeLongitude(new LatLonGeoLocation
+                            {
+                                Lat = latitude,
+                                Lon = longitude,
+                            })
+                        }
+                    })
                 }
-                return sort;
-            }));
+                : null
+        };
 
+        var response = await index.SearchAsync<GeoLocationSearchModel>(request);
         return new GeoLocationSearchViewModel
         {
             Hits = response.Hits.Select(x => new GeoLocationSearchResult()

@@ -1,6 +1,6 @@
-﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
+﻿using Elastic.Clients.Elasticsearch;
 
-using Nest;
+using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
@@ -34,12 +34,12 @@ public interface IElasticSearchIndexingStrategy
     /// <param name="indexName">Name of the index that should be cretaed.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task representing asynchronnous operation.</returns>
-    Task CreateIndexInternalAsync(ElasticClient indexClient, string indexName, CancellationToken cancellationToken);
+    Task CreateIndexInternalAsync(ElasticsearchClient indexClient, string indexName, CancellationToken cancellationToken);
 
     /// <summary>
     /// Called when uploading data to user defined <see cref="ElasticSearchIndex"/>.
     /// Expects an <see cref="IEnumerable{IElasticSearchModel}"/> created in <see cref="MapToElasticSearchModelOrNull"/>
     /// </summary>
     /// <returns>Number of uploaded documents</returns>
-    Task<int> UploadDocumentsAsync(IEnumerable<IElasticSearchModel> models, ElasticClient searchClient, string indexName);
+    Task<int> UploadDocumentsAsync(IEnumerable<IElasticSearchModel> models, ElasticsearchClient searchClient, string indexName);
 }

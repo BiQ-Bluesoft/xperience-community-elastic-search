@@ -11,4 +11,10 @@ public interface IElasticSearchModel
     public string ItemGuid { get; set; }
     public string ObjectID { get; set; }
     public string Name { get; set; }
+
+    /// <summary>
+    /// Returns identifier, which is used to compare documents in search
+    /// </summary>
+    /// <returns></returns>
+    string GetId();
 }

@@ -152,16 +152,6 @@
         "resolved": "0.4.22",
         "contentHash": "9J5GPHJcT8sewn2zVfWTrsCQvfQYgUiY/jx+IRjWUk7XNPd837qfEL42I5baH69cyW/e4RoDy8v76yxqz95tDw=="
       },
-      "Elasticsearch.Net": {
-        "type": "Transitive",
-        "resolved": "7.17.5",
-        "contentHash": "orChsQi1Ceho/NyIylNOn6y4vuGcsbCfMZnCueNN0fzqYEGQmQdPfcVmsR5+3fwpXTgxCdjTUVmqOwvHpCSB+Q==",
-        "dependencies": {
-          "Microsoft.CSharp": "4.6.0",
-          "System.Buffers": "4.5.1",
-          "System.Diagnostics.DiagnosticSource": "5.0.0"
-        }
-      },
       "Fare": {
         "type": "Transitive",
         "resolved": "2.1.1",
@@ -485,11 +475,6 @@
         "type": "Transitive",
         "resolved": "17.9.0",
         "contentHash": "RGD37ZSrratfScYXm7M0HjvxMxZyWZL4jm+XgMZbkIY1UPgjUpbNA/t+WTGj/rC/0Hm9A3IrH3ywbKZkOCnoZA=="
-      },
-      "Microsoft.CSharp": {
-        "type": "Transitive",
-        "resolved": "4.6.0",
-        "contentHash": "kxn3M2rnAGy5N5DgcIwcE8QTePWU/XiYcQVzn9HqTls2NKluVzVSmVWRjK7OUPWbljCXuZxHyhEz9kPRIQeXow=="
       },
       "Microsoft.Data.SqlClient": {
         "type": "Transitive",
@@ -992,8 +977,7 @@
         "dependencies": {
           "Elastic.Clients.Elasticsearch": "[8.15.6, )",
           "Kentico.Xperience.Admin": "[29.0.0, )",
-          "Kentico.Xperience.WebApp": "[29.0.0, )",
-          "NEST": "[7.17.5, )"
+          "Kentico.Xperience.WebApp": "[29.0.0, )"
         }
       },
       "Elastic.Clients.Elasticsearch": {
@@ -1031,15 +1015,6 @@
           "Microsoft.Extensions.Caching.Memory": "6.0.1",
           "Microsoft.Extensions.FileProviders.Embedded": "6.0.29",
           "Microsoft.Extensions.Localization": "6.0.29"
-        }
-      },
-      "NEST": {
-        "type": "CentralTransitive",
-        "requested": "[7.17.5, )",
-        "resolved": "7.17.5",
-        "contentHash": "bo9UyuIoVRx4IUQiuC8ZrlZuvAXKIccernC7UUKukQCEmRq2eVIk+gubHlnMQljrP51q0mN4cjgy9vv5uZPkoA==",
-        "dependencies": {
-          "Elasticsearch.Net": "7.17.5"
         }
       }
     }

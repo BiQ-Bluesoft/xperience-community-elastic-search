@@ -1,4 +1,7 @@
-﻿using Kentico.Xperience.ElasticSearch.Admin;
+﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
+
+using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Aliasing;
 
@@ -11,8 +14,6 @@ using Kentico.Xperience.ElasticSearch.Search;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-
-using Nest;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -63,11 +64,12 @@ public static class ElasticSearchStartupExtensions
             .AddSingleton(x =>
             {
                 var options = x.GetRequiredService<IOptions<ElasticSearchOptions>>();
-                var settings = new ConnectionSettings(new Uri(options.Value.SearchServiceEndPoint))
-                    .BasicAuthentication(options.Value.SearchServiceUsername, options.Value.SearchServicePassword)
-                    .DisableDirectStreaming()  // Enable detailed logging of request/response
+
+                var settings = new ElasticsearchClientSettings(new Uri(options.Value.SearchServiceEndPoint))
+                    .Authentication(new BasicAuthentication(options.Value.SearchServiceUsername, options.Value.SearchServicePassword))
+                    .DisableDirectStreaming()
                     .PrettyJson();
-                return new ElasticClient(settings);
+                return new ElasticsearchClient(settings);
             })
             .AddSingleton<IElasticSearchQueryClientService>(x =>
             {
