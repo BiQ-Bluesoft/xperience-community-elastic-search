@@ -32,7 +32,7 @@ internal class IndexAliasListingPage(
     IElasticSearchClient elasticSearchClient,
     IElasticSearchIndexAliasService elasticSearchIndexAliasService,
     IOptions<ElasticSearchOptions> elasticSearchOptions,
-    IPageUrlGenerator pageUrlGenerator,
+    IPageLinkGenerator pageLinkGenerator,
     IElasticSearchConfigurationStorageService configurationStorageService) : ListingPage
 {
     private readonly ElasticSearchOptions elasticSearchOptions = elasticSearchOptions.Value;
@@ -134,7 +134,7 @@ internal class IndexAliasListingPage(
     [PageCommand(Permission = SystemPermissions.DELETE)]
     public async Task<INavigateResponse> Delete(int id, CancellationToken cancellationToken)
     {
-        var response = NavigateTo(pageUrlGenerator.GenerateUrl<IndexAliasListingPage>());
+        var response = NavigateTo(pageLinkGenerator.GetPath<IndexAliasListingPage>());
         var alias = ElasticSearchIndexAliasStore.Instance.GetAlias(id);
         if (alias == null)
         {

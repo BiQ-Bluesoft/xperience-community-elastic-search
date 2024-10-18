@@ -25,7 +25,7 @@ internal class IndexAliasCreatePage(
     IFormDataBinder formDataBinder,
     IElasticSearchIndexAliasService elasticSearchIndexAliasService,
     IElasticSearchConfigurationStorageService storageService,
-    IPageUrlGenerator pageUrlGenerator) : BaseIndexAliasEditPage(formItemCollectionProvider, formDataBinder, elasticSearchIndexAliasService, storageService)
+    IPageLinkGenerator pageLinkGenerator) : BaseIndexAliasEditPage(formItemCollectionProvider, formDataBinder, elasticSearchIndexAliasService, storageService)
 {
     private ElasticSearchAliasConfigurationModel? model = null;
 
@@ -46,8 +46,11 @@ internal class IndexAliasCreatePage(
         if (result.ModificationResult == ModificationResult.Success)
         {
             var alias = ElasticSearchIndexAliasStore.Instance.GetRequiredAlias(model.AliasName);
-
-            var successResponse = NavigateTo(pageUrlGenerator.GenerateUrl<IndexAliasEditPage>(alias.Identifier.ToString()))
+            var pageParameters = new PageParameterValues
+            {
+                { typeof(IndexAliasEditPage), alias.Identifier }
+            };
+            var successResponse = NavigateTo(pageLinkGenerator.GetPath<IndexAliasEditPage>(pageParameters))
                 .AddSuccessMessage("Index alias created.");
 
             return successResponse;

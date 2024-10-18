@@ -30,7 +30,7 @@ namespace Kentico.Xperience.ElasticSearch.Admin;
 [UIEvaluatePermission(SystemPermissions.VIEW)]
 internal class IndexListingPage(
     IElasticSearchClient elasticSearchClient,
-    IPageUrlGenerator pageUrlGenerator,
+    IPageLinkGenerator pageLinkGenerator,
     IOptions<ElasticSearchOptions> elasticSearchOptions,
     IElasticSearchConfigurationStorageService configurationStorageService,
     IConversionService conversionService) : ListingPage
@@ -180,7 +180,7 @@ internal class IndexListingPage(
     [PageCommand(Permission = SystemPermissions.DELETE)]
     public async Task<INavigateResponse> Delete(int id, CancellationToken cancellationToken)
     {
-        var response = NavigateTo(pageUrlGenerator.GenerateUrl<IndexListingPage>());
+        var response = NavigateTo(pageLinkGenerator.GetPath<IndexListingPage>());
         var index = ElasticSearchIndexStore.Instance.GetIndex(id);
         if (index == null)
         {

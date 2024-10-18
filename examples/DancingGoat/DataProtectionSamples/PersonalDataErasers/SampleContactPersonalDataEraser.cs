@@ -112,10 +112,10 @@ namespace Samples.DancingGoat
         /// <remarks>Activities are deleted via bulk operation, considering the amount of activities for a contact.</remarks>
         private void DeleteSubmittedFormsActivities(ICollection<int> contactIds, IDictionary<string, object> configuration)
         {
-            if (configuration.TryGetValue("DeleteSubmittedFormsActivities", out object deleteSubmittedFormsActivities)
+            if (configuration.TryGetValue("DeleteSubmittedFormsActivities", out var deleteSubmittedFormsActivities)
                 && ValidationHelper.GetBoolean(deleteSubmittedFormsActivities, false))
             {
-                ActivityInfoProvider.ProviderObject.BulkDelete(new WhereCondition().WhereEquals("ActivityType", PredefinedActivityType.BIZFORM_SUBMIT)
+                ActivityInfo.Provider.BulkDelete(new WhereCondition().WhereEquals("ActivityType", PredefinedActivityType.BIZFORM_SUBMIT)
                                                                                    .WhereIn("ActivityContactID", contactIds));
             }
         }
@@ -126,7 +126,7 @@ namespace Samples.DancingGoat
         /// </summary>
         private void DeleteDancingGoatSubmittedFormsData(ICollection<string> emails, ICollection<int> contactIDs, IDictionary<string, object> configuration)
         {
-            if (configuration.TryGetValue("DeleteSubmittedFormsData", out object deleteSubmittedForms)
+            if (configuration.TryGetValue("DeleteSubmittedFormsData", out var deleteSubmittedForms)
                 && ValidationHelper.GetBoolean(deleteSubmittedForms, false))
             {
                 var consentAgreementGuids = consentAgreementInfoProvider.Get()
@@ -141,7 +141,7 @@ namespace Samples.DancingGoat
                 {
                     var bizForm = new BizFormInfo(row);
                     var formClass = new DataClassInfo(row);
-                    string emailColumn = dancingGoatForms[bizForm.FormGUID];
+                    var emailColumn = dancingGoatForms[bizForm.FormGUID];
 
                     var bizFormItems = BizFormItemProvider.GetItems(formClass.ClassName)
                         .WhereIn(emailColumn, emails);
@@ -166,10 +166,10 @@ namespace Samples.DancingGoat
         /// <remarks>Activities are deleted via bulk operation, considering the amount of activities for a contact.</remarks>
         private void DeleteActivities(List<int> contactIds, IDictionary<string, object> configuration)
         {
-            if (configuration.TryGetValue("deleteActivities", out object deleteActivities)
+            if (configuration.TryGetValue("deleteActivities", out var deleteActivities)
                 && ValidationHelper.GetBoolean(deleteActivities, false))
             {
-                ActivityInfoProvider.ProviderObject.BulkDelete(new WhereCondition().WhereIn("ActivityContactID", contactIds));
+                ActivityInfo.Provider.BulkDelete(new WhereCondition().WhereIn("ActivityContactID", contactIds));
             }
         }
 
@@ -179,7 +179,7 @@ namespace Samples.DancingGoat
         /// </summary>
         private void DeleteContactFromAccounts(ICollection<int> contactIds, IDictionary<string, object> configuration)
         {
-            if (configuration.TryGetValue("deleteContactFromAccounts", out object deleteContactFromAccounts)
+            if (configuration.TryGetValue("deleteContactFromAccounts", out var deleteContactFromAccounts)
                 && ValidationHelper.GetBoolean(deleteContactFromAccounts, false))
             {
                 var accounts = accountContactInfoProvider.Get().WhereIn("ContactID", contactIds);
@@ -197,7 +197,7 @@ namespace Samples.DancingGoat
         /// </summary>
         private void DeleteContacts(IEnumerable<ContactInfo> contacts, IDictionary<string, object> configuration)
         {
-            if (configuration.TryGetValue("DeleteContacts", out object deleteContacts) && ValidationHelper.GetBoolean(deleteContacts, false))
+            if (configuration.TryGetValue("DeleteContacts", out var deleteContacts) && ValidationHelper.GetBoolean(deleteContacts, false))
             {
                 foreach (var contact in contacts)
                 {

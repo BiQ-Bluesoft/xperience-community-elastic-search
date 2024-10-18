@@ -48,6 +48,7 @@
 		<PackageReference Include="Elastic.Clients.Elasticsearch" />
 		<PackageReference Include="Kentico.Xperience.Admin" />
 		<PackageReference Include="Kentico.Xperience.WebApp" />
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
 
 	<ItemGroup>

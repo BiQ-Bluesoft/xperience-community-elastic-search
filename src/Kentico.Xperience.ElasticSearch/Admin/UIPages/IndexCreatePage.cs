@@ -25,7 +25,7 @@ internal class IndexCreatePage(
     IFormItemCollectionProvider formItemCollectionProvider,
     IFormDataBinder formDataBinder,
     IElasticSearchConfigurationStorageService storageService,
-    IPageUrlGenerator pageUrlGenerator,
+    IPageLinkGenerator pageLinkGenerator,
     IElasticSearchIndexClientService searchClientService) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, searchClientService)
 {
     private ElasticSearchConfigurationModel? model = null;
@@ -48,7 +48,11 @@ internal class IndexCreatePage(
         {
             var index = ElasticSearchIndexStore.Instance.GetRequiredIndex(model.IndexName);
 
-            var successResponse = NavigateTo(pageUrlGenerator.GenerateUrl<IndexEditPage>(index.Identifier.ToString()))
+            var pageParameters = new PageParameterValues()
+            {
+                { typeof(IndexEditPage), index.Identifier}
+            };
+            var successResponse = NavigateTo(pageLinkGenerator.GetPath<IndexEditPage>(pageParameters))
                 .AddSuccessMessage("Index created.");
 
             return successResponse;

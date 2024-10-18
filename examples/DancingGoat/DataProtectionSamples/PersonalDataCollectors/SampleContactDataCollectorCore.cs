@@ -18,8 +18,8 @@ namespace Samples.DancingGoat
     {
         private readonly IPersonalDataWriter writer;
         private readonly IInfoProvider<ActivityInfo> activityInfoProvider;
-        private readonly ICountryInfoProvider countryInfoProvider;
-        private readonly IStateInfoProvider stateInfoProvider;
+        private readonly IInfoProvider<CountryInfo> countryInfoProvider;
+        private readonly IInfoProvider<StateInfo> stateInfoProvider;
         private readonly IInfoProvider<ConsentAgreementInfo> consentAgreementInfoProvider;
         private readonly IInfoProvider<AccountContactInfo> accountContactInfoProvider;
         private readonly IInfoProvider<AccountInfo> accountInfoProvider;
@@ -252,7 +252,7 @@ namespace Samples.DancingGoat
         {
             if (columnName.Equals("ContactGender", StringComparison.InvariantCultureIgnoreCase))
             {
-                int? gender = columnValue as int?;
+                var gender = columnValue as int?;
                 return gender switch
                 {
                     1 => "male",
@@ -277,7 +277,7 @@ namespace Samples.DancingGoat
                 var xmlNode = consentXml.SelectSingleNode("/ConsentContent/ConsentLanguageVersions/ConsentLanguageVersion/FullText");
 
                 // Strip HTML tags
-                string result = HTMLHelper.StripTags(xmlNode?.InnerText);
+                var result = HTMLHelper.StripTags(xmlNode?.InnerText);
 
                 return result;
             }
@@ -290,7 +290,7 @@ namespace Samples.DancingGoat
         {
             if (columnName.Equals("ConsentAgreementRevoked", StringComparison.InvariantCultureIgnoreCase))
             {
-                bool revoked = (bool)columnValue;
+                var revoked = (bool)columnValue;
 
                 return revoked ? "Revoked" : "Agreed";
             }
@@ -313,8 +313,8 @@ namespace Samples.DancingGoat
         public SampleContactDataCollectorCore(
             IPersonalDataWriter writer,
             IInfoProvider<ActivityInfo> activityInfoProvider,
-            ICountryInfoProvider countryInfoProvider,
-            IStateInfoProvider stateInfoProvider,
+            IInfoProvider<CountryInfo> countryInfoProvider,
+            IInfoProvider<StateInfo> stateInfoProvider,
             IInfoProvider<ConsentAgreementInfo> consentAgreementInfoProvider,
             IInfoProvider<AccountContactInfo> accountContactInfoProvider,
             IInfoProvider<AccountInfo> accountInfoProvider,
@@ -384,8 +384,8 @@ namespace Samples.DancingGoat
                 writer.WriteStartSection(ContactInfo.OBJECT_TYPE, "Contact");
                 writer.WriteBaseInfo(contactInfo, contactInfoColumns, TransformGenderValue);
 
-                int countryID = contactInfo.ContactCountryID;
-                int stateID = contactInfo.ContactStateID;
+                var countryID = contactInfo.ContactCountryID;
+                var stateID = contactInfo.ContactStateID;
                 if (countryID != 0)
                 {
                     writer.WriteBaseInfo(countryInfoProvider.Get(countryID), countryInfoColumns);
