@@ -5,7 +5,6 @@ using CMS.Helpers;
 using CMS.Websites;
 
 using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.Core.Bulk;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
