@@ -15,6 +15,9 @@ internal class ElasticSearchBatchResult
     internal HashSet<ElasticSearchIndex> PublishedIndices { get; set; } = [];
 }
 
+/// <summary>
+/// Default implementation of <see cref="IElasticSearchTaskProcessor"/>.
+/// </summary>
 internal class DefaultElasticSearchTaskProcessor(
     IElasticSearchClient elasticSearchClient,
     IEventLogService eventLogService,
@@ -25,8 +28,7 @@ internal class DefaultElasticSearchTaskProcessor(
     /// <inheritdoc />
     public async Task<int> ProcessElasticSearchTasks(IEnumerable<ElasticSearchQueueItem> queueItems, CancellationToken cancellationToken, int maximumBatchSize = 100)
     {
-        ElasticSearchBatchResult batchResults = new();
-
+        var batchResults = new ElasticSearchBatchResult();
         var batches = queueItems.Batch(maximumBatchSize);
 
         foreach (var batch in batches)
@@ -45,12 +47,18 @@ internal class DefaultElasticSearchTaskProcessor(
         {
             try
             {
-                var deleteIds = new List<string>();
+                if (ElasticSearchIndexStore.Instance.GetIndex(group.Key) is not { } index)
+                {
+                    eventLogService
+                        .LogError(nameof(DefaultElasticSearchTaskProcessor), nameof(ProcessElasticSearchTasks), "Index instance not exists");
+                    continue;
+                }
+
                 var deleteTasks = group.Where(queueItem => queueItem.TaskType == ElasticSearchTaskType.DELETE).ToList();
-
                 var updateTasks = group.Where(queueItem => queueItem.TaskType is ElasticSearchTaskType.PUBLISH_INDEX or ElasticSearchTaskType.UPDATE);
-                var upsertData = new List<IElasticSearchModel>();
+                var rebuildTasks = group.Where(queueItem => queueItem.TaskType is ElasticSearchTaskType.REBUILD);
 
+                var upsertData = new List<IElasticSearchModel>();
                 foreach (var queueItem in updateTasks)
                 {
                     var document = await GetSearchModel(queueItem);
@@ -64,21 +72,18 @@ internal class DefaultElasticSearchTaskProcessor(
                     }
                 }
 
-                deleteIds.AddRange(GetIdsToDelete(deleteTasks ?? []).Where(x => x is not null).Select(x => x ?? string.Empty));
+                var deleteIds = GetIdsToDelete(deleteTasks ?? [])
+                    .Where(x => x is not null)
+                    .Select(x => x ?? string.Empty);
 
-                if (ElasticSearchIndexStore.Instance.GetIndex(group.Key) is { } index)
-                {
-                    previousBatchResults.SuccessfulOperations += await elasticSearchClient.DeleteRecordsAsync(deleteIds, group.Key, cancellationToken);
-                    previousBatchResults.SuccessfulOperations += await elasticSearchClient.UpsertRecords(upsertData, group.Key, cancellationToken);
+                await ProcessRebuildTasks(elasticSearchClient, rebuildTasks, cancellationToken);
 
-                    if (group.Any(t => t.TaskType == ElasticSearchTaskType.PUBLISH_INDEX) && !previousBatchResults.PublishedIndices.Any(x => x.IndexName == index.IndexName))
-                    {
-                        previousBatchResults.PublishedIndices.Add(index);
-                    }
-                }
-                else
+                previousBatchResults.SuccessfulOperations += await elasticSearchClient.DeleteRecordsAsync(deleteIds, group.Key, cancellationToken);
+                previousBatchResults.SuccessfulOperations += await elasticSearchClient.UpsertRecordsAsync(upsertData, group.Key, cancellationToken);
+
+                if (group.Any(t => t.TaskType == ElasticSearchTaskType.PUBLISH_INDEX) && !previousBatchResults.PublishedIndices.Any(x => x.IndexName == index.IndexName))
                 {
-                    eventLogService.LogError(nameof(DefaultElasticSearchTaskProcessor), nameof(ProcessElasticSearchTasks), "Index instance not exists");
+                    previousBatchResults.PublishedIndices.Add(index);
                 }
             }
             catch (Exception ex)
@@ -88,16 +93,28 @@ internal class DefaultElasticSearchTaskProcessor(
         }
     }
 
-    private static IEnumerable<string?> GetIdsToDelete(IEnumerable<ElasticSearchQueueItem> deleteTasks) => deleteTasks.Select(queueItem => queueItem.ItemToIndex.ItemGuid.ToString());
+    #region Private methods
+
+    private static async Task ProcessRebuildTasks(IElasticSearchClient elasticSearchClient, IEnumerable<ElasticSearchQueueItem> rebuildTasks, CancellationToken cancellationToken)
+    {
+        var rebuildIndexName = rebuildTasks.Select(task => task.IndexName).FirstOrDefault();
+        if (!string.IsNullOrEmpty(rebuildIndexName))
+        {
+            await elasticSearchClient.RebuildAsync(rebuildIndexName, cancellationToken);
+        }
+    }
+
+    private static IEnumerable<string?> GetIdsToDelete(IEnumerable<ElasticSearchQueueItem> deleteTasks) => deleteTasks.Select(queueItem => queueItem.ItemToIndex?.ItemGuid.ToString());
 
     private async Task<IElasticSearchModel?> GetSearchModel(ElasticSearchQueueItem queueItem)
     {
-        var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetRequiredIndex(queueItem.IndexName);
+        if (queueItem.ItemToIndex is null)
+        {
+            return null;
+        }
 
-        var strategy = serviceProvider.GetRequiredStrategy(elasticSearchIndex);
-
+        var strategy = serviceProvider.GetRequiredStrategy(ElasticSearchIndexStore.Instance.GetRequiredIndex(queueItem.IndexName));
         var data = await strategy.MapToElasticSearchModelOrNull(queueItem.ItemToIndex);
-
         if (data is null)
         {
             return null;
@@ -130,4 +147,6 @@ internal class DefaultElasticSearchTaskProcessor(
             }
         }
     }
+
+    #endregion
 }

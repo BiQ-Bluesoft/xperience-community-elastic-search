@@ -117,7 +117,7 @@ internal class IndexAliasListingPage(
 
             try
             {
-                await elasticSearchClient.Rebuild(index.IndexName, cancellationToken);
+                await elasticSearchClient.StartRebuildAsync(index.IndexName, cancellationToken);
             }
             catch (Exception ex)
             {

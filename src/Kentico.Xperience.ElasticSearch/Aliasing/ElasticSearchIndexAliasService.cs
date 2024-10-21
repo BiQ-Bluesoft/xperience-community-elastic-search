@@ -6,50 +6,42 @@ using Elastic.Clients.Elasticsearch.IndexManagement;
 namespace Kentico.Xperience.ElasticSearch.Aliasing
 {
     internal class ElasticSearchIndexAliasService(
-         ElasticsearchClient indexClient,
+        ElasticsearchClient indexClient,
         IEventLogService eventLogService) : IElasticSearchIndexAliasService
     {
         /// <inheritdoc />
         public async Task EditAliasAsync(string oldAliasName, string newAliasName, IEnumerable<string> newAliasIndices,
             CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(oldAliasName))
-            {
-                throw new ArgumentNullException(nameof(oldAliasName));
-            }
+            ValidateNonEmptyAliasName(oldAliasName);
 
             await DeleteAliasAsync(oldAliasName, cancellationToken);
 
-            await CreateAliasAsync(oldAliasName, newAliasName, newAliasIndices, cancellationToken);
+            await CreateAliasAsync(newAliasName, newAliasIndices, cancellationToken);
         }
 
         /// <inheritdoc />
         public async Task DeleteAliasAsync(string aliasName, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(aliasName))
-            {
-                throw new ArgumentNullException(nameof(aliasName));
-            }
+            ValidateNonEmptyAliasName(aliasName);
 
             var getAliasResponse = await indexClient.Indices
                 .GetAliasAsync(alias => alias.Name(aliasName), cancellationToken);
 
-            var aliasActions = new List<IndexUpdateAliasesAction>();
             if (getAliasResponse.IsValidResponse && getAliasResponse.Aliases.Any())
             {
-                foreach (var index in getAliasResponse.Aliases)
-                {
-                    aliasActions.Add(IndexUpdateAliasesAction.Remove(new RemoveAction
+                var aliasActions = getAliasResponse.Aliases.Select(index =>
+                    IndexUpdateAliasesAction.Remove(new RemoveAction
                     {
                         Alias = aliasName,
-                        Index = index.Key,
-                    }));
-                }
+                        Index = index.Key
+                    })).ToList();
 
                 var deleteAliasResponse = await indexClient.Indices.UpdateAliasesAsync(new UpdateAliasesRequest
                 {
                     Actions = aliasActions,
                 }, cancellationToken);
+
                 if (!deleteAliasResponse.IsValidResponse)
                 {
                     // Additional work - Discuss whether exception should be thrown or logging the error is enough.
@@ -61,17 +53,35 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
             }
         }
 
-        private async Task CreateAliasAsync(string oldAliasName, string newAliasName, IEnumerable<string> newAliasIndices, CancellationToken cancellationToken)
+        /// <inheritdoc />
+        public async Task AddAliasAsync(string aliasName, string indexName, CancellationToken cancellationToken)
         {
-            var aliasActions = new List<IndexUpdateAliasesAction>();
-            foreach (var index in newAliasIndices)
+            ValidateNonEmptyAliasName(aliasName);
+
+            ValidationNonEmptyIndexName(indexName);
+
+            var putAliasReponse = await indexClient.Indices
+                .PutAliasAsync(new PutAliasRequest(indexName, aliasName), cancellationToken);
+            if (!putAliasReponse.IsValidResponse)
             {
-                aliasActions.Add(IndexUpdateAliasesAction.Add(new AddAction
+                eventLogService.LogError(
+                        nameof(AddAliasAsync),
+                        "ELASTIC_SEARCH",
+                        $"Unable to add alias with name: {aliasName} for index with name: {indexName}. Operation failed with error: {putAliasReponse.DebugInformation}");
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task CreateAliasAsync(string aliasName, IEnumerable<string> aliasIndices, CancellationToken cancellationToken)
+        {
+            ValidateNonEmptyAliasName(aliasName);
+
+            var aliasActions = aliasIndices.Select(index =>
+                IndexUpdateAliasesAction.Add(new AddAction
                 {
                     Index = index,
-                    Alias = newAliasName,
-                }));
-            }
+                    Alias = aliasName
+                })).ToList();
 
             var createAliasResponse = await indexClient.Indices.UpdateAliasesAsync(
                 new UpdateAliasesRequest
@@ -82,15 +92,32 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
 
             if (!createAliasResponse.IsValidResponse)
             {
-                // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
-                    nameof(EditAliasAsync),
+                    nameof(CreateAliasAsync),
                     "ELASTIC_SEARCH",
-                    $"Unable to edit alias with name: {oldAliasName}\n" +
-                    $"- new alias name: {newAliasName}\n" +
-                    $"- new indices: {newAliasIndices}." +
+                    $"Unable to create alias with name: {aliasName}\n" +
+                    $"- indices: {aliasIndices}." +
                     $"Operation failed with error: {createAliasResponse.DebugInformation}");
             }
         }
+
+        #region Private methods
+
+        private static void ValidateNonEmptyAliasName(string aliasName)
+        {
+            if (string.IsNullOrEmpty(aliasName))
+            {
+                throw new ArgumentNullException(nameof(aliasName));
+            }
+        }
+        private static void ValidationNonEmptyIndexName(string indexName)
+        {
+            if (string.IsNullOrEmpty(indexName))
+            {
+                throw new ArgumentNullException(nameof(indexName));
+            }
+        }
+
+        #endregion
     }
 }

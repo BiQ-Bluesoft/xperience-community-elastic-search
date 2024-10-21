@@ -27,6 +27,7 @@ internal class IndexAliasCreatePage(
     IElasticSearchConfigurationStorageService storageService,
     IPageLinkGenerator pageLinkGenerator) : BaseIndexAliasEditPage(formItemCollectionProvider, formDataBinder, elasticSearchIndexAliasService, storageService)
 {
+
     private ElasticSearchAliasConfigurationModel? model = null;
 
     protected override ElasticSearchAliasConfigurationModel Model
@@ -50,12 +51,17 @@ internal class IndexAliasCreatePage(
             {
                 { typeof(IndexAliasEditPage), alias.Identifier }
             };
+
             var successResponse = NavigateTo(pageLinkGenerator.GetPath<IndexAliasEditPage>(pageParameters))
                 .AddSuccessMessage("Index alias created.");
-
             return successResponse;
         }
 
+        return CreateErrorResponse(result);
+    }
+
+    private ICommandResponse CreateErrorResponse(ModificationResponse result)
+    {
         var errorResponse = ResponseFrom(new FormSubmissionResult(FormSubmissionStatus.ValidationFailure));
 
         if (result.ErrorMessages is not null)

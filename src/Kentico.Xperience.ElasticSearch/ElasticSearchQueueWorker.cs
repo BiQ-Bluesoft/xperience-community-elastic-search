@@ -31,12 +31,16 @@ internal class ElasticSearchQueueWorker : ThreadQueueWorker<ElasticSearchQueueIt
     /// <exception cref="InvalidOperationException" />
     public static void EnqueueElasticSearchQueueItem(ElasticSearchQueueItem queueItem)
     {
-        if ((queueItem.ItemToIndex == null && queueItem.TaskType != ElasticSearchTaskType.PUBLISH_INDEX) || string.IsNullOrEmpty(queueItem.IndexName))
+        // Don't enqueue items that cannot be processed.
+        if (string.IsNullOrEmpty(queueItem.IndexName) || queueItem.TaskType == ElasticSearchTaskType.UNKNOWN)
         {
             return;
         }
 
-        if (queueItem.TaskType == ElasticSearchTaskType.UNKNOWN)
+        // Don't enqueue items that require item to index to be processed correctly, but it is empty.
+        if (queueItem.ItemToIndex == null &&
+                queueItem.TaskType != ElasticSearchTaskType.PUBLISH_INDEX &&
+                queueItem.TaskType != ElasticSearchTaskType.REBUILD)
         {
             return;
         }

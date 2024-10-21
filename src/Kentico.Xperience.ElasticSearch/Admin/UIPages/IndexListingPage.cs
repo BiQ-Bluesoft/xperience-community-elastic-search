@@ -163,7 +163,7 @@ internal class IndexListingPage(
         }
         try
         {
-            await elasticSearchClient.Rebuild(index.IndexName, cancellationToken);
+            await elasticSearchClient.StartRebuildAsync(index.IndexName, cancellationToken);
 
             return ResponseFrom(result)
                 .AddSuccessMessage("Indexing in progress. Visit your ElasticSearch dashboard for details about the indexing process.");
@@ -189,7 +189,7 @@ internal class IndexListingPage(
         }
         try
         {
-            await elasticSearchClient.DeleteIndex(index.IndexName, cancellationToken);
+            await elasticSearchClient.DeleteIndexAsync(index.IndexName, cancellationToken);
             var res = configurationStorageService.TryDeleteIndex(id);
             if (res)
             {

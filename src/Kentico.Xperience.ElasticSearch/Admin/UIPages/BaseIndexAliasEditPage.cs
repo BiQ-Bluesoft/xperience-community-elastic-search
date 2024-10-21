@@ -43,41 +43,18 @@ internal abstract class BaseIndexAliasEditPage(
 
         if (StorageService.GetAliasIds().Exists(x => x == configuration.Id))
         {
-            var oldAliasName = StorageService.GetAliasDataOrNull(configuration.Id)!.AliasName;
-
-            var edited = StorageService.TryEditAlias(configuration);
-
-            if (edited)
-            {
-                ElasticSearchIndexAliasStore.SetAliases(StorageService);
-                await elasticSearchIndexAliasService.EditAliasAsync(oldAliasName, configuration.AliasName, configuration.IndexNames, default);
-
-                return new ModificationResponse(ModificationResult.Success);
-            }
-
-            return new ModificationResponse(ModificationResult.Failure);
+            return await ProcessExistingAlias(configuration);
         }
 
-        var created = !configuration.IndexNames.IsNullOrEmpty() && StorageService.TryCreateAlias(configuration);
-
-        if (created)
-        {
-            ElasticSearchIndexAliasStore.Instance.AddAlias(new ElasticSearchIndexAlias(configuration));
-
-            return new ModificationResponse(ModificationResult.Success);
-        }
-
-        return new ModificationResponse(ModificationResult.Failure);
+        return await ProcessNewAlias(configuration);
     }
 
     protected static string RemoveWhitespacesUsingStringBuilder(string source)
     {
         var builder = new StringBuilder(source.Length);
 
-        for (var i = 0; i < source.Length; i++)
+        foreach (var c in source)
         {
-            var c = source[i];
-
             if (!char.IsWhiteSpace(c))
             {
                 builder.Append(c);
@@ -85,5 +62,33 @@ internal abstract class BaseIndexAliasEditPage(
         }
 
         return source.Length == builder.Length ? source : builder.ToString();
+    }
+
+    private async Task<ModificationResponse> ProcessNewAlias(ElasticSearchAliasConfigurationModel configuration)
+    {
+        if (!configuration.IndexNames.IsNullOrEmpty() && StorageService.TryCreateAlias(configuration))
+        {
+            ElasticSearchIndexAliasStore.Instance.AddAlias(new ElasticSearchIndexAlias(configuration));
+            await elasticSearchIndexAliasService.CreateAliasAsync(configuration.AliasName, configuration.IndexNames, default);
+
+            return new ModificationResponse(ModificationResult.Success);
+        }
+
+        return new ModificationResponse(ModificationResult.Failure);
+    }
+
+    private async Task<ModificationResponse> ProcessExistingAlias(ElasticSearchAliasConfigurationModel configuration)
+    {
+        var oldAliasName = StorageService.GetAliasDataOrNull(configuration.Id)!.AliasName;
+
+        if (StorageService.TryEditAlias(configuration))
+        {
+            ElasticSearchIndexAliasStore.SetAliases(StorageService);
+            await elasticSearchIndexAliasService.EditAliasAsync(oldAliasName, configuration.AliasName, configuration.IndexNames, default);
+
+            return new ModificationResponse(ModificationResult.Success);
+        }
+
+        return new ModificationResponse(ModificationResult.Failure);
     }
 }

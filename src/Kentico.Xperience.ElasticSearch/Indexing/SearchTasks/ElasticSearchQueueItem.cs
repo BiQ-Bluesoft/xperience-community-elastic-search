@@ -11,7 +11,7 @@ public sealed class ElasticSearchQueueItem
     /// <summary>
     /// The <see cref="IIndexEventItemModel"/> that was changed.
     /// </summary>
-    public IIndexEventItemModel ItemToIndex { get; }
+    public IIndexEventItemModel? ItemToIndex { get; }
 
     /// <summary>
     /// The type of the ElasticSearch task.
@@ -30,14 +30,16 @@ public sealed class ElasticSearchQueueItem
     /// <param name="taskType">The type of the ElasticSearch task.</param>
     /// <param name="indexName">The code name of the ElasticSearch index to be updated.</param>
     /// <exception cref="ArgumentNullException" />
-    public ElasticSearchQueueItem(IIndexEventItemModel itemToIndex, ElasticSearchTaskType taskType, string indexName)
+    public ElasticSearchQueueItem(IIndexEventItemModel? itemToIndex, ElasticSearchTaskType taskType, string indexName)
     {
         if (string.IsNullOrEmpty(indexName))
         {
             throw new ArgumentNullException(nameof(indexName));
         }
 
-        if (taskType != ElasticSearchTaskType.PUBLISH_INDEX && itemToIndex == null)
+        if (taskType != ElasticSearchTaskType.PUBLISH_INDEX &&
+            taskType != ElasticSearchTaskType.REBUILD &&
+            itemToIndex == null)
         {
             throw new ArgumentNullException(nameof(itemToIndex));
         }

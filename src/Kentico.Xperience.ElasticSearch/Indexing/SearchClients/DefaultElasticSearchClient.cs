@@ -7,6 +7,7 @@ using CMS.Websites;
 using Elastic.Clients.Elasticsearch;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Aliasing;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
@@ -26,32 +27,16 @@ internal class DefaultElasticSearchClient(
     IConversionService conversionService,
     IProgressiveCache cache,
     ElasticsearchClient searchIndexClient,
-    IEventLogService eventLogService) : IElasticSearchClient
+    IEventLogService eventLogService,
+    IElasticSearchIndexAliasService elasticSearchIndexAliasService) : IElasticSearchClient
 {
-    /// <inheritdoc />
-    public async Task<int> DeleteRecordsAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrEmpty(indexName))
-        {
-            throw new ArgumentNullException(nameof(indexName));
-        }
-
-        if (!itemGuids.Any())
-        {
-            return await Task.FromResult(0);
-        }
-
-        return await DeleteRecordsInternalAsync(itemGuids, indexName, cancellationToken);
-    }
-
 
     /// <inheritdoc/>
     public async Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(CancellationToken cancellationToken)
     {
         var indices = ElasticSearchIndexStore.Instance.GetAllIndices();
 
-        var stats = new List<ElasticSearchIndexStatisticsViewModel>();
-
+        var statistics = new List<ElasticSearchIndexStatisticsViewModel>();
         foreach (var index in indices)
         {
             var indexClient = await elasticSearchIndexClientService.InitializeIndexClient(index.IndexName, cancellationToken);
@@ -59,77 +44,51 @@ internal class DefaultElasticSearchClient(
             var countResponse = await indexClient.CountAsync<IElasticSearchModel>(c => c.Indices(index.IndexName), cancellationToken);
             if (!countResponse.IsValidResponse)
             {
-                // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
                     nameof(GetStatisticsAsync),
                     "ELASTIC_SEARCH",
                     $"Unable to fetch statistics for index with name {index.IndexName}. Operation failed with error: {countResponse.DebugInformation}");
             }
 
-            stats.Add(new ElasticSearchIndexStatisticsViewModel()
+            statistics.Add(new ElasticSearchIndexStatisticsViewModel()
             {
                 Name = index.IndexName,
                 Entries = countResponse.Count
             });
         }
 
-        return stats;
+        return statistics;
     }
 
     /// <inheritdoc />
-    public Task Rebuild(string indexName, CancellationToken? cancellationToken)
+    public async Task DeleteIndexAsync(string indexName, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(indexName))
-        {
-            throw new ArgumentNullException(nameof(indexName));
-        }
-
-        var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetRequiredIndex(indexName);
-        return RebuildInternalAsync(elasticSearchIndex, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public async Task DeleteIndex(string indexName, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrEmpty(indexName))
-        {
-            throw new ArgumentNullException(nameof(indexName));
-        }
+        ValidateIndexWithNameExists(indexName);
 
         await searchIndexClient.Indices.DeleteAsync(indexName, cancellationToken);
     }
 
     /// <inheritdoc />
-    public Task<int> UpsertRecords(IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken)
+    public async Task<int> DeleteRecordsAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(indexName))
+        ValidateIndexWithNameExists(indexName);
+
+        if (!itemGuids.Any())
         {
-            throw new ArgumentNullException(nameof(indexName));
+            return await Task.FromResult(0);
         }
 
-        if (models == null || !models.Any())
+        var bulkDeleteResponse = await searchIndexClient.BulkAsync(bulk =>
         {
-            return Task.FromResult(0);
-        }
-
-        return UpsertRecordsInternalAsync(models, indexName, cancellationToken);
-    }
-
-    private async Task<int> DeleteRecordsInternalAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken)
-    {
-        var bulkDeleteResponse = await searchIndexClient
-            .BulkAsync(bulk =>
+            foreach (var guid in itemGuids)
             {
-                foreach (var guid in itemGuids)
-                {
-                    bulk.Delete(guid, d => d.Index(indexName));
-                }
-            }, cancellationToken);
+                bulk.Delete(guid, d => d.Index(indexName));
+            }
+        }, cancellationToken);
 
         if (!bulkDeleteResponse.IsValidResponse)
         {
-            // Additional work - Discuss whether exception should be thrown or logging the error is enough.
-            eventLogService.LogError(nameof(DeleteRecordsInternalAsync),
+            eventLogService.LogError(nameof(DeleteRecordsAsync),
                 "ELASTIC_SEARCH",
                 $"Unable to delete records with guids: {itemGuids} from index with name {indexName}. Operation failed with error: {bulkDeleteResponse.DebugInformation}");
         }
@@ -137,7 +96,88 @@ internal class DefaultElasticSearchClient(
         return bulkDeleteResponse.Items.Count(item => item.Status == 200);
     }
 
-    private async Task RebuildInternalAsync(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
+    /// <inheritdoc />
+    public async Task<int> UpsertRecordsAsync(IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken)
+    {
+        ValidateIndexWithNameExists(indexName);
+
+        if (models == null || !models.Any())
+        {
+            return 0;
+        }
+
+        var searchClient = await elasticSearchIndexClientService.InitializeIndexClient(indexName, cancellationToken);
+        var elasticIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName) ??
+            throw new InvalidOperationException($"Registered index with name '{indexName}' doesn't exist.");
+
+        var strategy = serviceProvider.GetRequiredStrategy(elasticIndex);
+        return await strategy.UploadDocumentsAsync(models, searchClient, indexName);
+    }
+
+    /// <inheritdoc />
+    public async Task StartRebuildAsync(string indexName, CancellationToken? cancellationToken)
+    {
+        ValidateIndexWithNameExists(indexName);
+
+        var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetRequiredIndex(indexName);
+
+        var indexedItems = await FetchContentForRebuildAsync(executor, elasticSearchIndex, cancellationToken);
+        EnqueueRebuildTasksAsync(elasticSearchIndex, indexedItems);
+    }
+
+    /// <inheritdoc />
+    public async Task RebuildAsync(string indexName, CancellationToken cancellationToken)
+    {
+        ValidateIndexWithNameExists(indexName);
+
+        // Retrieve existing aliases
+        var getAliasResponse = await searchIndexClient.Indices
+            .GetAliasAsync(alias => alias.Indices(indexName), cancellationToken);
+        if (!getAliasResponse.IsValidResponse)
+        {
+            eventLogService.LogError(nameof(RebuildAsync),
+                "ELASTIC_SEARCH",
+                $"Unable to retrieve aliases for index with name {indexName}. Operation failed with error: {getAliasResponse.DebugInformation}");
+        }
+        var aliases = getAliasResponse.Aliases.Values.SelectMany(val => val.Aliases.Keys);
+
+        // Delete index in elastic
+        await DeleteIndexAsync(indexName, cancellationToken);
+
+        // Create index in elastic
+        var elasticIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName) ??
+            throw new InvalidOperationException($"Registered index with name '{indexName}' doesn't exist.");
+
+        var strategy = serviceProvider.GetRequiredStrategy(elasticIndex);
+        await strategy.CreateIndexInternalAsync(searchIndexClient, indexName, cancellationToken);
+
+        // Reassign aliases
+        if (aliases.Any())
+        {
+            foreach (var alias in aliases)
+            {
+                await elasticSearchIndexAliasService.AddAliasAsync(alias, indexName, cancellationToken);
+            }
+        }
+    }
+
+    #region Private methods
+
+    private static void ValidateIndexWithNameExists(string indexName)
+    {
+        if (string.IsNullOrEmpty(indexName))
+        {
+            throw new ArgumentNullException(nameof(indexName));
+        }
+    }
+
+    private static void EnqueueRebuildTasksAsync(ElasticSearchIndex elasticSearchIndex, List<IIndexEventItemModel> indexedItems)
+    {
+        ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(null, ElasticSearchTaskType.REBUILD, elasticSearchIndex.IndexName));
+        indexedItems.ForEach(item => ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(item, ElasticSearchTaskType.PUBLISH_INDEX, elasticSearchIndex.IndexName)));
+    }
+
+    private async Task<List<IIndexEventItemModel>> FetchContentForRebuildAsync(IContentQueryExecutor executor, ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
     {
         var indexedItems = new List<IIndexEventItemModel>();
 
@@ -148,29 +188,41 @@ internal class DefaultElasticSearchClient(
                  ? PathMatch.Children(includedPathAttribute.AliasPath[..^2])
                  : PathMatch.Single(includedPathAttribute.AliasPath);
 
-            foreach (var language in elasticSearchIndex.LanguageNames)
-            {
-                if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
-                {
-                    var queryBuilder = new ContentItemQueryBuilder();
-                    foreach (var contentType in includedPathAttribute.ContentTypes)
-                    {
-                        queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(elasticSearchIndex.WebSiteChannelName, includeUrlPath: true, pathMatch: pathMatch));
-                        queryBuilder.InLanguage(language);
-
-                        var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken ?? default);
-
-                        foreach (var page in webpages)
-                        {
-                            var item = await MapToEventItemAsync(page);
-                            indexedItems.Add(item);
-                        }
-                    }
-                }
-            }
+            await AddPageItemsAsync(executor, elasticSearchIndex, cancellationToken, indexedItems, includedPathAttribute, pathMatch);
 
         }
 
+        await AddReusableItemsAsync(executor, elasticSearchIndex, cancellationToken, indexedItems);
+
+        return indexedItems;
+    }
+
+    private async Task AddPageItemsAsync(IContentQueryExecutor executor, ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken, List<IIndexEventItemModel> indexedItems, ElasticSearchIndexIncludedPath includedPathAttribute, PathMatch pathMatch)
+    {
+        foreach (var language in elasticSearchIndex.LanguageNames)
+        {
+            if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
+            {
+                var queryBuilder = new ContentItemQueryBuilder();
+                foreach (var contentType in includedPathAttribute.ContentTypes)
+                {
+                    queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(elasticSearchIndex.WebSiteChannelName, includeUrlPath: true, pathMatch: pathMatch));
+                    queryBuilder.InLanguage(language);
+
+                    var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken ?? default);
+
+                    foreach (var page in webpages)
+                    {
+                        var item = await MapToEventItemAsync(page);
+                        indexedItems.Add(item);
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task AddReusableItemsAsync(IContentQueryExecutor executor, ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken, List<IIndexEventItemModel> indexedItems)
+    {
         foreach (var language in elasticSearchIndex.LanguageNames)
         {
             var queryBuilder = new ContentItemQueryBuilder();
@@ -181,11 +233,9 @@ internal class DefaultElasticSearchClient(
                 {
                     queryBuilder.ForContentType(reusableContentType);
                 }
-
                 queryBuilder.InLanguage(language);
 
                 var reusableItems = await executor.GetResult(queryBuilder, result => result, cancellationToken: cancellationToken ?? default);
-
                 foreach (var reusableItem in reusableItems)
                 {
                     var item = await MapToEventReusableItemAsync(reusableItem);
@@ -193,9 +243,6 @@ internal class DefaultElasticSearchClient(
                 }
             }
         }
-
-        await searchIndexClient.Indices.DeleteAsync(elasticSearchIndex.IndexName, cancellationToken ?? default);
-        indexedItems.ForEach(item => ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(item, ElasticSearchTaskType.PUBLISH_INDEX, elasticSearchIndex.IndexName)));
     }
 
     private async Task<IndexEventWebPageItemModel> MapToEventItemAsync(IWebPageContentQueryDataContainer content)
@@ -243,21 +290,6 @@ internal class DefaultElasticSearchClient(
         return item;
     }
 
-    private async Task<int> UpsertRecordsInternalAsync(IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken)
-    {
-        var upsertedCount = 0;
-        var searchClient = await elasticSearchIndexClientService.InitializeIndexClient(indexName, cancellationToken);
-
-        var elasticIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName) ??
-            throw new InvalidOperationException($"Registered index with name '{indexName}' doesn't exist.");
-
-        var strategy = serviceProvider.GetRequiredStrategy(elasticIndex);
-
-        upsertedCount += await strategy.UploadDocumentsAsync(models, searchClient, indexName);
-
-        return upsertedCount;
-    }
-
     private Task<IEnumerable<ContentLanguageInfo>> GetAllLanguagesAsync() =>
         cache.LoadAsync(async cs =>
         {
@@ -291,4 +323,6 @@ internal class DefaultElasticSearchClient(
 
             return items.AsEnumerable();
         }, new CacheSettings(5, nameof(DefaultElasticSearchClient), nameof(GetAllWebsiteChannelsAsync)));
+
+    #endregion
 }

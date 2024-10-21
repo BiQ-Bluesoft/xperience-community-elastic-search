@@ -23,5 +23,10 @@ public enum ElasticSearchTaskType
     /// <summary>
     /// A task for a page which should be updated
     /// </summary>
-    UPDATE
+    UPDATE,
+
+    /// <summary>
+    /// Task marks the start of rebuilding index, index is deleted and recreated after this task occurs.
+    /// </summary>
+    REBUILD,
 }
