@@ -11,37 +11,31 @@ Your custom implemention of `BaseElasticSearchIndexingStrategy<TSearchModel>>` c
 
 ## Create a SearchModel
 
-Define a custom search model with attribute decorators by extending the `BaseElasticSearchModel` provided by the library, which will be used to create an index in the Elastic administration. Read more about these decorator attributes in Elastic Nest Client [documentation](https://www.elastic.co/guide/en/elasticsearch/client/net-api/2.x/attribute-mapping.html).
-Specify which attribute should be used as a key. You can also use any attribute from the `BaseElasticSearchModel`.
+Define a custom search model with attribute decorators by extending the `BaseElasticSearchModel` provided by the library, which will be used to create an index in the Elastic administration. Read more about these decorator attributes in Elastic Nest Client [documentation](https://www.elastic.co/guide/en/elasticsearch/client/net-api/current/source-serialization.html).
+Specify which attribute should be used as a _id by implementing `GetId()` method if neccessary.
 
 ```csharp
 public class BaseElasticSearchModel : IElasticSearchModel
 {
-    [Text]
     public string? Url { get; set; } = string.Empty;
 
-    [Text]
     public string ContentTypeName { get; set; } = string.Empty;
 
-    [Text]
     public string LanguageName { get; set; } = string.Empty;
 
-    [Keyword]
     public string ItemGuid { get; set; } = string.Empty;
 
-    [Keyword]
     public string ObjectID { get; set; } = string.Empty;
 
-    [Text]
     public string Name { get; set; } = string.Empty;
+
+    public virtual string GetId() => ItemGuid;
 }
 ```
 
 ```csharp
-[ElasticsearchType(IdProperty = nameof(base.ItemGuid))] // specify key attribute
 public class SimpleSearchModel : BaseElasticSearchModel
 {
-    [Text]
     public string Title { get; set; }
 }
 ```

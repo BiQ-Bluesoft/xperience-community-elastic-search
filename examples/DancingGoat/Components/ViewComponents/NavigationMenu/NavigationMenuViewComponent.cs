@@ -28,7 +28,6 @@ namespace DancingGoat.ViewComponents
             navigationViewModels.AddRange(new List<NavigationItemViewModel>
             {
                 new($"Search", "/Search"),
-                new($"{nameof(SearchController.Geo)}Search", $"/Search/{nameof(SearchController.Geo)}"),
                 new($"{nameof(SearchController.Simple)}Search", $"/Search/{nameof(SearchController.Simple)}"),
             });
 

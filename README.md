@@ -10,7 +10,7 @@ This integration enables you to create [ElasticSearch](https://www.elastic.co/) 
 
 - [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download)
 - [Xperience by Kentico](https://docs.xperience.io/xp/changelog)
-- [NEST (Elasticsearch .NET Client)](https://github.com/elastic/elasticsearch-net)
+- [Elasticsearch .NET Client](https://www.elastic.co/guide/en/elasticsearch/client/net-api/current/index.html)
 
 ## Package Installation
 

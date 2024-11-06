@@ -21,49 +21,52 @@ public class ExampleSearchModel : BaseElasticSearchModel
 Execute a search with custom Elastic `SearchOptions` using the `IElasticSearchQueryClientService`. Specify Search options and select data which will be retrieved from the Elastic Index.
 
 ```csharp
-public class ExampleSearchService
+public class ExampleSearchService(IElasticSearchQueryClientService searchClientService)
 {
-    private readonly IElasticSearchQueryClientService searchClientService;
-
-    public ExampleSearchService(IElasticSearchQueryClientService searchClientService) => this.searchClientService = searchClientService;
-
         public async Task<DancingGoatSearchViewModel> GlobalSearch(
         string indexName,
         string searchText,
         int page = 1,
         int pageSize = 10)
-    {
-        var index = searchClientService.CreateSearchClientForQueries(indexName);
-
-        page = Math.Max(page, 1);
-        pageSize = Math.Max(1, pageSize);
-
-        var response = await index.SearchAsync<DancingGoatSearchModel>(s => s
-            .From((page - 1) * pageSize)
-            .Size(pageSize)
-            .Source(src => src
-                .Includes(i => i
-                    .Fields(f => f.Title, f => f.Url)))
-            .Query(q => q
-                .MultiMatch(mm => mm
-                    .Fields(f => f
-                        .Field(p => p.Title)
-                        .Field(p => p.Url))
-                    .Query(searchText))));
-
-        return new DancingGoatSearchViewModel()
         {
-            Hits = response.Hits.Select(x => new DancingGoatSearchResult()
+            var index = searchClientService.CreateSearchClientForQueries(indexName);
+
+            page = Math.Max(page, 1);
+            pageSize = Math.Max(1, pageSize);
+
+            var request = new SearchRequest(indexName)
             {
-                Title = x.Source.Title,
-                Url = x.Source.Url,
-            }),
-            TotalHits = (int)response.Total,
-            Query = searchText,
-            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
-            PageSize = pageSize,
-            Page = page
-        };
+                From = (page - 1) * pageSize,
+                Size = pageSize,
+                Query = string.IsNullOrEmpty(searchText)
+                    ? new MatchAllQuery()
+                    : new MultiMatchQuery()
+                    {
+                        Fields = new[]
+                        {
+                            nameof(DancingGoatSearchModel.Title).ToLower(),
+                        },
+                        Query = searchText,
+                    },
+                TrackTotalHits = new TrackHits(true)
+            };
+
+            var response = await index.SearchAsync<DancingGoatSearchModel>(request);
+            return new DancingGoatSearchViewModel()
+            {
+                Hits = response.Hits.Select(x => new DancingGoatSearchResult()
+                {
+                    Title = x.Source.Title,
+                    Url = x.Source.Url,
+                }),
+                TotalHits = (int)response.Total,
+                Query = searchText,
+                TotalPages = (int)response.Total <= 0 
+                    ? 0 
+                    : (((int)response.Total - 1) /pageSize) + 1,
+                PageSize = pageSize,
+                Page = page
+            };
     }
 }
 ```

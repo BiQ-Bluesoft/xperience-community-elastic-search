@@ -17,7 +17,7 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
         page = Math.Max(page, 1);
         pageSize = Math.Max(1, pageSize);
 
-        var request = new SearchRequest()
+        var request = new SearchRequest(indexName)
         {
             From = (page - 1) * pageSize,
             Size = pageSize,
@@ -82,74 +82,6 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
             {
                 Title = x.Title,
                 Url = x.Url,
-            }),
-            TotalHits = (int)response.Total,
-            Query = searchText,
-            TotalPages = (int)response.Total <= 0 ? 0 : (((int)response.Total - 1) / pageSize) + 1,
-            PageSize = pageSize,
-            Page = page
-        };
-    }
-
-    public async Task<GeoLocationSearchViewModel> GeoSearch(
-        string indexName,
-        string searchText,
-        double latitude,
-        double longitude,
-        bool sortByDistance = true,
-        int page = 1,
-        int pageSize = 10
-        )
-    {
-        var index = searchClientService.CreateSearchClientForQueries(indexName);
-
-        page = Math.Max(page, 1);
-        pageSize = Math.Max(1, pageSize);
-
-        var request = new SearchRequest()
-        {
-            From = (page - 1) * pageSize,
-            Size = pageSize,
-            Query = string.IsNullOrEmpty(searchText)
-                ? new MatchAllQuery()
-                : new MultiMatchQuery()
-                {
-                    Fields = new[]
-                    {
-                        nameof(GeoLocationSearchModel.Title).ToLower(),
-                        nameof(GeoLocationSearchModel.Url).ToLower()
-                    },
-                    Query = searchText,
-                },
-            Sort = sortByDistance
-                ? new[]
-                {
-                    SortOptions.GeoDistance(new GeoDistanceSort
-                    {
-                        Field = Infer.Field<GeoLocationSearchModel>(p => p.GeoLocation),
-                        DistanceType = GeoDistanceType.Arc,
-                        Order = SortOrder.Asc,
-                        Location = new []
-                        {
-                            GeoLocation.LatitudeLongitude(new LatLonGeoLocation
-                            {
-                                Lat = latitude,
-                                Lon = longitude,
-                            })
-                        }
-                    })
-                }
-                : null
-        };
-
-        var response = await index.SearchAsync<GeoLocationSearchModel>(request);
-        return new GeoLocationSearchViewModel
-        {
-            Hits = response.Hits.Select(x => new GeoLocationSearchResult()
-            {
-                Title = x.Source.Title,
-                Url = x.Source.Url,
-                Location = x.Source.Location,
             }),
             TotalHits = (int)response.Total,
             Query = searchText,
