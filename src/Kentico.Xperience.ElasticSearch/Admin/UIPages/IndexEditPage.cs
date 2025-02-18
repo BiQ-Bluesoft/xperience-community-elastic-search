@@ -7,6 +7,8 @@ using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
+using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
+
 [assembly: UIPage(
    parentType: typeof(IndexListingPage),
    slug: PageParameterConstants.PARAMETERIZED_SLUG,
@@ -19,7 +21,7 @@ namespace Kentico.Xperience.ElasticSearch.Admin;
 
 [UIEvaluatePermission(SystemPermissions.UPDATE)]
 internal class IndexEditPage(
-    Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
+    IFormItemCollectionProvider formItemCollectionProvider,
     IFormDataBinder formDataBinder,
     IElasticSearchConfigurationStorageService storageService,
     IElasticSearchIndexClientService indexClientService) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, indexClientService)
