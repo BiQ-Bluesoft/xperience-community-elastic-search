@@ -43,6 +43,9 @@ SQL Server 2019 or newer compatible database
 
 Running the sample project requires creating a new Xperience by Kentico database. To create a database follow the instructions in the Xperience documentation on [creating a new database](https://docs.kentico.com/developers-and-admins/installation#create-the-project-database). Don't forget to update connection string in appsettings.json if neccessary.
 
+### Kentico Setup
+To demonstrate the functionality on the Dancing Goat page, it is neccessary to create (See [Managing search indexes](Managing-Indexes.md)) 2 demo indices with names advanced and simple. Without these two indices, search on the live page will always fail.
+
 ### Admin Customization
 
 To run the Sample app Admin customization in development mode, add the following to your [User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-8.0&tabs=windows#secret-manager) for the application.
