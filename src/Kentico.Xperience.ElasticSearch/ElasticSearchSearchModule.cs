@@ -47,8 +47,11 @@ internal class ElasticSearchSearchModule : Module
             elasticSearchTaskLogger = services.GetRequiredService<IElasticSearchTaskLogger>();
 
             WebPageEvents.Publish.Execute += HandleEvent;
+            WebPageEvents.Unpublish.Execute += HandleEvent;
             WebPageEvents.Delete.Execute += HandleEvent;
+
             ContentItemEvents.Publish.Execute += HandleContentItemEvent;
+            ContentItemEvents.Unpublish.Execute += HandleContentItemEvent;
             ContentItemEvents.Delete.Execute += HandleContentItemEvent;
 
             RequestEvents.RunEndRequestTasks.Execute += (sender, eventArgs) => ElasticSearchQueueWorker.Current.EnsureRunningThread();
