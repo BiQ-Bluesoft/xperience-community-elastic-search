@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-using CMS.DataEngine;
+﻿using CMS.DataEngine;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
@@ -31,10 +29,10 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         var newInfo = new ElasticSearchIndexItemInfo
         {
-            ElasticSearchIndexItemIndexName = configuration.IndexName ?? "",
-            ElasticSearchIndexItemChannelName = configuration.ChannelName ?? "",
-            ElasticSearchIndexItemStrategyName = configuration.StrategyName ?? "",
-            ElasticSearchIndexItemRebuildHook = configuration.RebuildHook ?? ""
+            ElasticSearchIndexItemIndexName = configuration.IndexName,
+            ElasticSearchIndexItemChannelName = configuration.ChannelName,
+            ElasticSearchIndexItemStrategyName = configuration.StrategyName,
+            ElasticSearchIndexItemRebuildHook = configuration.RebuildHook
         };
 
         indexProvider.Set(newInfo);
@@ -104,7 +102,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         var aliasInfo = new ElasticSearchIndexAliasItemInfo()
         {
-            ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName ?? string.Empty,
+            ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName,
         };
 
         var indexIds = indexProvider
@@ -267,10 +265,10 @@ internal class DefaultElasticSearchConfigurationStorageService(
         contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId)} = {configuration.Id}"));
         indexAliasIndexProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexAliasIndexItemInfo.ElasticSearchIndexAliasIndexItemIndexItemId)} = {configuration.Id}"));
 
-        indexInfo.ElasticSearchIndexItemRebuildHook = configuration.RebuildHook ?? string.Empty;
-        indexInfo.ElasticSearchIndexItemStrategyName = configuration.StrategyName ?? string.Empty;
-        indexInfo.ElasticSearchIndexItemChannelName = configuration.ChannelName ?? string.Empty;
-        indexInfo.ElasticSearchIndexItemIndexName = configuration.IndexName ?? string.Empty;
+        indexInfo.ElasticSearchIndexItemRebuildHook = configuration.RebuildHook;
+        indexInfo.ElasticSearchIndexItemStrategyName = configuration.StrategyName;
+        indexInfo.ElasticSearchIndexItemChannelName = configuration.ChannelName;
+        indexInfo.ElasticSearchIndexItemIndexName = configuration.IndexName;
 
         indexProvider.Set(indexInfo);
 
@@ -298,7 +296,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
             {
                 var contentInfo = new ElasticSearchContentTypeItemInfo
                 {
-                    ElasticSearchContentTypeItemContentTypeName = contentType.ContentTypeName ?? "",
+                    ElasticSearchContentTypeItemContentTypeName = contentType.ContentTypeName,
                     ElasticSearchContentTypeItemIncludedPathItemId = pathInfo.ElasticSearchIncludedPathItemId,
                     ElasticSearchContentTypeItemIndexItemId = indexInfo.ElasticSearchIndexItemId,
                 };
@@ -328,7 +326,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
             return false;
         }
 
-        aliasInfo.ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName ?? "";
+        aliasInfo.ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName;
 
         var indexIds = indexProvider
             .Get()
