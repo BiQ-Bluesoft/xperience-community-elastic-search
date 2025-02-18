@@ -1,4 +1,5 @@
 ﻿using CMS.Core;
+using CMS.Helpers;
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
@@ -33,8 +34,7 @@ internal class IndexListingPage(
     IElasticSearchClient elasticSearchClient,
     IPageLinkGenerator pageLinkGenerator,
     IOptions<ElasticSearchOptions> elasticSearchOptions,
-    IElasticSearchConfigurationStorageService configurationStorageService,
-    IConversionService conversionService) : ListingPage
+    IElasticSearchConfigurationStorageService configurationStorageService) : ListingPage
 {
     private readonly ElasticSearchOptions elasticSearchOptions = elasticSearchOptions.Value;
 
@@ -137,7 +137,7 @@ internal class IndexListingPage(
 
     private ElasticSearchIndexStatisticsViewModel? GetStatistic(Row row, ICollection<ElasticSearchIndexStatisticsViewModel> statistics)
     {
-        var indexId = conversionService.GetInteger(row.Identifier, 0);
+        var indexId = ValidationHelper.GetInteger(row.Identifier, 0);
         var indexName = ElasticSearchIndexStore.Instance.GetIndex(indexId) is ElasticSearchIndex index
             ? index.IndexName
             : "";

@@ -25,7 +25,6 @@ internal class DefaultElasticSearchClient(
     IServiceProvider serviceProvider,
     IInfoProvider<ContentLanguageInfo> languageProvider,
     IInfoProvider<ChannelInfo> channelProvider,
-    IConversionService conversionService,
     IProgressiveCache cache,
     ElasticsearchClient searchIndexClient,
     IEventLogService eventLogService,
@@ -328,7 +327,9 @@ internal class DefaultElasticSearchClient(
             {
                 if (item.TryGetValue(nameof(WebsiteChannelInfo.WebsiteChannelID), out var channelID) && item.TryGetValue(nameof(ChannelInfo.ChannelName), out var channelName))
                 {
-                    items.Add(new(conversionService.GetInteger(channelID, 0), conversionService.GetString(channelName, string.Empty)));
+                    items.Add(new(
+                        ValidationHelper.GetInteger(channelID, 0),
+                        ValidationHelper.GetString(channelName, string.Empty)));
                 }
             }
 
