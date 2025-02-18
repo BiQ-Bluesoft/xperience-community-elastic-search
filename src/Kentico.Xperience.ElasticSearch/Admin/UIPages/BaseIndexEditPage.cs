@@ -56,7 +56,7 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
 
             if (edited)
             {
-                ElasticSearchIndexStore.SetIndicies(StorageService);
+                ElasticSearchIndexStore.SetIndices(StorageService);
                 await indexClientService.EditIndexAsync(oldIndex!.IndexName, configuration, default);
 
                 return new ModificationResponse(ModificationResult.Success);

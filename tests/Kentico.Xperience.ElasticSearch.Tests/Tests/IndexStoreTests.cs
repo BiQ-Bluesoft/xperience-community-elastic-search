@@ -9,7 +9,7 @@ internal class IndexStoreTests
     [Test]
     public void AddAndGetIndex()
     {
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
 
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.GetIndex("TestIndex", 1));
@@ -24,7 +24,7 @@ internal class IndexStoreTests
     [Test]
     public void AddIndex_AlreadyExists()
     {
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         var hasThrown = false;
@@ -42,12 +42,12 @@ internal class IndexStoreTests
     }
 
     [Test]
-    public void SetIndicies()
+    public void SetIndices()
     {
         var defaultIndex = new ElasticSearchConfigurationModel { IndexName = "DefaultIndex", Id = 0 };
         var simpleIndex = new ElasticSearchConfigurationModel { IndexName = "SimpleIndex", Id = 1 };
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>() { defaultIndex, simpleIndex });
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>() { defaultIndex, simpleIndex });
 
         Assert.Multiple(() =>
         {

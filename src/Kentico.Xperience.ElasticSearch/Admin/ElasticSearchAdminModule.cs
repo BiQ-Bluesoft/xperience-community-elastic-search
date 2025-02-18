@@ -50,7 +50,7 @@ internal class ElasticSearchAdminModule : AdminModule
     {
         installer.Install();
 
-        ElasticSearchIndexStore.SetIndicies(storageService);
+        ElasticSearchIndexStore.SetIndices(storageService);
         ElasticSearchIndexAliasStore.SetAliases(storageService);
     }
 }

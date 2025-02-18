@@ -78,10 +78,10 @@ public sealed class ElasticSearchIndexStore
     }
 
     /// <summary>
-    /// Resets all indicies
+    /// Resets all indices
     /// </summary>
     /// <param name="models"></param>
-    internal void SetIndicies(IEnumerable<ElasticSearchConfigurationModel> models)
+    internal void SetIndices(IEnumerable<ElasticSearchConfigurationModel> models)
     {
         registeredIndexes.Clear();
 
@@ -92,13 +92,13 @@ public sealed class ElasticSearchIndexStore
     }
 
     /// <summary>
-    /// Sets the current indicies to those provided by <paramref name="configurationService"/>
+    /// Sets the current indices to those provided by <paramref name="configurationService"/>
     /// </summary>
     /// <param name="configurationService"></param>
-    internal static void SetIndicies(IElasticSearchConfigurationStorageService configurationService)
+    internal static void SetIndices(IElasticSearchConfigurationStorageService configurationService)
     {
         var indices = configurationService.GetAllIndexData();
 
-        Instance.SetIndicies(indices);
+        Instance.SetIndices(indices);
     }
 }

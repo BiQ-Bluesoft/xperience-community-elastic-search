@@ -194,7 +194,7 @@ internal class IndexListingPage(
             var res = configurationStorageService.TryDeleteIndex(id);
             if (res)
             {
-                ElasticSearchIndexStore.SetIndicies(configurationStorageService);
+                ElasticSearchIndexStore.SetIndices(configurationStorageService);
             }
             else
             {

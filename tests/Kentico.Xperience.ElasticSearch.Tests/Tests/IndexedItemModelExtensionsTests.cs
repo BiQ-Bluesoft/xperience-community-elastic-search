@@ -18,7 +18,7 @@ internal class IndexedItemModelExtensionsTests
         Service.InitializeContainer();
         var log = Substitute.For<IEventLogService>();
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         var fixture = new Fixture();
@@ -44,7 +44,7 @@ internal class IndexedItemModelExtensionsTests
 
         index.IncludedPaths = new List<ElasticSearchIndexIncludedPath>() { path };
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(index);
 
         Assert.That(model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
@@ -66,7 +66,7 @@ internal class IndexedItemModelExtensionsTests
 
         index.IncludedPaths = new List<ElasticSearchIndexIncludedPath>() { path };
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
@@ -88,7 +88,7 @@ internal class IndexedItemModelExtensionsTests
 
         index.IncludedPaths = new List<ElasticSearchIndexIncludedPath>() { path };
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
@@ -106,7 +106,7 @@ internal class IndexedItemModelExtensionsTests
         var model = MockDataProvider.WebModel(item);
         model.ContentTypeName = "DancingGoat.HomePage";
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));
@@ -123,7 +123,7 @@ internal class IndexedItemModelExtensionsTests
 
         var model = MockDataProvider.WebModel(item);
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         Assert.That(!MockDataProvider.WebModel(model).IsIndexedByIndex(log, "NewIndex", MockDataProvider.EventName));
@@ -141,7 +141,7 @@ internal class IndexedItemModelExtensionsTests
         var model = MockDataProvider.WebModel(item);
         model.LanguageName = "sk";
 
-        ElasticSearchIndexStore.Instance.SetIndicies(new List<ElasticSearchConfigurationModel>());
+        ElasticSearchIndexStore.Instance.SetIndices(new List<ElasticSearchConfigurationModel>());
         ElasticSearchIndexStore.Instance.AddIndex(MockDataProvider.Index);
 
         Assert.That(!model.IsIndexedByIndex(log, MockDataProvider.DefaultIndex, MockDataProvider.EventName));

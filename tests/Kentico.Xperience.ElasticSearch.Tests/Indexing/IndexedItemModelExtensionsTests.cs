@@ -163,7 +163,7 @@ public class Tests : UnitTests
     }
 
     [TearDown]
-    public void TearDown() => ElasticSearchIndexStore.Instance.SetIndicies([]);
+    public void TearDown() => ElasticSearchIndexStore.Instance.SetIndices([]);
 
     private IndexEventWebPageItemModel GetDefaultIndexEventWebPageItemModel()
     {
