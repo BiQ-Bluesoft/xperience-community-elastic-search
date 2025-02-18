@@ -8,7 +8,7 @@ using Elastic.Clients.Elasticsearch;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Aliasing;
-using Kentico.Xperience.ElasticSearch.Helpers;
+using Kentico.Xperience.ElasticSearch.Helpers.Constants;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 

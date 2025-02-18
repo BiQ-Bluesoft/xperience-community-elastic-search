@@ -5,6 +5,7 @@ using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
+using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
 using Kentico.Xperience.ElasticSearch.Indexing;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
@@ -33,7 +34,7 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
 
     protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchConfigurationModel configuration)
     {
-        configuration.IndexName = RemoveWhitespacesUsingStringBuilder(configuration.IndexName);
+        configuration.IndexName = configuration.IndexName.RemoveWhitespacesUsingStringBuilder();
 
         var context = new ValidationContext(configuration, null, null);
         var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
@@ -75,21 +76,5 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
         }
 
         return new ModificationResponse(ModificationResult.Failure);
-    }
-
-    protected static string RemoveWhitespacesUsingStringBuilder(string source)
-    {
-        var builder = new StringBuilder(source.Length);
-
-        for (var i = 0; i < source.Length; i++)
-        {
-            var c = source[i];
-            if (!char.IsWhiteSpace(c))
-            {
-                builder.Append(c);
-            }
-        }
-
-        return source.Length == builder.Length ? source : builder.ToString();
     }
 }

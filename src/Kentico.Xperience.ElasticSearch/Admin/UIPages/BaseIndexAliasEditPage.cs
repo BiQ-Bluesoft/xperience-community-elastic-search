@@ -6,6 +6,7 @@ using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Aliasing;
+using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
 
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,7 +26,7 @@ internal abstract class BaseIndexAliasEditPage(
 
     protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchAliasConfigurationModel configuration)
     {
-        configuration.AliasName = RemoveWhitespacesUsingStringBuilder(configuration.AliasName ?? string.Empty);
+        configuration.AliasName = configuration.AliasName.RemoveWhitespacesUsingStringBuilder();
 
         var context = new ValidationContext(configuration, null, null);
         var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
@@ -47,21 +48,6 @@ internal abstract class BaseIndexAliasEditPage(
         }
 
         return await ProcessNewAlias(configuration);
-    }
-
-    protected static string RemoveWhitespacesUsingStringBuilder(string source)
-    {
-        var builder = new StringBuilder(source.Length);
-
-        foreach (var c in source)
-        {
-            if (!char.IsWhiteSpace(c))
-            {
-                builder.Append(c);
-            }
-        }
-
-        return source.Length == builder.Length ? source : builder.ToString();
     }
 
     private async Task<ModificationResponse> ProcessNewAlias(ElasticSearchAliasConfigurationModel configuration)

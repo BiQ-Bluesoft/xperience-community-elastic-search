@@ -3,7 +3,7 @@
 using Elastic.Clients.Elasticsearch;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
-using Kentico.Xperience.ElasticSearch.Helpers;
+using Kentico.Xperience.ElasticSearch.Helpers.Constants;
 
 using Microsoft.Extensions.DependencyInjection;
 

@@ -3,6 +3,7 @@
 using CMS.DataEngine;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
 
 namespace Kentico.Xperience.ElasticSearch.Admin.Services;
 
@@ -16,23 +17,6 @@ internal class DefaultElasticSearchConfigurationStorageService(
     IInfoProvider<ElasticSearchReusableContentTypeItemInfo> reusableContentTypeProvider
     ) : IElasticSearchConfigurationStorageService
 {
-    private static string RemoveWhitespacesUsingStringBuilder(string source)
-    {
-        var builder = new StringBuilder(source.Length);
-
-        for (var i = 0; i < source.Length; i++)
-        {
-            var c = source[i];
-
-            if (!char.IsWhiteSpace(c))
-            {
-                builder.Append(c);
-            }
-        }
-
-        return source.Length == builder.Length ? source : builder.ToString();
-    }
-
     public bool TryCreateIndex(ElasticSearchConfigurationModel configuration)
     {
         var existingIndex = indexProvider.Get()
@@ -266,7 +250,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
     public bool TryEditIndex(ElasticSearchConfigurationModel configuration)
     {
-        configuration.IndexName = RemoveWhitespacesUsingStringBuilder(configuration.IndexName ?? "");
+        configuration.IndexName = configuration.IndexName.RemoveWhitespacesUsingStringBuilder();
 
         var indexInfo = indexProvider.Get()
             .WhereEquals(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemId), configuration.Id)
@@ -330,7 +314,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
     public bool TryEditAlias(ElasticSearchAliasConfigurationModel configuration)
     {
-        configuration.AliasName = RemoveWhitespacesUsingStringBuilder(configuration.AliasName ?? "");
+        configuration.AliasName = configuration.AliasName.RemoveWhitespacesUsingStringBuilder();
 
         var aliasInfo = indexAliasProvider.Get()
             .WhereEquals(nameof(ElasticSearchIndexAliasItemInfo.ElasticSearchIndexAliasItemId), configuration.Id)

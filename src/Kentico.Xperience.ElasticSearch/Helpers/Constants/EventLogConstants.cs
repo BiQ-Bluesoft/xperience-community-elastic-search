@@ -1,4 +1,4 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Helpers
+﻿namespace Kentico.Xperience.ElasticSearch.Helpers.Constants
 {
     public static class EventLogConstants
     {
