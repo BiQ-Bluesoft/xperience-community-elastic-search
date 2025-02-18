@@ -11,7 +11,7 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 internal class ElasticSearchBatchResult
 {
-    internal int SuccessfulOperations { get; set; } = 0;
+    internal int SuccessfulOperations { get; set; }
     internal HashSet<ElasticSearchIndex> PublishedIndices { get; set; } = [];
 }
 
