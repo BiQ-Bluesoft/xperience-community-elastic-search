@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
@@ -22,7 +21,6 @@ internal abstract class BaseIndexAliasEditPage(
     ) : ModelEditPage<ElasticSearchAliasConfigurationModel>(formItemCollectionProvider, formDataBinder)
 {
     protected IElasticSearchConfigurationStorageService StorageService = storageService;
-    private readonly IElasticSearchIndexAliasService elasticSearchIndexAliasService = elasticSearchIndexAliasService;
 
     protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchAliasConfigurationModel configuration)
     {
