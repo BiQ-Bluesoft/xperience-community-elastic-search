@@ -33,7 +33,7 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
 
     protected async Task<ModificationResponse> ValidateAndProcess(ElasticSearchConfigurationModel configuration)
     {
-        configuration.IndexName = RemoveWhitespacesUsingStringBuilder(configuration.IndexName ?? string.Empty);
+        configuration.IndexName = RemoveWhitespacesUsingStringBuilder(configuration.IndexName);
 
         var context = new ValidationContext(configuration, null, null);
         var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
