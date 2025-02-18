@@ -8,6 +8,7 @@ using Elastic.Clients.Elasticsearch;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Aliasing;
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
@@ -46,7 +47,7 @@ internal class DefaultElasticSearchClient(
             {
                 eventLogService.LogError(
                     nameof(GetStatisticsAsync),
-                    "ELASTIC_SEARCH",
+                    EventLogConstants.ElasticInfoEventCode,
                     $"Unable to fetch statistics for index with name {index.IndexName}. Operation failed with error: {countResponse.DebugInformation}");
             }
 
@@ -65,6 +66,10 @@ internal class DefaultElasticSearchClient(
     {
         ValidateIndexWithNameExists(indexName);
 
+        eventLogService.LogInformation(
+            nameof(DefaultElasticSearchClient),
+            EventLogConstants.ElasticDeleteEventCode,
+            $"Delete of index {indexName} started.");
         await searchIndexClient.Indices.DeleteAsync(indexName, cancellationToken);
     }
 
@@ -88,8 +93,9 @@ internal class DefaultElasticSearchClient(
 
         if (!bulkDeleteResponse.IsValidResponse)
         {
-            eventLogService.LogError(nameof(DeleteRecordsAsync),
-                "ELASTIC_SEARCH",
+            eventLogService.LogError(
+                nameof(DeleteRecordsAsync),
+                EventLogConstants.ElasticItemsDeleteEventCode,
                 $"Unable to delete records with guids: {itemGuids} from index with name {indexName}. Operation failed with error: {bulkDeleteResponse.DebugInformation}");
         }
 
@@ -119,6 +125,11 @@ internal class DefaultElasticSearchClient(
     {
         ValidateIndexWithNameExists(indexName);
 
+        eventLogService.LogInformation(
+            nameof(DefaultElasticSearchClient),
+            EventLogConstants.ElasticRebuildEventCode,
+            $"Rebuild of index {indexName} started");
+
         var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetRequiredIndex(indexName);
 
         var indexedItems = await FetchContentForRebuildAsync(executor, elasticSearchIndex, cancellationToken);
@@ -136,7 +147,7 @@ internal class DefaultElasticSearchClient(
         if (!getAliasResponse.IsValidResponse)
         {
             eventLogService.LogError(nameof(RebuildAsync),
-                "ELASTIC_SEARCH",
+                EventLogConstants.ElasticRebuildEventCode,
                 $"Unable to retrieve aliases for index with name {indexName}. Operation failed with error: {getAliasResponse.DebugInformation}");
         }
         var aliases = getAliasResponse.Aliases.Values.SelectMany(val => val.Aliases.Keys);

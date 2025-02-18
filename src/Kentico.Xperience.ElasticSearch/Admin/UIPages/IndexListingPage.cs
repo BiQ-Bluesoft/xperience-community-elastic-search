@@ -5,6 +5,7 @@ using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Indexing;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
@@ -170,7 +171,7 @@ internal class IndexListingPage(
         }
         catch (Exception ex)
         {
-            EventLogService.LogException(nameof(IndexListingPage), nameof(Rebuild), ex);
+            EventLogService.LogException(nameof(IndexListingPage), EventLogConstants.ElasticRebuildEventCode, ex);
 
             return ResponseFrom(result)
                .AddErrorMessage(string.Format("Errors occurred while rebuilding the '{0}' index. Please check the Event Log for more details.", index.IndexName));
@@ -205,7 +206,7 @@ internal class IndexListingPage(
         }
         catch (Exception ex)
         {
-            EventLogService.LogException(nameof(IndexListingPage), nameof(Delete), ex);
+            EventLogService.LogException(nameof(IndexListingPage), EventLogConstants.ElasticDeleteEventCode, ex);
             return response
                .AddErrorMessage(string.Format("Errors occurred while deleting the '{0}' index. Please check the Event Log for more details.", index.IndexName));
         }

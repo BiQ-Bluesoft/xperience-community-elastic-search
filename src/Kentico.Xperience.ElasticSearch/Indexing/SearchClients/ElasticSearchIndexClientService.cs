@@ -3,6 +3,7 @@
 using Elastic.Clients.Elasticsearch;
 
 using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Helpers;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +26,11 @@ public sealed class ElasticSearchIndexClientService(
         var indexExistsInElastic = (await indexClient.Indices.ExistsAsync(indexName, cancellationToken))?.Exists ?? false;
         if (!indexExistsInElastic)
         {
+            eventLogService.LogInformation(
+                nameof(ElasticSearchIndexClientService),
+                EventLogConstants.ElasticCreateEventCode,
+                $"Starting creation of index {indexName}");
+
             await elasticSearchStrategy.CreateIndexInternalAsync(indexClient, indexName, cancellationToken);
         }
 
@@ -50,13 +56,17 @@ public sealed class ElasticSearchIndexClientService(
             throw new ArgumentNullException(nameof(indexName));
         }
 
+        eventLogService.LogInformation(
+            nameof(ElasticSearchIndexClientService),
+            EventLogConstants.ElasticDeleteEventCode,
+            $"Deletion of index {indexName} started.");
+
         var deleteIndexResponse = await indexClient.Indices.DeleteAsync(indexName, cancellationToken);
         if (!deleteIndexResponse.IsValidResponse)
         {
-            // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(
                 nameof(DeleteIndexInternalAsync),
-                "ELASTIC_SEARCH",
+                EventLogConstants.ElasticDeleteEventCode,
                 $"Unable to delete index with name: {indexName}. Operation failed with error: {deleteIndexResponse.DebugInformation}");
         }
     }
