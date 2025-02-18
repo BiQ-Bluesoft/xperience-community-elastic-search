@@ -23,14 +23,14 @@ internal class LanguageOptionsProvider(IInfoProvider<ContentLanguageInfo> conten
         itemQuery.Page(pageIndex, 20);
 
         // Retrieves the users and converts them into ObjectSelectorListItem<string> options
-        var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
+        var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>
         {
             Value = x.ContentLanguageName,
             Text = x.ContentLanguageDisplayName,
             IsValid = true
         });
 
-        return new PagedSelectListItems<string>()
+        return new PagedSelectListItems<string>
         {
             NextPageAvailable = itemQuery.NextPageAvailable,
             Items = items
@@ -46,7 +46,7 @@ internal class LanguageOptionsProvider(IInfoProvider<ContentLanguageInfo> conten
     public async Task<IEnumerable<ObjectSelectorListItem<string>>> GetSelectedItemsAsync(IEnumerable<string> selectedValues, CancellationToken cancellationToken)
     {
         var itemQuery = contentLanguageInfoProvider.Get().Page(0, 20);
-        var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
+        var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>
         {
             Value = x.ContentLanguageName,
             Text = x.ContentLanguageDisplayName,

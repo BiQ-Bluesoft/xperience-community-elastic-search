@@ -11,7 +11,7 @@ internal class ChannelOptionsProvider(IInfoProvider<ChannelInfo> channelInfoProv
         (await channelInfoProvider.Get()
             .WhereEquals(nameof(ChannelInfo.ChannelType), nameof(ChannelType.Website))
             .GetEnumerableTypedResultAsync())
-            .Select(x => new DropDownOptionItem()
+            .Select(x => new DropDownOptionItem
             {
                 Value = x.ChannelName,
                 Text = x.ChannelDisplayName

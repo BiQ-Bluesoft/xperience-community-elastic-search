@@ -48,7 +48,7 @@ internal class IndexCreatePage(
         {
             var index = ElasticSearchIndexStore.Instance.GetRequiredIndex(model.IndexName);
 
-            var pageParameters = new PageParameterValues()
+            var pageParameters = new PageParameterValues
             {
                 { typeof(IndexEditPage), index.Identifier}
             };

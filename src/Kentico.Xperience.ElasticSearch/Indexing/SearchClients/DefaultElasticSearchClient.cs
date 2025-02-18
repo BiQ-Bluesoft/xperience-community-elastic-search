@@ -50,7 +50,7 @@ internal class DefaultElasticSearchClient(
                     $"Unable to fetch statistics for index with name {index.IndexName}. Operation failed with error: {countResponse.DebugInformation}");
             }
 
-            statistics.Add(new ElasticSearchIndexStatisticsViewModel()
+            statistics.Add(new ElasticSearchIndexStatisticsViewModel
             {
                 Name = index.IndexName,
                 Entries = countResponse.Count

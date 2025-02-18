@@ -45,7 +45,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
             return false;
         }
 
-        var newInfo = new ElasticSearchIndexItemInfo()
+        var newInfo = new ElasticSearchIndexItemInfo
         {
             ElasticSearchIndexItemIndexName = configuration.IndexName ?? "",
             ElasticSearchIndexItemChannelName = configuration.ChannelName ?? "",
@@ -59,7 +59,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var language in configuration.LanguageNames)
         {
-            var languageInfo = new ElasticSearchIndexLanguageItemInfo()
+            var languageInfo = new ElasticSearchIndexLanguageItemInfo
             {
                 ElasticSearchIndexLanguageItemName = language,
                 ElasticSearchIndexLanguageItemIndexItemId = newInfo.ElasticSearchIndexItemId
@@ -70,7 +70,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var path in configuration.Paths)
         {
-            var pathInfo = new ElasticSearchIncludedPathItemInfo()
+            var pathInfo = new ElasticSearchIncludedPathItemInfo
             {
                 ElasticSearchIncludedPathItemAliasPath = path.AliasPath,
                 ElasticSearchIncludedPathItemIndexItemId = newInfo.ElasticSearchIndexItemId
@@ -79,7 +79,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
             foreach (var contentType in path.ContentTypes)
             {
-                var contentInfo = new ElasticSearchContentTypeItemInfo()
+                var contentInfo = new ElasticSearchContentTypeItemInfo
                 {
                     ElasticSearchContentTypeItemContentTypeName = contentType.ContentTypeName,
                     ElasticSearchContentTypeItemIncludedPathItemId = pathInfo.ElasticSearchIncludedPathItemId,
@@ -93,7 +93,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
         {
             foreach (var reusableContentTypeName in configuration.ReusableContentTypeNames)
             {
-                var reusableContentTypeItemInfo = new ElasticSearchReusableContentTypeItemInfo()
+                var reusableContentTypeItemInfo = new ElasticSearchReusableContentTypeItemInfo
                 {
                     ElasticSearchReusableContentTypeItemContentTypeName = reusableContentTypeName,
                     ElasticSearchReusableContentTypeItemIndexItemId = newInfo.ElasticSearchIndexItemId
@@ -133,7 +133,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var indexId in indexIds)
         {
-            var indexAliasIndexInfo = new ElasticSearchIndexAliasIndexItemInfo()
+            var indexAliasIndexInfo = new ElasticSearchIndexAliasIndexItemInfo
             {
                 ElasticSearchIndexAliasIndexItemIndexAliasId = aliasInfo.ElasticSearchIndexAliasItemId,
                 ElasticSearchIndexAliasIndexItemIndexItemId = indexId
@@ -292,7 +292,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var language in configuration.LanguageNames)
         {
-            var languageInfo = new ElasticSearchIndexLanguageItemInfo()
+            var languageInfo = new ElasticSearchIndexLanguageItemInfo
             {
                 ElasticSearchIndexLanguageItemName = language,
                 ElasticSearchIndexLanguageItemIndexItemId = indexInfo.ElasticSearchIndexItemId,
@@ -303,7 +303,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var path in configuration.Paths)
         {
-            var pathInfo = new ElasticSearchIncludedPathItemInfo()
+            var pathInfo = new ElasticSearchIncludedPathItemInfo
             {
                 ElasticSearchIncludedPathItemAliasPath = path.AliasPath,
                 ElasticSearchIncludedPathItemIndexItemId = indexInfo.ElasticSearchIndexItemId,
@@ -312,7 +312,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
             foreach (var contentType in path.ContentTypes)
             {
-                var contentInfo = new ElasticSearchContentTypeItemInfo()
+                var contentInfo = new ElasticSearchContentTypeItemInfo
                 {
                     ElasticSearchContentTypeItemContentTypeName = contentType.ContentTypeName ?? "",
                     ElasticSearchContentTypeItemIncludedPathItemId = pathInfo.ElasticSearchIncludedPathItemId,
@@ -354,7 +354,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var indexId in indexIds)
         {
-            var indexAliasIndexInfo = new ElasticSearchIndexAliasIndexItemInfo()
+            var indexAliasIndexInfo = new ElasticSearchIndexAliasIndexItemInfo
             {
                 ElasticSearchIndexAliasIndexItemIndexAliasId = aliasInfo.ElasticSearchIndexAliasItemId,
                 ElasticSearchIndexAliasIndexItemIndexItemId = indexId
@@ -404,7 +404,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
 
         foreach (var reusableContentType in newReusableContentTypes)
         {
-            var reusableContentTypeInfo = new ElasticSearchReusableContentTypeItemInfo()
+            var reusableContentTypeInfo = new ElasticSearchReusableContentTypeItemInfo
             {
                 ElasticSearchReusableContentTypeItemContentTypeName = reusableContentType,
                 ElasticSearchReusableContentTypeItemIndexItemId = indexInfo.ElasticSearchIndexItemId,
