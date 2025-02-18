@@ -67,8 +67,7 @@ public static class ElasticSearchStartupExtensions
 
                 var settings = new ElasticsearchClientSettings(new Uri(options.Value.SearchServiceEndPoint))
                     .Authentication(new BasicAuthentication(options.Value.SearchServiceUsername, options.Value.SearchServicePassword))
-                    .DisableDirectStreaming()
-                    .PrettyJson();
+                    .DisableDirectStreaming();
                 return new ElasticsearchClient(settings);
             })
             .AddSingleton<IElasticSearchQueryClientService>(x =>
