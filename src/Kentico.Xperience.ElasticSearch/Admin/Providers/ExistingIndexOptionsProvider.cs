@@ -29,7 +29,7 @@ internal class ExistingIndexOptionsProvider(IInfoProvider<ElasticSearchIndexItem
             IsValid = true
         });
 
-        return new PagedSelectListItems<string>()
+        return new PagedSelectListItems<string>
         {
             NextPageAvailable = itemQuery.NextPageAvailable,
             Items = items
@@ -45,7 +45,7 @@ internal class ExistingIndexOptionsProvider(IInfoProvider<ElasticSearchIndexItem
     public async Task<IEnumerable<ObjectSelectorListItem<string>>> GetSelectedItemsAsync(IEnumerable<string> selectedValues, CancellationToken cancellationToken)
     {
         var itemQuery = indexProvider.Get().Page(0, 20);
-        var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
+        var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>
         {
             Value = x.ElasticSearchIndexItemIndexName,
             Text = x.ElasticSearchIndexItemIndexName,
