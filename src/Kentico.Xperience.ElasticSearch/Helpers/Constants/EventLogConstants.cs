@@ -8,5 +8,6 @@
         public const string ElasticCreateEventCode = "ELASTIC_CREATE";
 
         public const string ElasticItemsDeleteEventCode = "ELASTIC_DELETE_ITEM";
+        public const string ElasticItemsAddEventCode = "ELASTIC_ADD_ITEM";
     }
 }

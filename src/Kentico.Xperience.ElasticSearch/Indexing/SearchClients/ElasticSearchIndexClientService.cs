@@ -26,11 +26,6 @@ public sealed class ElasticSearchIndexClientService(
         var indexExistsInElastic = (await indexClient.Indices.ExistsAsync(indexName, cancellationToken))?.Exists ?? false;
         if (!indexExistsInElastic)
         {
-            eventLogService.LogInformation(
-                nameof(ElasticSearchIndexClientService),
-                EventLogConstants.ElasticCreateEventCode,
-                $"Starting creation of index {indexName}");
-
             await elasticSearchStrategy.CreateIndexInternalAsync(indexClient, indexName, cancellationToken);
         }
 

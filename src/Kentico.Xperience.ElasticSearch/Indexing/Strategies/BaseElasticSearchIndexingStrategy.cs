@@ -2,6 +2,7 @@
 
 using Elastic.Clients.Elasticsearch;
 
+using Kentico.Xperience.ElasticSearch.Helpers.Constants;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
@@ -55,10 +56,9 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
             var failedItems = bulkIndexResponse.ItemsWithErrors;
             foreach (var item in failedItems)
             {
-                // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                 eventLogService.LogError(
-                    nameof(UploadDocumentsAsync),
-                    "ELASTIC_SEARCH",
+                    nameof(BaseElasticSearchIndexingStrategy<TSearchModel>),
+                    EventLogConstants.ElasticItemsAddEventCode,
                     $"Unable to upload document {item.Id} to index with name {indexName}. Operation failed errors: {item.Error?.Reason}");
             }
         }
@@ -68,14 +68,17 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
     /// <inheritdoc />
     public async Task CreateIndexInternalAsync(ElasticsearchClient indexClient, string indexName, CancellationToken cancellationToken)
     {
+        eventLogService.LogInformation(
+            nameof(BaseElasticSearchIndexingStrategy<TSearchModel>),
+            EventLogConstants.ElasticCreateEventCode,
+            $"Creation of index {indexName} started");
         var createResponse = await indexClient.Indices.CreateAsync<TSearchModel>(indexName, cancellationToken);
 
         if (!createResponse.IsValidResponse)
         {
-            // Additional work - Discuss whether exception should be thrown or logging the error is enough.
             eventLogService.LogError(
-                nameof(CreateIndexInternalAsync),
-                "ELASTIC_SEARCH",
+                nameof(BaseElasticSearchIndexingStrategy<TSearchModel>),
+                EventLogConstants.ElasticCreateEventCode,
                 $"Unable to create index with name: {indexName}. Operation failed with error: {createResponse.DebugInformation}");
         }
     }
