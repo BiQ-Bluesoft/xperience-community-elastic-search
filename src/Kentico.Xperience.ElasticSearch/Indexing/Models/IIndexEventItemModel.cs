@@ -60,9 +60,8 @@ public class IndexEventWebPageItemModel : IIndexEventItemModel
         int contentLanguageID,
         string websiteChannelName,
         string webPageItemTreePath,
-        int parentID,
-        int order
-    )
+        int order,
+        int? parentID = null)
     {
         ItemID = itemID;
         ItemGuid = itemGuid;
@@ -70,39 +69,12 @@ public class IndexEventWebPageItemModel : IIndexEventItemModel
         ContentTypeName = contentTypeName;
         WebsiteChannelName = websiteChannelName;
         WebPageItemTreePath = webPageItemTreePath;
+        Order = order;
+        Name = name;
+        IsSecured = isSecured;
+        ContentTypeID = contentTypeID;
+        ContentLanguageID = contentLanguageID;
         ParentID = parentID;
-        Order = order;
-        Name = name;
-        IsSecured = isSecured;
-        ContentTypeID = contentTypeID;
-        ContentLanguageID = contentLanguageID;
-    }
-
-    public IndexEventWebPageItemModel(
-        int itemID,
-        Guid itemGuid,
-        string languageName,
-        string contentTypeName,
-        string name,
-        bool isSecured,
-        int contentTypeID,
-        int contentLanguageID,
-        string websiteChannelName,
-        string webPageItemTreePath,
-        int order
-    )
-    {
-        ItemID = itemID;
-        ItemGuid = itemGuid;
-        LanguageName = languageName;
-        ContentTypeName = contentTypeName;
-        WebsiteChannelName = websiteChannelName;
-        WebPageItemTreePath = webPageItemTreePath;
-        Order = order;
-        Name = name;
-        IsSecured = isSecured;
-        ContentTypeID = contentTypeID;
-        ContentLanguageID = contentLanguageID;
     }
 }
 

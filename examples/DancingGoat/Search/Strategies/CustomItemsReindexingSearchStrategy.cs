@@ -59,8 +59,8 @@ public class CustomItemsReindexingSearchStrategy(
                     articlePage.SystemFields.ContentItemCommonDataContentLanguageID,
                     StrategyHelper.INDEXED_WEBSITECHANNEL_NAME,
                     articlePage.SystemFields.WebPageItemTreePath,
-                    articlePage.SystemFields.WebPageItemParentID,
-                    articlePage.SystemFields.WebPageItemOrder));
+                    articlePage.SystemFields.WebPageItemOrder,
+                    articlePage.SystemFields.WebPageItemParentID));
             }
         }
 

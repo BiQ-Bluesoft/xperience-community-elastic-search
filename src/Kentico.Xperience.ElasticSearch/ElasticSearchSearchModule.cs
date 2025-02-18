@@ -84,9 +84,8 @@ internal class ElasticSearchSearchModule : Module
             publishedEvent.ContentLanguageID,
             publishedEvent.WebsiteChannelName,
             publishedEvent.TreePath,
-            publishedEvent.ParentID,
-            publishedEvent.Order)
-        { };
+            publishedEvent.Order,
+            publishedEvent.ParentID);
 
         elasticSearchTaskLogger?.HandleEvent(indexedItemModel, e.CurrentHandler.Name).GetAwaiter().GetResult();
     }
