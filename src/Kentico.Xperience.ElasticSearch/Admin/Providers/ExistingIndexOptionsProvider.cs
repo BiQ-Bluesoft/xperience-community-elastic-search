@@ -21,7 +21,7 @@ internal class ExistingIndexOptionsProvider(IInfoProvider<ElasticSearchIndexItem
         // Ensures paging of items
         itemQuery.Page(pageIndex, 20);
 
-        // Retrieves the users and converts them into ObjectSelectorListItem<string> options
+        // Retrieves the index names and converts them into ObjectSelectorListItem<string> options
         var items = (await itemQuery.GetEnumerableTypedResultAsync()).Select(x => new ObjectSelectorListItem<string>()
         {
             Value = x.ElasticSearchIndexItemIndexName,
