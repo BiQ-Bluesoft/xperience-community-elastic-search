@@ -24,7 +24,7 @@ internal class IndexEditPage(
     IElasticSearchConfigurationStorageService storageService,
     IElasticSearchIndexClientService indexClientService) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, indexClientService)
 {
-    private ElasticSearchConfigurationModel? model = null;
+    private ElasticSearchConfigurationModel? model;
 
     [PageParameter(typeof(IntPageModelBinder))]
     public int IndexIdentifier { get; set; }

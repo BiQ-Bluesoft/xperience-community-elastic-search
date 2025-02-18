@@ -28,7 +28,7 @@ internal class IndexAliasCreatePage(
     IPageLinkGenerator pageLinkGenerator) : BaseIndexAliasEditPage(formItemCollectionProvider, formDataBinder, elasticSearchIndexAliasService, storageService)
 {
 
-    private ElasticSearchAliasConfigurationModel? model = null;
+    private ElasticSearchAliasConfigurationModel? model;
 
     protected override ElasticSearchAliasConfigurationModel Model
     {

@@ -24,7 +24,7 @@ internal class IndexAliasEditPage(Xperience.Admin.Base.Forms.Internal.IFormItemC
              IElasticSearchIndexAliasService elasticSearchIndexAliasService
     ) : BaseIndexAliasEditPage(formItemCollectionProvider, formDataBinder, elasticSearchIndexAliasService, storageService)
 {
-    private ElasticSearchAliasConfigurationModel? model = null;
+    private ElasticSearchAliasConfigurationModel? model;
 
     [PageParameter(typeof(IntPageModelBinder))]
     public int IndexIdentifier { get; set; }

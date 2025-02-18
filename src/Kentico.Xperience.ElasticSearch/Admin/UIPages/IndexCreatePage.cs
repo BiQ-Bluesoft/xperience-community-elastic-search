@@ -28,7 +28,7 @@ internal class IndexCreatePage(
     IPageLinkGenerator pageLinkGenerator,
     IElasticSearchIndexClientService searchClientService) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, searchClientService)
 {
-    private ElasticSearchConfigurationModel? model = null;
+    private ElasticSearchConfigurationModel? model;
 
     protected override ElasticSearchConfigurationModel Model
     {
