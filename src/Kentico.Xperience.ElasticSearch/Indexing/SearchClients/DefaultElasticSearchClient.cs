@@ -131,7 +131,7 @@ internal class DefaultElasticSearchClient(
 
         var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetRequiredIndex(indexName);
 
-        var indexedItems = await FetchContentForRebuildAsync(executor, elasticSearchIndex, cancellationToken);
+        var indexedItems = await FetchContentForRebuildAsync(elasticSearchIndex, cancellationToken);
         EnqueueRebuildTasksAsync(elasticSearchIndex, indexedItems);
     }
 
@@ -187,7 +187,7 @@ internal class DefaultElasticSearchClient(
         indexedItems.ForEach(item => ElasticSearchQueueWorker.EnqueueElasticSearchQueueItem(new ElasticSearchQueueItem(item, ElasticSearchTaskType.PUBLISH_INDEX, elasticSearchIndex.IndexName)));
     }
 
-    private async Task<List<IIndexEventItemModel>> FetchContentForRebuildAsync(IContentQueryExecutor executor, ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
+    private async Task<List<IIndexEventItemModel>> FetchContentForRebuildAsync(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)
     {
         var indexedItems = new List<IIndexEventItemModel>();
 
@@ -198,16 +198,16 @@ internal class DefaultElasticSearchClient(
                  ? PathMatch.Children(includedPathAttribute.AliasPath[..^2])
                  : PathMatch.Single(includedPathAttribute.AliasPath);
 
-            await AddPageItemsAsync(executor, elasticSearchIndex, cancellationToken, indexedItems, includedPathAttribute, pathMatch);
+            await AddPageItemsAsync(elasticSearchIndex, cancellationToken, indexedItems, includedPathAttribute, pathMatch);
 
         }
 
-        await AddReusableItemsAsync(executor, elasticSearchIndex, cancellationToken, indexedItems);
+        await AddReusableItemsAsync(elasticSearchIndex, cancellationToken, indexedItems);
 
         return indexedItems;
     }
 
-    private async Task AddPageItemsAsync(IContentQueryExecutor executor, ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken, List<IIndexEventItemModel> indexedItems, ElasticSearchIndexIncludedPath includedPathAttribute, PathMatch pathMatch)
+    private async Task AddPageItemsAsync(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken, List<IIndexEventItemModel> indexedItems, ElasticSearchIndexIncludedPath includedPathAttribute, PathMatch pathMatch)
     {
         foreach (var language in elasticSearchIndex.LanguageNames)
         {
@@ -231,7 +231,7 @@ internal class DefaultElasticSearchClient(
         }
     }
 
-    private async Task AddReusableItemsAsync(IContentQueryExecutor executor, ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken, List<IIndexEventItemModel> indexedItems)
+    private async Task AddReusableItemsAsync(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken, List<IIndexEventItemModel> indexedItems)
     {
         foreach (var language in elasticSearchIndex.LanguageNames)
         {
