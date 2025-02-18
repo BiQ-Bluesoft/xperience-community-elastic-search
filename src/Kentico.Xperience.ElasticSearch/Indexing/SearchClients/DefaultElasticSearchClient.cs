@@ -79,7 +79,7 @@ internal class DefaultElasticSearchClient(
 
         if (!itemGuids.Any())
         {
-            return await Task.FromResult(0);
+            return 0;
         }
 
         var bulkDeleteResponse = await searchIndexClient.BulkAsync(bulk =>
