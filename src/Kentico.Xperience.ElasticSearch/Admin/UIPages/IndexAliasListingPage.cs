@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
    parentType: typeof(IndexListingPage),
    slug: "indexes",
    uiPageType: typeof(IndexAliasListingPage),
-   name: "List of registered Elastic AI Search index aliases",
+   name: "List of registered Elastic Search index aliases",
    templateName: TemplateNames.LISTING,
    order: UIPageOrder.NoOrder)]
 

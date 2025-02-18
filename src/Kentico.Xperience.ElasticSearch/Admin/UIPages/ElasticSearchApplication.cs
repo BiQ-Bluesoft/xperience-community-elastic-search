@@ -8,7 +8,7 @@ using Kentico.Xperience.ElasticSearch.Admin;
     identifier: ElasticSearchApplicationPage.IDENTIFIER,
     type: typeof(ElasticSearchApplicationPage),
     slug: "elasticsearch",
-    name: "Elastic AI Search",
+    name: "Elastic Search",
     category: BaseApplicationCategories.DEVELOPMENT,
     icon: Icons.Magnifier,
     templateName: TemplateNames.SECTION_LAYOUT)]
