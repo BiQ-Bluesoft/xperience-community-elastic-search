@@ -100,7 +100,7 @@ internal class DefaultElasticSearchConfigurationStorageService(
             return false;
         }
 
-        var aliasInfo = new ElasticSearchIndexAliasItemInfo()
+        var aliasInfo = new ElasticSearchIndexAliasItemInfo
         {
             ElasticSearchIndexAliasItemIndexAliasName = configuration.AliasName,
         };
