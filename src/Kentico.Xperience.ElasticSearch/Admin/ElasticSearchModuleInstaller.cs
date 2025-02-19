@@ -109,6 +109,18 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
         };
         formInfo.AddFormItem(formItem);
 
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemLastRebuild),
+            AllowEmpty = true,
+            Visible = true,
+            Precision = 0,
+            Size = 100,
+            DataType = "datetime",
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
         SetFormDefinition(info, formInfo);
 
         if (info.HasChanged)

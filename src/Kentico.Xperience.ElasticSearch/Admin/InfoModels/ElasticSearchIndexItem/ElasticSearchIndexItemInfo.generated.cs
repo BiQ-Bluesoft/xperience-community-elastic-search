@@ -100,6 +100,15 @@ public partial class ElasticSearchIndexItemInfo : AbstractInfo<ElasticSearchInde
         set => SetValue(nameof(ElasticSearchIndexItemRebuildHook), value, String.Empty);
     }
 
+    /// <summary>
+    /// Last rebuild time.
+    /// </summary>
+    [DatabaseField]
+    public virtual DateTime ElasticSearchIndexItemLastRebuild
+    {
+        get => ValidationHelper.GetDateTime(GetValue(nameof(ElasticSearchIndexItemLastRebuild)), DateTime.MinValue);
+        set => SetValue(nameof(ElasticSearchIndexItemLastRebuild), value, DateTime.MinValue);
+    }
 
     /// <summary>
     /// Deletes the object using appropriate provider.

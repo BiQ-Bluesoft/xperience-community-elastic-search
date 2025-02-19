@@ -6,6 +6,7 @@ using CMS.Websites;
 
 using Elastic.Clients.Elasticsearch;
 
+using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Aliasing;
 using Kentico.Xperience.ElasticSearch.Helpers.Constants;
@@ -25,6 +26,7 @@ internal class DefaultElasticSearchClient(
     IServiceProvider serviceProvider,
     IInfoProvider<ContentLanguageInfo> languageProvider,
     IInfoProvider<ChannelInfo> channelProvider,
+    IInfoProvider<ElasticSearchIndexItemInfo> indexItemInfoProvider,
     IProgressiveCache cache,
     ElasticsearchClient searchIndexClient,
     IEventLogService eventLogService,
@@ -168,6 +170,16 @@ internal class DefaultElasticSearchClient(
             {
                 await elasticSearchIndexAliasService.AddAliasAsync(alias, indexName, cancellationToken);
             }
+        }
+
+        var index = indexItemInfoProvider.Get()
+            .WhereEquals(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemIndexName), indexName)
+            .FirstOrDefault();
+
+        if (index != null)
+        {
+            index.ElasticSearchIndexItemLastRebuild = DateTime.Now;
+            index.Update();
         }
     }
 

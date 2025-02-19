@@ -80,7 +80,8 @@ internal class IndexListingPage(
                 .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemIndexName), "Name", sortable: true, searchable: true)
                 .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemChannelName), "Channel", searchable: true, sortable: true)
                 .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemStrategyName), "Index Strategy", searchable: true, sortable: true)
-                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemId), "Entries", sortable: true);
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemId), "Entries", sortable: true)
+                .AddColumn(nameof(ElasticSearchIndexItemInfo.ElasticSearchIndexItemLastRebuild), "Last Rebuild", sortable: true);
 
             PageConfiguration.AddEditRowAction<IndexEditPage>();
             PageConfiguration.TableActions.AddCommand("Rebuild", nameof(Rebuild), icon: Icons.RotateRight);

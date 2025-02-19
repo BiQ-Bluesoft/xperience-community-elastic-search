@@ -36,6 +36,8 @@ public class ElasticSearchConfigurationModel
     [GeneralSelectorComponent(dataProviderType: typeof(ReusableContentOptionsProvider), Label = "Included Reusable Content Types", Order = 3)]
     public IEnumerable<string> ReusableContentTypeNames { get; set; } = [];
 
+    public DateTime? LastRebuild { get; set; }
+
     public ElasticSearchConfigurationModel() { }
 
     public ElasticSearchConfigurationModel(
@@ -51,6 +53,7 @@ public class ElasticSearchConfigurationModel
         ChannelName = index.ElasticSearchIndexItemChannelName;
         RebuildHook = index.ElasticSearchIndexItemRebuildHook;
         StrategyName = index.ElasticSearchIndexItemStrategyName;
+        LastRebuild = index.ElasticSearchIndexItemLastRebuild;
         ReusableContentTypeNames = reusableContentTypes
              .Where(c => c.ElasticSearchReusableContentTypeItemIndexItemId == index.ElasticSearchIndexItemId)
              .Select(c => c.ElasticSearchReusableContentTypeItemContentTypeName)
