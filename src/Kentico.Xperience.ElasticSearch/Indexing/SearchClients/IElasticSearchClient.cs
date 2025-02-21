@@ -9,6 +9,8 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 /// </summary>
 public interface IElasticSearchClient
 {
+    Task<(string?, string)> GetElasticIndexNames(string indexName);
+
     /// <summary>
     /// Gets the indices of the ElasticSearch application with basic statistics.
     /// </summary>
@@ -41,7 +43,8 @@ public interface IElasticSearchClient
     /// <exception cref="ObjectDisposedException" />
     /// <exception cref="OverflowException" />
     /// <returns>The number of records deleted.</returns>
-    Task<int> DeleteRecordsAsync(IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken);
+    Task<int> DeleteRecordsAsync(
+        IEnumerable<string> itemGuids, string indexName, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates the ElasticSearch index with the dynamic data in each object of the passed <paramref name="models"/>.
@@ -56,7 +59,8 @@ public interface IElasticSearchClient
     /// <exception cref="ObjectDisposedException" />
     /// <exception cref="OverflowException" />
     /// <returns>The number of objects processed.</returns>
-    Task<int> UpsertRecordsAsync(IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken);
+    Task<int> UpsertRecordsAsync(
+        IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Starts the rebuild process by creating corresponding search tasks 
@@ -69,18 +73,7 @@ public interface IElasticSearchClient
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ObjectDisposedException" />
-    Task StartRebuildAsync(string indexName, CancellationToken? cancellationToken);
+    Task StartRebuildAsync(string indexName, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Rebuilds the ElasticSearch index by removing existing data from ElasticSearch and indexing all
-    /// pages in the content tree included in the index.
-    /// </summary>
-    /// <param name="indexName">The index to rebuild.</param>
-    /// <param name="cancellationToken">The cancellation token for the task.</param>
-    /// 
-    /// <exception cref="InvalidOperationException" />
-    /// <exception cref="ArgumentNullException" />
-    /// <exception cref="OperationCanceledException" />
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="indexName"/> is null.</exception>
-    Task RebuildAsync(string indexName, CancellationToken cancellationToken);
+    Task EndRebuildAsync(string indexName, string? elasticOldIndex, string elasticNewIndex, CancellationToken cancellationToken = default);
 }

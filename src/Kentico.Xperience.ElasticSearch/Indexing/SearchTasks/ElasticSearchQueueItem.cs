@@ -32,16 +32,10 @@ public sealed class ElasticSearchQueueItem
     /// <exception cref="ArgumentNullException" />
     public ElasticSearchQueueItem(IIndexEventItemModel? itemToIndex, ElasticSearchTaskType taskType, string indexName)
     {
-        if (string.IsNullOrEmpty(indexName))
+        if (string.IsNullOrEmpty(indexName) ||
+            (taskType != ElasticSearchTaskType.REBUILD_ITEM && itemToIndex == null))
         {
             throw new ArgumentNullException(nameof(indexName));
-        }
-
-        if (taskType != ElasticSearchTaskType.PUBLISH_INDEX &&
-            taskType != ElasticSearchTaskType.REBUILD &&
-            itemToIndex == null)
-        {
-            throw new ArgumentNullException(nameof(itemToIndex));
         }
 
         ItemToIndex = itemToIndex;

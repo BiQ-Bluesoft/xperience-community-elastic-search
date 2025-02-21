@@ -30,8 +30,16 @@ public sealed class ElasticSearchIndexStore
     /// <param name="indexName">The name of the index to retrieve.</param>
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="InvalidOperationException" />
-    public ElasticSearchIndex? GetIndex(string indexName) => string.IsNullOrEmpty(indexName) ? null
-        : registeredIndexes.SingleOrDefault(i => i.IndexName.Equals(indexName, StringComparison.OrdinalIgnoreCase));
+    public ElasticSearchIndex? GetIndex(string indexName)
+    {
+        if (string.IsNullOrEmpty(indexName))
+        {
+            return null;
+        }
+
+        var realIndexName = RemovePostfix(indexName);
+        return registeredIndexes.SingleOrDefault(i => i.IndexName.Equals(realIndexName, StringComparison.OrdinalIgnoreCase));
+    }
 
     /// <summary>
     /// Gets a registered <see cref="ElasticSearchIndex"/> with the specified <paramref name="identifier"/>,
@@ -55,7 +63,8 @@ public sealed class ElasticSearchIndexStore
             throw new ArgumentException("Value must not be null or empty");
         }
 
-        return registeredIndexes.SingleOrDefault(i => i.IndexName.Equals(indexName, StringComparison.OrdinalIgnoreCase))
+        var realIndexName = RemovePostfix(indexName);
+        return registeredIndexes.SingleOrDefault(i => i.IndexName.Equals(realIndexName, StringComparison.OrdinalIgnoreCase))
             ?? throw new InvalidOperationException($"The index '{indexName}' is not registered.");
     }
 
@@ -101,4 +110,8 @@ public sealed class ElasticSearchIndexStore
 
         Instance.SetIndices(indices);
     }
+
+    private static string RemovePostfix(string collectionName) => collectionName.Replace("-primary", string.Empty)
+                                                                         .Replace("-secondary", string.Empty);
+
 }

@@ -38,9 +38,7 @@ internal class ElasticSearchQueueWorker : ThreadQueueWorker<ElasticSearchQueueIt
         }
 
         // Don't enqueue items that require item to index to be processed correctly, but it is empty.
-        if (queueItem.ItemToIndex == null &&
-                queueItem.TaskType != ElasticSearchTaskType.PUBLISH_INDEX &&
-                queueItem.TaskType != ElasticSearchTaskType.REBUILD)
+        if (queueItem.ItemToIndex == null && queueItem.TaskType != ElasticSearchTaskType.REBUILD_ITEM)
         {
             return;
         }

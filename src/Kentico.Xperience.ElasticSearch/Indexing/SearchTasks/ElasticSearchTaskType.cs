@@ -16,17 +16,17 @@ public enum ElasticSearchTaskType
     DELETE,
 
     /// <summary>
-    /// Task marks the end of indexed items, index is published after this task occurs
-    /// </summary>
-    PUBLISH_INDEX,
-
-    /// <summary>
     /// A task for a page which should be updated
     /// </summary>
     UPDATE,
 
     /// <summary>
-    /// Task marks the start of rebuilding index, index is deleted and recreated after this task occurs.
+    /// Task marks the end of indexed items, index is published after this task occurs
     /// </summary>
-    REBUILD,
+    REBUILD_ITEM,
+
+    /// <summary>
+    /// Task marks the end of rebuilding index, all pointers are redirected to new rebuilt index and the old index is deleted.
+    /// </summary>
+    REBUILD_END,
 }
