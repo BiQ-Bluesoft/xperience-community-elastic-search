@@ -79,7 +79,6 @@ public static class ElasticSearchStartupExtensions
             .AddSingleton<IElasticSearchTaskLogger, DefaultElasticSearchTaskLogger>()
             .AddSingleton<IElasticSearchTaskProcessor, DefaultElasticSearchTaskProcessor>()
             .AddSingleton<IElasticSearchConfigurationStorageService, DefaultElasticSearchConfigurationStorageService>()
-            .AddSingleton<IElasticSearchIndexClientService, ElasticSearchIndexClientService>()
             .AddSingleton<IElasticSearchIndexAliasService, ElasticSearchIndexAliasService>();
 }
 

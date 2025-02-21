@@ -18,7 +18,9 @@ public interface IElasticSearchClient
     /// 
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ObjectDisposedException" />
-    Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(CancellationToken cancellationToken);
+    Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(CancellationToken cancellationToken = default);
+
+    Task CreateIndexAsync(string indexName, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes the ElasticSearch index by removing existing index data from Elastic.
@@ -29,7 +31,9 @@ public interface IElasticSearchClient
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="indexName"/> is null.</exception>
-    Task DeleteIndexAsync(string indexName, CancellationToken cancellationToken);
+    Task DeleteIndexAsync(string indexName, CancellationToken cancellationToken = default);
+
+    Task EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes records from the ElasticSearch index.
