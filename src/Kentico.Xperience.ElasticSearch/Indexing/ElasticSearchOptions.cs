@@ -36,4 +36,10 @@ public sealed class ElasticSearchOptions
         get;
         set;
     } = string.Empty;
+
+    public string SearchServiceAPIKey
+    {
+        get;
+        set;
+    } = string.Empty;
 }

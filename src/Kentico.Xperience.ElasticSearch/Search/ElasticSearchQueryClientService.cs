@@ -6,14 +6,17 @@ using Kentico.Xperience.ElasticSearch.Indexing;
 namespace Kentico.Xperience.ElasticSearch.Search;
 
 /// <inheritdoc />
-public sealed class ElasticSearchQueryClientService(ElasticSearchOptions settings) : IElasticSearchQueryClientService
+public sealed class ElasticSearchQueryClientService(ElasticSearchOptions options) : IElasticSearchQueryClientService
 {
     public ElasticsearchClient CreateSearchClientForQueries(string indexName)
     {
-        var elasticSettings = new ElasticsearchClientSettings(new Uri(settings.SearchServiceEndPoint))
-            .DefaultIndex(indexName)
-            .Authentication(new BasicAuthentication(settings.SearchServiceUsername, settings.SearchServicePassword));
-
-        return new ElasticsearchClient(elasticSettings);
+        var settings = new ElasticsearchClientSettings(new Uri(options.SearchServiceEndPoint))
+            .DefaultIndex(indexName);
+        settings = !string.IsNullOrEmpty(options.SearchServiceAPIKey)
+            ? settings
+                .Authentication(new ApiKey(options.SearchServiceAPIKey))
+            : settings
+                .Authentication(new BasicAuthentication(options.SearchServiceUsername, options.SearchServicePassword));
+        return new ElasticsearchClient(settings);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.MachineLearning;
 using Elastic.Transport;
 
 using Kentico.Xperience.ElasticSearch.Admin;
@@ -65,9 +66,14 @@ public static class ElasticSearchStartupExtensions
             {
                 var options = x.GetRequiredService<IOptions<ElasticSearchOptions>>();
 
-                var settings = new ElasticsearchClientSettings(new Uri(options.Value.SearchServiceEndPoint))
-                    .Authentication(new BasicAuthentication(options.Value.SearchServiceUsername, options.Value.SearchServicePassword))
-                    .DisableDirectStreaming();
+                var settings = new ElasticsearchClientSettings(new Uri(options.Value.SearchServiceEndPoint));
+                settings = !string.IsNullOrEmpty(options.Value.SearchServiceAPIKey)
+                    ? settings
+                        .Authentication(new ApiKey(options.Value.SearchServiceAPIKey))
+                        .DisableDirectStreaming()
+                    : settings
+                        .Authentication(new BasicAuthentication(options.Value.SearchServiceUsername, options.Value.SearchServicePassword))
+                        .DisableDirectStreaming();
                 return new ElasticsearchClient(settings);
             })
             .AddSingleton<IElasticSearchQueryClientService>(x =>
