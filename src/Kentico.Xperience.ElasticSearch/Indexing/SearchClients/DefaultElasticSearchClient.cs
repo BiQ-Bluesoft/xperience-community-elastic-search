@@ -105,7 +105,16 @@ internal class DefaultElasticSearchClient(
             EventLogConstants.ElasticDeleteEventCode,
             $"Delete of index {indexName} started.");
 
-        var deleteResponse = await elasticSearchClient.Indices.DeleteAsync(indexName, cancellationToken);
+        var getResponse = await elasticSearchClient.Indices.GetAsync(indexName, cancellationToken);
+        if (!getResponse.IsValidResponse || getResponse.Indices.Count == 0)
+        {
+            eventLogService.LogError(
+                nameof(DefaultElasticSearchClient),
+                EventLogConstants.ElasticDeleteEventCode,
+                $"Index or alias with name: {indexName} not found.");
+        }
+        var deleteResponse = await elasticSearchClient.Indices
+            .DeleteAsync(getResponse.Indices.First().Key.ToString(), cancellationToken);
         if (!deleteResponse.IsValidResponse)
         {
             eventLogService.LogError(
@@ -235,6 +244,11 @@ internal class DefaultElasticSearchClient(
             {
                 foreach (var alias in aliases)
                 {
+                    // we need to transfer index name alias after deleting the old index.
+                    if (alias == indexName)
+                    {
+                        continue;
+                    }
                     await elasticSearchIndexAliasService.AddAliasAsync(alias, elasticNewIndex, cancellationToken);
                 }
             }

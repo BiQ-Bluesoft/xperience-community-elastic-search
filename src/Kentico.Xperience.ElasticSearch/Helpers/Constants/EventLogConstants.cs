@@ -9,5 +9,8 @@
 
         public const string ElasticItemsDeleteEventCode = "ELASTIC_DELETE_ITEM";
         public const string ElasticItemsAddEventCode = "ELASTIC_ADD_ITEM";
+
+        public const string ElasticAliasCreateEventCode = "ELASTIC_ALIAS_CREATE";
+        public const string ElasticAliasDeleteEventCode = "ELASTIC_ALIAS_DELETE";
     }
 }

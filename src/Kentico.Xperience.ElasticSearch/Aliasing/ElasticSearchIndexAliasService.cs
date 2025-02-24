@@ -3,10 +3,12 @@
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.IndexManagement;
 
+using Kentico.Xperience.ElasticSearch.Helpers.Constants;
+
 namespace Kentico.Xperience.ElasticSearch.Aliasing
 {
     internal class ElasticSearchIndexAliasService(
-        ElasticsearchClient indexClient,
+        ElasticsearchClient elasticSearchClient,
         IEventLogService eventLogService) : IElasticSearchIndexAliasService
     {
         /// <inheritdoc />
@@ -25,7 +27,7 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
         {
             ValidateNonEmptyAliasName(aliasName);
 
-            var getAliasResponse = await indexClient.Indices
+            var getAliasResponse = await elasticSearchClient.Indices
                 .GetAliasAsync(alias => alias.Name(aliasName), cancellationToken);
 
             if (getAliasResponse.IsValidResponse && getAliasResponse.Aliases.Any())
@@ -37,17 +39,16 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
                         Index = index.Key
                     })).ToList();
 
-                var deleteAliasResponse = await indexClient.Indices.UpdateAliasesAsync(new UpdateAliasesRequest
+                var deleteAliasResponse = await elasticSearchClient.Indices.UpdateAliasesAsync(new UpdateAliasesRequest
                 {
                     Actions = aliasActions,
                 }, cancellationToken);
 
                 if (!deleteAliasResponse.IsValidResponse)
                 {
-                    // Additional work - Discuss whether exception should be thrown or logging the error is enough.
                     eventLogService.LogError(
-                        nameof(DeleteAliasAsync),
-                        "ELASTIC_SEARCH",
+                        nameof(ElasticSearchIndexAliasService),
+                        EventLogConstants.ElasticAliasDeleteEventCode,
                         $"Unable to delete alias with name: {aliasName}. Operation failed with error: {deleteAliasResponse.DebugInformation}");
                 }
             }
@@ -57,17 +58,27 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
         public async Task AddAliasAsync(string aliasName, string indexName, CancellationToken cancellationToken)
         {
             ValidateNonEmptyAliasName(aliasName);
+            ValidateNonEmptyIndexName(indexName);
 
-            ValidationNonEmptyIndexName(indexName);
+            var getResponse = await elasticSearchClient.Indices.GetAsync(indexName, cancellationToken);
+            if (!getResponse.IsValidResponse || getResponse.Indices.Count == 0)
+            {
+                eventLogService.LogError(
+                    nameof(ElasticSearchIndexAliasService),
+                    EventLogConstants.ElasticAliasCreateEventCode,
+                    $"Index with name or alias {indexName} not found.");
+                return;
+            }
 
-            var putAliasReponse = await indexClient.Indices
-                .PutAliasAsync(new PutAliasRequest(indexName, aliasName), cancellationToken);
+            var putAliasReponse = await elasticSearchClient.Indices
+                .PutAliasAsync(
+                    new PutAliasRequest(getResponse.Indices.First().Key.ToString(), aliasName), cancellationToken);
             if (!putAliasReponse.IsValidResponse)
             {
                 eventLogService.LogError(
-                        nameof(AddAliasAsync),
-                        "ELASTIC_SEARCH",
-                        $"Unable to add alias with name: {aliasName} for index with name: {indexName}. Operation failed with error: {putAliasReponse.DebugInformation}");
+                    nameof(ElasticSearchIndexAliasService),
+                    EventLogConstants.ElasticAliasCreateEventCode,
+                    $"Unable to add alias with name: {aliasName} for index with name: {indexName}. Operation failed with error: {putAliasReponse.DebugInformation}");
             }
         }
 
@@ -76,25 +87,38 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
         {
             ValidateNonEmptyAliasName(aliasName);
 
-            var aliasActions = aliasIndices.Select(index =>
-                IndexUpdateAliasesAction.Add(new AddAction
+            var addActions = new List<IndexUpdateAliasesAction>();
+            foreach (var aliasIndexName in aliasIndices)
+            {
+                var getResponse = await elasticSearchClient.Indices.GetAsync(aliasIndexName, cancellationToken);
+                if (!getResponse.IsValidResponse || getResponse.Indices.Count == 0)
                 {
-                    Index = index,
-                    Alias = aliasName
-                })).ToList();
+                    eventLogService.LogError(
+                        nameof(ElasticSearchIndexAliasService),
+                        EventLogConstants.ElasticAliasCreateEventCode,
+                        $"Index with name or alias {aliasIndexName} not found.");
+                    continue;
+                }
 
-            var createAliasResponse = await indexClient.Indices.UpdateAliasesAsync(
+                addActions.Add(IndexUpdateAliasesAction.Add(new AddAction
+                {
+                    Index = getResponse.Indices.First().Key.ToString(),
+                    Alias = aliasName,
+                }));
+            }
+
+            var createAliasResponse = await elasticSearchClient.Indices.UpdateAliasesAsync(
                 new UpdateAliasesRequest
                 {
-                    Actions = aliasActions,
+                    Actions = addActions,
                 },
                 cancellationToken);
 
             if (!createAliasResponse.IsValidResponse)
             {
                 eventLogService.LogError(
-                    nameof(CreateAliasAsync),
-                    "ELASTIC_SEARCH",
+                    nameof(ElasticSearchIndexAliasService),
+                    EventLogConstants.ElasticAliasCreateEventCode,
                     $"Unable to create alias with name: {aliasName}\n" +
                     $"- indices: {aliasIndices}." +
                     $"Operation failed with error: {createAliasResponse.DebugInformation}");
@@ -110,7 +134,7 @@ namespace Kentico.Xperience.ElasticSearch.Aliasing
                 throw new ArgumentNullException(nameof(aliasName));
             }
         }
-        private static void ValidationNonEmptyIndexName(string indexName)
+        private static void ValidateNonEmptyIndexName(string indexName)
         {
             if (string.IsNullOrEmpty(indexName))
             {

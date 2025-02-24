@@ -263,7 +263,6 @@ internal class DefaultElasticSearchConfigurationStorageService(
         pathProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIncludedPathItemInfo.ElasticSearchIncludedPathItemIndexItemId)} = {configuration.Id}"));
         languageProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexLanguageItemInfo.ElasticSearchIndexLanguageItemIndexItemId)} = {configuration.Id}"));
         contentTypeProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchContentTypeItemInfo.ElasticSearchContentTypeItemIndexItemId)} = {configuration.Id}"));
-        indexAliasIndexProvider.BulkDelete(new WhereCondition($"{nameof(ElasticSearchIndexAliasIndexItemInfo.ElasticSearchIndexAliasIndexItemIndexItemId)} = {configuration.Id}"));
 
         indexInfo.ElasticSearchIndexItemRebuildHook = configuration.RebuildHook;
         indexInfo.ElasticSearchIndexItemStrategyName = configuration.StrategyName;
