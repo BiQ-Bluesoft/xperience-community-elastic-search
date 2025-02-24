@@ -22,7 +22,9 @@
     <DefineConstants>$(DefineConstants);SEPARATED_ADMIN</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.Admin" />
     <PackageReference Include="Kentico.Xperience.AzureStorage" />
+    <PackageReference Include="Kentico.Xperience.Core.Tests" />
     <PackageReference Include="Kentico.Xperience.ImageProcessing" />
     <PackageReference Include="Kentico.Xperience.WebApp" />
   </ItemGroup>

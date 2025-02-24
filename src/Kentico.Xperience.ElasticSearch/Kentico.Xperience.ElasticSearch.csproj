@@ -47,6 +47,9 @@
 	<ItemGroup>
 		<PackageReference Include="Elastic.Clients.Elasticsearch" />
 		<PackageReference Include="Kentico.Xperience.Admin" />
+		<PackageReference Include="Kentico.Xperience.AzureStorage" />
+		<PackageReference Include="Kentico.Xperience.Core.Tests" />
+		<PackageReference Include="Kentico.Xperience.ImageProcessing" />
 		<PackageReference Include="Kentico.Xperience.WebApp" />
 		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>

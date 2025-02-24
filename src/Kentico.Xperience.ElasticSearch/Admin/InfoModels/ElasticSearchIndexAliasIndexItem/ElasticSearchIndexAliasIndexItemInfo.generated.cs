@@ -1,9 +1,9 @@
 using System.Data;
-using System.Runtime.Serialization;
 
 using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
+
 using Kentico.Xperience.ElasticSearch.Admin;
 
 [assembly: RegisterObjectType(typeof(ElasticSearchIndexAliasIndexItemInfo), ElasticSearchIndexAliasIndexItemInfo.OBJECT_TYPE)]
@@ -100,18 +100,6 @@ public partial class ElasticSearchIndexAliasIndexItemInfo : AbstractInfo<Elastic
     {
         Provider.Set(this);
     }
-
-
-    /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected ElasticSearchIndexAliasIndexItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
 
     /// <summary>
     /// Creates an empty instance of the <see cref="ElasticSearchIndexAliasIndexItemInfo"/> class.

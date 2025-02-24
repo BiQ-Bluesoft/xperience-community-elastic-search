@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Runtime.Serialization;
 
 using CMS;
 using CMS.DataEngine;
@@ -95,18 +94,6 @@ public class ElasticSearchReusableContentTypeItemInfo : AbstractInfo<ElasticSear
     /// </summary>
     protected override void SetObject() => Provider.Set(this);
 
-
-    /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected ElasticSearchReusableContentTypeItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
-
     /// <summary>
     /// Creates an empty instance of the <see cref="ElasticSearchReusableContentTypeItemInfo"/> class.
     /// </summary>
@@ -114,7 +101,6 @@ public class ElasticSearchReusableContentTypeItemInfo : AbstractInfo<ElasticSear
         : base(TYPEINFO)
     {
     }
-
 
     /// <summary>
     /// Creates a new instances of the <see cref="ElasticSearchReusableContentTypeItemInfo"/> class from the given <see cref="DataRow"/>.

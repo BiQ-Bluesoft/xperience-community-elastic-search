@@ -1,6 +1,6 @@
-﻿using AngleSharp.Html.Parser;
+﻿using System.Text.RegularExpressions;
 
-using CMS.Helpers;
+using AngleSharp.Html.Parser;
 
 namespace DancingGoat.Search.Services;
 
@@ -51,7 +51,7 @@ public class WebScraperHtmlSanitizer
         var textContent = body.TextContent;
 
         // Normalizes and trims whitespace characters
-        textContent = HTMLHelper.RegexHtmlToTextWhiteSpace.Replace(textContent, " ");
+        textContent = WebScraperHtmlSanitizerParser.WhiteSpace().Replace(textContent, " ");
         textContent = textContent.Trim();
 
         var title = doc.Head?.QuerySelector("title")?.TextContent ?? "";
@@ -62,4 +62,10 @@ public class WebScraperHtmlSanitizer
             new string[] { title, description, textContent }.Where(i => !string.IsNullOrWhiteSpace(i))
         );
     }
+}
+
+public static partial class WebScraperHtmlSanitizerParser
+{
+    [GeneratedRegex(@"\\s+")]
+    public static partial Regex WhiteSpace();
 }

@@ -1,4 +1,5 @@
-﻿using Kentico.PageBuilder.Web.Mvc;
+﻿
+using Kentico.Builder.Web.Mvc;
 
 namespace DancingGoat.Helpers
 {
@@ -19,9 +20,8 @@ namespace DancingGoat.Helpers
                 .ToArray();
         }
 
-
-        private static IEnumerable<string> GetWidgetsIdentifiers() => new ComponentDefinitionProvider<WidgetDefinition>()
-                   .GetAll()
-                   .Select(definition => definition.Identifier);
+        private static IEnumerable<string> GetWidgetsIdentifiers() => new ComponentDefinitionProvider<Kentico.PageBuilder.Web.Mvc.WidgetDefinition>()
+            .GetAll()
+            .Select(definition => definition.Identifier);
     }
 }

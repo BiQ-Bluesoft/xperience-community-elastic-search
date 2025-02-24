@@ -1,5 +1,4 @@
 using System.Data;
-using System.Runtime.Serialization;
 
 using CMS;
 using CMS.DataEngine;
@@ -100,18 +99,6 @@ public partial class ElasticSearchIndexLanguageItemInfo : AbstractInfo<ElasticSe
     {
         Provider.Set(this);
     }
-
-
-    /// <summary>
-    /// Constructor for de-serialization.
-    /// </summary>
-    /// <param name="info">Serialization info.</param>
-    /// <param name="context">Streaming context.</param>
-    protected ElasticSearchIndexLanguageItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
 
     /// <summary>
     /// Creates an empty instance of the <see cref="ElasticSearchIndexLanguageItemInfo"/> class.
