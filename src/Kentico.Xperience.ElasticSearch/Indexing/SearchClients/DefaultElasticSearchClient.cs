@@ -300,19 +300,18 @@ internal class DefaultElasticSearchClient(
         {
             if (includedPathAttribute.ContentTypes != null && includedPathAttribute.ContentTypes.Count > 0)
             {
-                var queryBuilder = new ContentItemQueryBuilder();
-                foreach (var contentType in includedPathAttribute.ContentTypes)
+                var contentTypeNames = includedPathAttribute.ContentTypes.Select(ct => ct.ContentTypeName);
+                var queryBuilder = new ContentItemQueryBuilder()
+                    .ForContentTypes(q => q
+                        .OfContentType(contentTypeNames.ToArray())
+                        .ForWebsite(elasticSearchIndex.WebSiteChannelName, includeUrlPath: true, pathMatch: pathMatch))
+                    .InLanguage(language);
+
+                var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken ?? default);
+                foreach (var page in webpages)
                 {
-                    queryBuilder.ForContentType(contentType.ContentTypeName, config => config.ForWebsite(elasticSearchIndex.WebSiteChannelName, includeUrlPath: true, pathMatch: pathMatch));
-                    queryBuilder.InLanguage(language);
-
-                    var webpages = await executor.GetWebPageResult(queryBuilder, container => container, cancellationToken: cancellationToken ?? default);
-
-                    foreach (var page in webpages)
-                    {
-                        var item = await MapToEventItemAsync(page);
-                        indexedItems.Add(item);
-                    }
+                    var item = await MapToEventItemAsync(page);
+                    indexedItems.Add(item);
                 }
             }
         }
@@ -322,15 +321,11 @@ internal class DefaultElasticSearchClient(
     {
         foreach (var language in elasticSearchIndex.LanguageNames)
         {
-            var queryBuilder = new ContentItemQueryBuilder();
-
             if (elasticSearchIndex.IncludedReusableContentTypes != null && elasticSearchIndex.IncludedReusableContentTypes.Count > 0)
             {
-                foreach (var reusableContentType in elasticSearchIndex.IncludedReusableContentTypes)
-                {
-                    queryBuilder.ForContentType(reusableContentType);
-                }
-                queryBuilder.InLanguage(language);
+                var queryBuilder = new ContentItemQueryBuilder()
+                        .ForContentTypes(q => q.OfContentType(elasticSearchIndex.IncludedReusableContentTypes.ToArray()))
+                        .InLanguage(language);
 
                 var reusableItems = await executor.GetResult(queryBuilder, result => result, cancellationToken: cancellationToken ?? default);
                 foreach (var reusableItem in reusableItems)
@@ -338,6 +333,7 @@ internal class DefaultElasticSearchClient(
                     var item = await MapToEventReusableItemAsync(reusableItem);
                     indexedItems.Add(item);
                 }
+
             }
         }
     }
