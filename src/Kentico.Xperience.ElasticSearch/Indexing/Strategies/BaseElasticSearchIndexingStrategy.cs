@@ -2,6 +2,7 @@
 
 using Elastic.Clients.Elasticsearch;
 
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Helpers.Constants;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
@@ -66,20 +67,22 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
     }
 
     /// <inheritdoc />
-    public async Task CreateIndexInternalAsync(ElasticsearchClient indexClient, string indexName, CancellationToken cancellationToken)
+    public async Task<ElasticSearchResponse> CreateIndexInternalAsync(ElasticsearchClient indexClient, string indexName, CancellationToken cancellationToken)
     {
         eventLogService.LogInformation(
             nameof(BaseElasticSearchIndexingStrategy<TSearchModel>),
             EventLogConstants.ElasticCreateEventCode,
             $"Creation of index {indexName} started");
-        var createResponse = await indexClient.Indices.CreateAsync<TSearchModel>(indexName, cancellationToken);
 
+        var createResponse = await indexClient.Indices.CreateAsync<TSearchModel>(indexName, cancellationToken);
         if (!createResponse.IsValidResponse)
         {
             eventLogService.LogError(
                 nameof(BaseElasticSearchIndexingStrategy<TSearchModel>),
                 EventLogConstants.ElasticCreateEventCode,
                 $"Unable to create index with name: {indexName}. Operation failed with error: {createResponse.DebugInformation}");
+            return ElasticSearchResponse.Failure($"Unable to create index with name: {indexName}.");
         }
+        return ElasticSearchResponse.Success();
     }
 }

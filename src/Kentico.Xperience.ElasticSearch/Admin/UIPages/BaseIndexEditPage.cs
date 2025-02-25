@@ -51,12 +51,16 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
         if (StorageService.GetIndexIds().Exists(x => x == configuration.Id))
         {
             var oldIndex = StorageService.GetIndexDataOrNull(configuration.Id);
-            var edited = StorageService.TryEditIndex(configuration);
 
-            if (edited)
+            if (StorageService.TryEditIndex(configuration))
             {
                 ElasticSearchIndexStore.SetIndices(StorageService);
-                await defaultElasticSearchClient.EditIndexAsync(oldIndex!.IndexName, configuration, default);
+
+                var elasticRespone = await defaultElasticSearchClient.EditIndexAsync(oldIndex!.IndexName, configuration, default);
+                if (!elasticRespone.IsSuccess)
+                {
+                    return new ModificationResponse(ModificationResult.Failure, [elasticRespone.ErrorMessage]);
+                }
 
                 return new ModificationResponse(ModificationResult.Success);
             }
@@ -64,16 +68,17 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
             return new ModificationResponse(ModificationResult.Failure);
         }
 
-        var created = !string.IsNullOrWhiteSpace(configuration.IndexName) && StorageService.TryCreateIndex(configuration);
-
-        if (created)
+        if (!string.IsNullOrWhiteSpace(configuration.IndexName) && StorageService.TryCreateIndex(configuration))
         {
             ElasticSearchIndexStore.Instance.AddIndex(new ElasticSearchIndex(configuration, StrategyStorage.Strategies));
-            await defaultElasticSearchClient.CreateIndexAsync(configuration.IndexName);
 
+            var elasticResponse = await defaultElasticSearchClient.CreateIndexAsync(configuration.IndexName);
+            if (!elasticResponse.IsSuccess)
+            {
+                return new ModificationResponse(ModificationResult.Failure, [elasticResponse.ErrorMessage]);
+            }
             return new ModificationResponse(ModificationResult.Success);
         }
-
         return new ModificationResponse(ModificationResult.Failure);
     }
 }

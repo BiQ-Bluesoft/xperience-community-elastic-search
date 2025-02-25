@@ -5,6 +5,7 @@ using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Aliasing;
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
 
 using Microsoft.IdentityModel.Tokens;
@@ -52,9 +53,14 @@ internal abstract class BaseIndexAliasEditPage(
     {
         if (!configuration.IndexNames.IsNullOrEmpty() && StorageService.TryCreateAlias(configuration))
         {
-            ElasticSearchIndexAliasStore.Instance.AddAlias(new ElasticSearchIndexAlias(configuration));
-            await elasticSearchIndexAliasService.CreateAliasAsync(configuration.AliasName, configuration.IndexNames, default);
+            var elasticResponse = await elasticSearchIndexAliasService.CreateAliasAsync(configuration.AliasName, configuration.IndexNames, default);
+            if (!elasticResponse.IsSuccess)
+            {
+                StorageService.TryDeleteAlias(configuration.Id);
+                return new ModificationResponse(ModificationResult.Failure, [elasticResponse.ErrorMessage]);
+            }
 
+            ElasticSearchIndexAliasStore.Instance.AddAlias(new ElasticSearchIndexAlias(configuration));
             return new ModificationResponse(ModificationResult.Success);
         }
 
@@ -67,9 +73,13 @@ internal abstract class BaseIndexAliasEditPage(
 
         if (StorageService.TryEditAlias(configuration))
         {
-            ElasticSearchIndexAliasStore.SetAliases(StorageService);
-            await elasticSearchIndexAliasService.EditAliasAsync(oldAliasName, configuration.AliasName, configuration.IndexNames, default);
+            var elasticResponse = await elasticSearchIndexAliasService.EditAliasAsync(oldAliasName, configuration.AliasName, configuration.IndexNames, default);
+            if (!elasticResponse.IsSuccess)
+            {
+                return new ModificationResponse(ModificationResult.Failure, [elasticResponse.ErrorMessage]);
+            }
 
+            ElasticSearchIndexAliasStore.SetAliases(StorageService);
             return new ModificationResponse(ModificationResult.Success);
         }
 

@@ -9,6 +9,7 @@ using Elastic.Clients.Elasticsearch;
 using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Aliasing;
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Helpers.Constants;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
@@ -31,26 +32,6 @@ internal class DefaultElasticSearchClient(
     IInfoProvider<ChannelInfo> channelProvider,
     IInfoProvider<ElasticSearchIndexItemInfo> elasticSearchIndexProvider) : IElasticSearchClient
 {
-
-    /// <inheritdoc/>
-    public async Task<(string?, string)> GetElasticIndexNames(string indexName)
-    {
-        var primaryName = $"{indexName}-primary";
-        var secondaryName = $"{indexName}-secondary";
-
-        var getResponse = await elasticSearchClient.Indices.GetAsync(indexName);
-        if (!getResponse.IsValidResponse || getResponse.Indices.Count == 0)
-        {
-            return (null, primaryName);
-        }
-
-        var currentIndex = getResponse.Indices.First();
-        var currentIndexName = currentIndex.Key.ToString();
-
-        return currentIndexName == primaryName
-            ? (currentIndexName, secondaryName)
-            : (currentIndexName, primaryName);
-    }
 
     /// <inheritdoc/>
     public async Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(
@@ -81,7 +62,7 @@ internal class DefaultElasticSearchClient(
     }
 
     /// <inheritdoc/>
-    public async Task CreateIndexAsync(string indexName, CancellationToken cancellationToken = default)
+    public async Task<ElasticSearchResponse> CreateIndexAsync(string indexName, CancellationToken cancellationToken = default)
     {
         var elasticSearchIndex = ElasticSearchIndexStore.Instance.GetIndex(indexName) ??
             throw new InvalidOperationException($"Registered index with name '{indexName}' doesn't exist.");
@@ -91,12 +72,13 @@ internal class DefaultElasticSearchClient(
         var indexExistsInElastic = (await elasticSearchClient.Indices.ExistsAsync(indexName, cancellationToken))?.Exists ?? false;
         if (!indexExistsInElastic)
         {
-            await elasticSearchStrategy.CreateIndexInternalAsync(elasticSearchClient, indexName, cancellationToken);
+            return await elasticSearchStrategy.CreateIndexInternalAsync(elasticSearchClient, indexName, cancellationToken);
         }
+        return ElasticSearchResponse.Success();
     }
 
     /// <inheritdoc />
-    public async Task DeleteIndexAsync(string indexName, CancellationToken cancellationToken = default)
+    public async Task<ElasticSearchResponse> DeleteIndexAsync(string indexName, CancellationToken cancellationToken = default)
     {
         ValidateNonEmptyIndexName(indexName);
 
@@ -105,14 +87,17 @@ internal class DefaultElasticSearchClient(
             EventLogConstants.ElasticDeleteEventCode,
             $"Delete of index {indexName} started.");
 
+        // Get real index, because the given index name can be only alias name for the index.
         var getResponse = await elasticSearchClient.Indices.GetAsync(indexName, cancellationToken);
         if (!getResponse.IsValidResponse || getResponse.Indices.Count == 0)
         {
             eventLogService.LogError(
                 nameof(DefaultElasticSearchClient),
                 EventLogConstants.ElasticDeleteEventCode,
-                $"Index or alias with name: {indexName} not found.");
+                $"Index or alias with name: {indexName} not found. Get operation failed with error: {getResponse.DebugInformation}");
+            return ElasticSearchResponse.Failure($"Index with name: {indexName} not found.");
         }
+
         var deleteResponse = await elasticSearchClient.Indices
             .DeleteAsync(getResponse.Indices.First().Key.ToString(), cancellationToken);
         if (!deleteResponse.IsValidResponse)
@@ -121,20 +106,23 @@ internal class DefaultElasticSearchClient(
                 nameof(DefaultElasticSearchClient),
                 EventLogConstants.ElasticDeleteEventCode,
                 $"Unable to delete index with name: {indexName}. Operation failed with error: {deleteResponse.DebugInformation}");
+            return ElasticSearchResponse.Failure($"Unable to delete index with name: {indexName}.");
         }
+        return ElasticSearchResponse.Success();
     }
 
     /// <inheritdoc />
-    public async Task EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration,
+    public async Task<ElasticSearchResponse> EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration,
         CancellationToken cancellationToken = default)
     {
         if (newConfiguration.IndexName != oldIndexName)
         {
             // Do we want this functionality?
+            return ElasticSearchResponse.Failure($"Editing name of the already created index is not permitted.");
         }
         else
         {
-            await StartRebuildAsync(newConfiguration.IndexName, cancellationToken);
+            return await StartRebuildAsync(newConfiguration.IndexName, cancellationToken);
         }
     }
 
@@ -188,7 +176,7 @@ internal class DefaultElasticSearchClient(
     }
 
     /// <inheritdoc />
-    public async Task StartRebuildAsync(string indexName, CancellationToken cancellationToken = default)
+    public async Task<ElasticSearchResponse> StartRebuildAsync(string indexName, CancellationToken cancellationToken = default)
     {
         ValidateNonEmptyIndexName(indexName);
 
@@ -204,7 +192,11 @@ internal class DefaultElasticSearchClient(
         // Create new index for rebuild = to ensure zero down time
         var (oldIndexName, newIndexName) = await GetElasticIndexNames(indexName);
         var strategy = serviceProvider.GetRequiredStrategy(elasticIndex);
-        await strategy.CreateIndexInternalAsync(elasticSearchClient, newIndexName, cancellationToken);
+        var elasticResponse = await strategy.CreateIndexInternalAsync(elasticSearchClient, newIndexName, cancellationToken);
+        if (!elasticResponse.IsSuccess)
+        {
+            return elasticResponse;
+        }
 
         // Enqueue items neccessary for rebuild
         indexedItems.ForEach(item =>
@@ -219,6 +211,7 @@ internal class DefaultElasticSearchClient(
                     new IndexEventRebuildEndModel(oldIndexName, newIndexName, indexName),
                     ElasticSearchTaskType.REBUILD_END,
                     elasticIndex.IndexName));
+        return ElasticSearchResponse.Success();
     }
 
     /// <inheritdoc/>
@@ -286,6 +279,25 @@ internal class DefaultElasticSearchClient(
         {
             throw new ArgumentNullException(nameof(indexName));
         }
+    }
+
+    private async Task<(string?, string)> GetElasticIndexNames(string indexName)
+    {
+        var primaryName = $"{indexName}-primary";
+        var secondaryName = $"{indexName}-secondary";
+
+        var getResponse = await elasticSearchClient.Indices.GetAsync(indexName);
+        if (!getResponse.IsValidResponse || getResponse.Indices.Count == 0)
+        {
+            return (null, primaryName);
+        }
+
+        var currentIndex = getResponse.Indices.First();
+        var currentIndexName = currentIndex.Key.ToString();
+
+        return currentIndexName == primaryName
+            ? (currentIndexName, secondaryName)
+            : (currentIndexName, primaryName);
     }
 
     private async Task<List<IIndexEventItemModel>> FetchContentForRebuildAsync(ElasticSearchIndex elasticSearchIndex, CancellationToken? cancellationToken)

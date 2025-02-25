@@ -1,4 +1,5 @@
 using Kentico.Xperience.ElasticSearch.Admin.Models;
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
@@ -9,8 +10,6 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 /// </summary>
 public interface IElasticSearchClient
 {
-    Task<(string?, string)> GetElasticIndexNames(string indexName);
-
     /// <summary>
     /// Gets the indices of the ElasticSearch application with basic statistics.
     /// </summary>
@@ -20,7 +19,12 @@ public interface IElasticSearchClient
     /// <exception cref="ObjectDisposedException" />
     Task<ICollection<ElasticSearchIndexStatisticsViewModel>> GetStatisticsAsync(CancellationToken cancellationToken = default);
 
-    Task CreateIndexAsync(string indexName, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Creates a new ElasticSearch index with the given name.
+    /// </summary>
+    /// <param name="indexName">Name of the index.</param>
+    /// <param name="cancellationToken">The cancellation token for the task.</param>
+    Task<ElasticSearchResponse> CreateIndexAsync(string indexName, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes the ElasticSearch index by removing existing index data from Elastic.
@@ -31,9 +35,16 @@ public interface IElasticSearchClient
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="indexName"/> is null.</exception>
-    Task DeleteIndexAsync(string indexName, CancellationToken cancellationToken = default);
+    Task<ElasticSearchResponse> DeleteIndexAsync(string indexName, CancellationToken cancellationToken = default);
 
-    Task EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Edits the ElasticSearch index by starting the zero downtime rebuild action. 
+    /// If edited index has a different name, return a failure response, since this is not permitted.
+    /// </summary>
+    /// <param name="oldIndexName">Name of the original index.</param>
+    /// <param name="newConfiguration">New configuration of the index containing edited information.</param>
+    /// <param name="cancellationToken">The cancellation token for the task.</param>
+    Task<ElasticSearchResponse> EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes records from the ElasticSearch index.
@@ -67,7 +78,7 @@ public interface IElasticSearchClient
         IEnumerable<IElasticSearchModel> models, string indexName, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Starts the rebuild process by creating corresponding search tasks 
+    /// Starts the rebuild process by creating new undelaying ElasticSearch index and creating corresponding search tasks 
     /// that will later be processed by <see cref="DefaultElasticSearchTaskProcessor"/>
     /// </summary>
     /// <param name="indexName">The index to rebuild.</param>
@@ -77,7 +88,15 @@ public interface IElasticSearchClient
     /// <exception cref="ArgumentNullException" />
     /// <exception cref="OperationCanceledException" />
     /// <exception cref="ObjectDisposedException" />
-    Task StartRebuildAsync(string indexName, CancellationToken cancellationToken = default);
+    Task<ElasticSearchResponse> StartRebuildAsync(string indexName, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Finalizes the rebuild process by transfering aliases from old underlaying ElasticSearch index to new underlaying ElasticSearch index 
+    /// and setting alias with given indexName to point to the new underlaying index.
+    /// </summary>
+    /// <param name="indexName">Name of the index in Kentico.</param>
+    /// <param name="elasticOldIndex">Name of the old underlaying index in ElasticSearch.</param>
+    /// <param name="elasticNewIndex">Name of the new underlaying index in ElasticSearch.</param>
+    /// <param name="cancellationToken">The cancellation token for the task.</param>
     Task EndRebuildAsync(string indexName, string? elasticOldIndex, string elasticNewIndex, CancellationToken cancellationToken = default);
 }

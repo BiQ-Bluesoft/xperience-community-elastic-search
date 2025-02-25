@@ -58,12 +58,12 @@ internal class IndexEditPage(
             }
             else
             {
-                response.AddErrorMessage("Could not create index.");
+                response.AddErrorMessage("Could not edit index.");
             }
         }
         else
         {
-            response.AddSuccessMessage("Index edited");
+            response.AddSuccessMessage("Index edited. Rebuild of index started.");
         }
 
         return response;

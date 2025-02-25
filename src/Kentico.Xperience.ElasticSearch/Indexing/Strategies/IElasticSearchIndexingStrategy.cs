@@ -1,5 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
 
+using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
 namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
@@ -34,7 +35,7 @@ public interface IElasticSearchIndexingStrategy
     /// <param name="indexName">Name of the index that should be cretaed.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task representing asynchronnous operation.</returns>
-    Task CreateIndexInternalAsync(ElasticsearchClient indexClient, string indexName, CancellationToken cancellationToken);
+    Task<ElasticSearchResponse> CreateIndexInternalAsync(ElasticsearchClient indexClient, string indexName, CancellationToken cancellationToken);
 
     /// <summary>
     /// Called when uploading data to user defined <see cref="ElasticSearchIndex"/>.

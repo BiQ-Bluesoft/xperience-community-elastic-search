@@ -53,7 +53,7 @@ internal class IndexCreatePage(
                 { typeof(IndexEditPage), index.Identifier}
             };
             var successResponse = NavigateTo(pageLinkGenerator.GetPath<IndexEditPage>(pageParameters))
-                .AddSuccessMessage("Index created.");
+                .AddSuccessMessage("Index created. Please rebuild the index");
 
             return successResponse;
         }

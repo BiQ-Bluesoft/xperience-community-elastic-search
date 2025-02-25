@@ -117,7 +117,12 @@ internal class IndexAliasListingPage(
 
             try
             {
-                await elasticSearchClient.StartRebuildAsync(index.IndexName, cancellationToken);
+                var elasticResponse = await elasticSearchClient.StartRebuildAsync(index.IndexName, cancellationToken);
+                if (!elasticResponse.IsSuccess)
+                {
+                    return ResponseFrom(result)
+                        .AddErrorMessage(string.Format("Errors occurred while rebuilding the '{0}' index. Please check the Event Log for more details.", index.IndexName));
+                }
             }
             catch (Exception ex)
             {
@@ -143,13 +148,15 @@ internal class IndexAliasListingPage(
         }
         try
         {
-            var res = configurationStorageService.TryDeleteAlias(id);
-
-            if (res)
+            if (configurationStorageService.TryDeleteAlias(id))
             {
-                ElasticSearchIndexAliasStore.SetAliases(configurationStorageService);
+                var elasticResponse = await elasticSearchIndexAliasService.DeleteAliasAsync(alias.AliasName, cancellationToken);
+                if (!elasticResponse.IsSuccess)
+                {
+                    return response.AddErrorMessage(elasticResponse.ErrorMessage);
+                }
 
-                await elasticSearchIndexAliasService.DeleteAliasAsync(alias.AliasName, cancellationToken);
+                ElasticSearchIndexAliasStore.SetAliases(configurationStorageService);
             }
             else
             {

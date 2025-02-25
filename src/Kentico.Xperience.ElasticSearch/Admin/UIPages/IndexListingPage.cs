@@ -141,7 +141,7 @@ internal class IndexListingPage(
         var indexId = ValidationHelper.GetInteger(row.Identifier, 0);
         var indexName = ElasticSearchIndexStore.Instance.GetIndex(indexId) is ElasticSearchIndex index
             ? index.IndexName
-            : "";
+            : string.Empty;
 
         return statistics.FirstOrDefault(s => string.Equals(s.Name, indexName, StringComparison.OrdinalIgnoreCase));
     }
@@ -165,7 +165,12 @@ internal class IndexListingPage(
         }
         try
         {
-            await elasticSearchClient.StartRebuildAsync(index.IndexName, cancellationToken);
+            var elasticResponse = await elasticSearchClient.StartRebuildAsync(index.IndexName, cancellationToken);
+            if (!elasticResponse.IsSuccess)
+            {
+                return ResponseFrom(result)
+                    .AddErrorMessage($"Errors occurred while rebuilding the '{index.IndexName}' index. Please check the Event Log for more details.");
+            }
 
             return ResponseFrom(result)
                 .AddSuccessMessage("Indexing in progress. Visit your ElasticSearch dashboard for details about the indexing process.");
@@ -191,10 +196,13 @@ internal class IndexListingPage(
         }
         try
         {
-            await elasticSearchClient.DeleteIndexAsync(index.IndexName, cancellationToken);
-            var res = configurationStorageService.TryDeleteIndex(id);
-            if (res)
+            if (configurationStorageService.TryDeleteIndex(id))
             {
+                var elasticResponse = await elasticSearchClient.DeleteIndexAsync(index.IndexName, cancellationToken);
+                if (!elasticResponse.IsSuccess)
+                {
+                    response.AddErrorMessage(elasticResponse.ErrorMessage);
+                }
                 ElasticSearchIndexStore.SetIndices(configurationStorageService);
             }
             else

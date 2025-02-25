@@ -56,7 +56,7 @@ internal class IndexAliasEditPage(Xperience.Admin.Base.Forms.Internal.IFormItemC
             }
             else
             {
-                response.AddErrorMessage("Could not create index alias.");
+                response.AddErrorMessage("Could not edit index alias.");
             }
         }
         else
