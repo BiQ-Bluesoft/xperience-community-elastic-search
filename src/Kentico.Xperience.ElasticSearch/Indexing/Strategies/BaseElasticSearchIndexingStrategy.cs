@@ -1,6 +1,8 @@
 ﻿using CMS.Core;
 
 using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.IndexManagement;
+using Elastic.Clients.Elasticsearch.Mapping;
 
 using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Helpers.Constants;
@@ -12,7 +14,7 @@ namespace Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 /// Default indexing strategy that provides simple indexing.
 /// Search model <typeparamref name="TSearchModel"/> used for Index definition and data retrieval.
 /// </summary>
-public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchIndexingStrategy where TSearchModel : class, IElasticSearchModel, new()
+public abstract class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchIndexingStrategy where TSearchModel : class, IElasticSearchModel, new()
 {
     private readonly IEventLogService eventLogService = Service.Resolve<IEventLogService>();
 
@@ -74,7 +76,8 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
             EventLogConstants.ElasticCreateEventCode,
             $"Creation of index {indexName} started");
 
-        var createResponse = await indexClient.Indices.CreateAsync<TSearchModel>(indexName, cancellationToken);
+        var createResponse = await indexClient.Indices
+            .CreateAsync<TSearchModel>(index => ConfigureIndex(index.Index(indexName).Mappings(Mapping)), cancellationToken);
         if (!createResponse.IsValidResponse)
         {
             eventLogService.LogError(
@@ -85,4 +88,8 @@ public class BaseElasticSearchIndexingStrategy<TSearchModel>() : IElasticSearchI
         }
         return ElasticSearchResponse.Success();
     }
+
+    public virtual CreateIndexRequestDescriptor<TSearchModel> ConfigureIndex(CreateIndexRequestDescriptor<TSearchModel> createIndexRequestDescriptor) => createIndexRequestDescriptor;
+
+    public abstract void Mapping(TypeMappingDescriptor<TSearchModel> descriptor);
 }

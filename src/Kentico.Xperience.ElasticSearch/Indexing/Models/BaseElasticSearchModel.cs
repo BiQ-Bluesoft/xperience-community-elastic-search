@@ -17,5 +17,5 @@ public class BaseElasticSearchModel : IElasticSearchModel
 
     public string Name { get; set; } = string.Empty;
 
-    public virtual string GetId() => ItemGuid;
+    public virtual string GetId() => ObjectID;
 }

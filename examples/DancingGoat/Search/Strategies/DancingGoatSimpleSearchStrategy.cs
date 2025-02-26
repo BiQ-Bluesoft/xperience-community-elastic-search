@@ -2,6 +2,8 @@
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
+using Elastic.Clients.Elasticsearch.Mapping;
+
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
@@ -36,7 +38,7 @@ public class DancingGoatSimpleSearchStrategy(StrategyHelper strategyHelper) : Ba
                 return null;
             }
 
-            result.Title = page.ArticleTitle ?? "";
+            result.Title = page.ArticleTitle ?? string.Empty;
         }
         else if (string.Equals(item.ContentTypeName, HomePage.CONTENT_TYPE_NAME, StringComparison.OrdinalIgnoreCase))
         {
@@ -60,4 +62,10 @@ public class DancingGoatSimpleSearchStrategy(StrategyHelper strategyHelper) : Ba
 
         return result;
     }
+
+    public override void Mapping(TypeMappingDescriptor<DancingGoatSimpleSearchModel> descriptor) =>
+        descriptor
+            .Properties(props => props
+                .Text(x => x.Title) // searching for the part of the title will work too
+                .Keyword(x => x.Url)); // only searching for the whole url will work
 }

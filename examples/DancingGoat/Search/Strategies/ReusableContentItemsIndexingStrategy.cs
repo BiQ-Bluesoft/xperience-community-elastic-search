@@ -5,6 +5,8 @@ using DancingGoat.Models;
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
+using Elastic.Clients.Elasticsearch.Mapping;
+
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
@@ -90,4 +92,10 @@ public class ReusableContentItemsIndexingStrategy : BaseElasticSearchIndexingStr
             return null;
         }
     }
+
+    public override void Mapping(TypeMappingDescriptor<DancingGoatSearchModel> descriptor) =>
+        descriptor
+            .Properties(props => props
+                .Text(x => x.Content)
+                .Keyword(x => x.Title));
 }

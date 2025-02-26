@@ -5,6 +5,8 @@ using DancingGoat.Models;
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
+using Elastic.Clients.Elasticsearch.Mapping;
+
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
@@ -67,6 +69,7 @@ public class CustomItemsReindexingSearchStrategy(
         return reindexedItems;
     }
 
+
     public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSearchModel();
@@ -92,7 +95,7 @@ public class CustomItemsReindexingSearchStrategy(
                 return null;
             }
 
-            result.Title = page.CafeTitle ?? "";
+            result.Title = page.CafeTitle ?? string.Empty;
             var rawContent = await webCrawler.CrawlWebPage(page!);
             result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
         }
@@ -110,7 +113,7 @@ public class CustomItemsReindexingSearchStrategy(
                 return null;
             }
 
-            result.Title = page.ArticleTitle ?? "";
+            result.Title = page.ArticleTitle ?? string.Empty;
             var rawContent = await webCrawler.CrawlWebPage(page!);
             result.Content = htmlSanitizer.SanitizeHtmlDocument(rawContent);
         }
@@ -138,4 +141,8 @@ public class CustomItemsReindexingSearchStrategy(
 
         return result;
     }
+    public override void Mapping(TypeMappingDescriptor<DancingGoatSearchModel> descriptor) =>
+        descriptor.Properties(props => props
+            .Text(x => x.Content)
+            .Keyword(x => x.Title));
 }

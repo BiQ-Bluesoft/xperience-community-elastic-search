@@ -1,5 +1,4 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.MachineLearning;
 using Elastic.Transport;
 
 using Kentico.Xperience.ElasticSearch.Admin;
@@ -48,12 +47,6 @@ public static class ElasticSearchStartupExtensions
         var builder = new ElasticSearchBuilder(serviceCollection);
 
         configure(builder);
-
-        if (builder.IncludeDefaultStrategy)
-        {
-            serviceCollection.AddTransient<BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>>();
-            builder.RegisterStrategy<BaseElasticSearchIndexingStrategy<BaseElasticSearchModel>, BaseElasticSearchModel>("Default");
-        }
 
         return serviceCollection;
     }
@@ -105,12 +98,6 @@ public interface IElasticSearchBuilder
 
 internal class ElasticSearchBuilder(IServiceCollection serviceCollection) : IElasticSearchBuilder
 {
-    /// <summary>
-    /// If true, the <see cref="BaseElasticSearchIndexingStrategy{BaseElasticSearchModel}" /> will be available as an explicitly selectable indexing strategy
-    /// within the Admin UI. Defaults to <c>true</c>
-    /// </summary>
-    public bool IncludeDefaultStrategy { get; set; } = true;
-
     /// <summary>
     /// Registers the <see cref="IElasticSearchIndexingStrategy"/> strategy <typeparamref name="TStrategy" /> in DI and
     /// as a selectable strategy in the Admin UI

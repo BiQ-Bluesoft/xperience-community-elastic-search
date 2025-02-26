@@ -2,6 +2,8 @@
 using DancingGoat.Search.Models;
 using DancingGoat.Search.Services;
 
+using Elastic.Clients.Elasticsearch.Mapping;
+
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
@@ -86,4 +88,10 @@ public class DancingGoatSearchStrategy(
 
         return result;
     }
+
+    public override void Mapping(TypeMappingDescriptor<DancingGoatSearchModel> descriptor) =>
+        descriptor
+            .Properties(props => props
+                .Keyword(x => x.Title)
+                .Text(x => x.Content));
 }

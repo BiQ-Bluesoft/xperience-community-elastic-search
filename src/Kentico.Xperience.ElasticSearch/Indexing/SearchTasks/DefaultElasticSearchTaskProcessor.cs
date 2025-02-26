@@ -136,7 +136,7 @@ internal class DefaultElasticSearchTaskProcessor(
             }
             if (string.IsNullOrEmpty(searchItem.ObjectID))
             {
-                searchItem.ObjectID = eventItem.ItemGuid.ToString();
+                searchItem.ObjectID = $"{eventItem.ItemGuid}_{eventItem.LanguageName}";
             }
             if (string.IsNullOrEmpty(searchItem.ContentTypeName))
             {
