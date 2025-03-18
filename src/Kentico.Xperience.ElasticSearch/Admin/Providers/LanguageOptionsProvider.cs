@@ -4,7 +4,7 @@ using CMS.DataEngine;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.Providers;
 
 internal class LanguageOptionsProvider(IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider) : IGeneralSelectorDataProvider
 {

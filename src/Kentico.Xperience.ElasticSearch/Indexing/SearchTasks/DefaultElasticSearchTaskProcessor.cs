@@ -5,8 +5,6 @@ using CMS.Websites;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
-using Microsoft.Extensions.DependencyInjection;
-
 namespace Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
 
 internal class ElasticSearchBatchResult

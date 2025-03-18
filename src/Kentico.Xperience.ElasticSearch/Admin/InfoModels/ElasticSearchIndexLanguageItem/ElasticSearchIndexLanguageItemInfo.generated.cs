@@ -4,11 +4,12 @@ using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
 
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexLanguageItem;
 
 [assembly: RegisterObjectType(typeof(ElasticSearchIndexLanguageItemInfo), ElasticSearchIndexLanguageItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexLanguageItem;
 
 /// <summary>
 /// Data container class for <see cref="ElasticSearchIndexLanguageItemInfo"/>.

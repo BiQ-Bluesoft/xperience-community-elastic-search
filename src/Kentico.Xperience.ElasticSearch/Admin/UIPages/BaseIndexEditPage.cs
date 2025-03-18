@@ -12,7 +12,7 @@ using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigurationModel>
 {

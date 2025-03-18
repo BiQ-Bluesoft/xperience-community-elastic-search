@@ -2,8 +2,9 @@
 
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.Providers;
 
 internal class ExistingIndexOptionsProvider(IInfoProvider<ElasticSearchIndexItemInfo> indexProvider) : IGeneralSelectorDataProvider
 {

@@ -2,9 +2,9 @@
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
+using Kentico.Xperience.ElasticSearch.Admin.UIPages;
 using Kentico.Xperience.ElasticSearch.Aliasing;
 
 [assembly: UIPage(
@@ -15,7 +15,7 @@ using Kentico.Xperience.ElasticSearch.Aliasing;
    templateName: TemplateNames.EDIT,
    order: UIPageOrder.NoOrder)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 [UIEvaluatePermission(SystemPermissions.UPDATE)]
 internal class IndexAliasEditPage(Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,

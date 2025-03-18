@@ -1,5 +1,12 @@
 ﻿using CMS.DataEngine;
 
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchContentTypeItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIncludedPathItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexAliasIndexItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexAliasItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexLanguageItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchReusableContentItem;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
 

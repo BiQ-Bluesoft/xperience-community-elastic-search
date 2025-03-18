@@ -4,11 +4,11 @@ using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
 
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
 
 [assembly: RegisterObjectType(typeof(ElasticSearchIndexItemInfo), ElasticSearchIndexItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
 
 /// <summary>
 /// Data container class for <see cref="ElasticSearchIndexItemInfo"/>.

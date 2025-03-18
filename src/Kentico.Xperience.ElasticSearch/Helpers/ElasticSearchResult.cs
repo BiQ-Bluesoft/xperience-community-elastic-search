@@ -1,8 +1,7 @@
-﻿namespace Kentico.Xperience.ElasticSearch.Helpers
+﻿namespace Kentico.Xperience.ElasticSearch.Helpers;
+
+public enum ElasticSearchResult
 {
-    public enum ElasticSearchResult
-    {
-        Success,
-        Failure
-    }
+    Success,
+    Failure
 }

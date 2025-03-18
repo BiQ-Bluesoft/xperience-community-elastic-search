@@ -10,7 +10,7 @@ using Elastic.Clients.Elasticsearch.Mapping;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
-namespace DancingGoat.Search;
+namespace DancingGoat.Search.Strategies;
 
 public class ReusableContentItemsIndexingStrategy : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
 {

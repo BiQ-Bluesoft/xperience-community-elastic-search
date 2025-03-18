@@ -13,9 +13,10 @@ using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 using Kentico.Xperience.ElasticSearch.Search;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Kentico.Xperience.ElasticSearch;
 
 public static class ElasticSearchStartupExtensions
 {

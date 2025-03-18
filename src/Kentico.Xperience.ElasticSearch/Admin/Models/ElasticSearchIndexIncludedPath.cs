@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIncludedPathItem;
+
 namespace Kentico.Xperience.ElasticSearch.Admin.Models;
 
 public class ElasticSearchIndexIncludedPath

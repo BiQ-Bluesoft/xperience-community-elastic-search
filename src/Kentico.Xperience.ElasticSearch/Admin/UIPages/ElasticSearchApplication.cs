@@ -2,7 +2,7 @@
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.UIPages;
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 [assembly: UIApplication(
     identifier: ElasticSearchApplicationPage.IDENTIFIER,
@@ -13,7 +13,7 @@ using Kentico.Xperience.ElasticSearch.Admin;
     icon: Icons.Magnifier,
     templateName: TemplateNames.SECTION_LAYOUT)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 /// <summary>
 /// The root application page for the ElasticSearch integration.

@@ -5,14 +5,13 @@ using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
 using Kentico.Xperience.ElasticSearch.Aliasing;
-using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Helpers.Extensions;
 
 using Microsoft.IdentityModel.Tokens;
 
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 internal abstract class BaseIndexAliasEditPage(
     IFormItemCollectionProvider formItemCollectionProvider,

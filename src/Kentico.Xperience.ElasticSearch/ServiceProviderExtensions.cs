@@ -1,7 +1,9 @@
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
-namespace Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Kentico.Xperience.ElasticSearch;
 
 internal static class ServiceProviderExtensions
 {

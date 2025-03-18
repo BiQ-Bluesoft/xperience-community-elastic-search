@@ -4,11 +4,13 @@ using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
 
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchContentTypeItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIncludedPathItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
 
 [assembly: RegisterObjectType(typeof(ElasticSearchContentTypeItemInfo), ElasticSearchContentTypeItemInfo.OBJECT_TYPE)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchContentTypeItem;
 
 /// <summary>
 /// Data container class for <see cref="ElasticSearchContentTypeItemInfo"/>.

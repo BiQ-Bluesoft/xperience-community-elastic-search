@@ -3,7 +3,7 @@
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 
-namespace Kentico.Xperience.ElasticSearch.Tests.Base;
+namespace Kentico.Xperience.ElasticSearch.Tests.Data;
 internal static class MockDataProvider
 {
     public static IndexEventWebPageItemModel WebModel(IndexEventWebPageItemModel item)

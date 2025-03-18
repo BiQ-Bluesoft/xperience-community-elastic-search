@@ -3,7 +3,7 @@ using CMS.DataEngine;
 
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.Providers;
 
 internal class ChannelOptionsProvider(IInfoProvider<ChannelInfo> channelInfoProvider) : IDropDownOptionsProvider
 {

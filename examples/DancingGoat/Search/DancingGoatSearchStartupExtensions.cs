@@ -2,6 +2,8 @@
 using DancingGoat.Search.Services;
 using DancingGoat.Search.Strategies;
 
+using Kentico.Xperience.ElasticSearch;
+
 namespace DancingGoat.Search;
 
 public static class DancingGoatSearchStartupExtensions

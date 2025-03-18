@@ -9,7 +9,7 @@ using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
 
 using Microsoft.IdentityModel.Tokens;
 
-namespace DancingGoat.Search;
+namespace DancingGoat.Search.Strategies;
 
 public class DancingGoatSearchStrategy(
     WebScraperHtmlSanitizer htmlSanitizer,

@@ -6,15 +6,13 @@ using CMS.Websites;
 
 using Elastic.Clients.Elasticsearch;
 
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Aliasing;
 using Kentico.Xperience.ElasticSearch.Helpers;
 using Kentico.Xperience.ElasticSearch.Helpers.Constants;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchTasks;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 

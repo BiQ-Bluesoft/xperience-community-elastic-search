@@ -1,6 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Kentico.Xperience.Admin.Base.FormAnnotations;
+using Kentico.Xperience.ElasticSearch.Admin.Components;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIncludedPathItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexLanguageItem;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchReusableContentItem;
+using Kentico.Xperience.ElasticSearch.Admin.Providers;
 
 namespace Kentico.Xperience.ElasticSearch.Admin.Models;
 

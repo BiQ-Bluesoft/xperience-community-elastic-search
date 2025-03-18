@@ -2,9 +2,9 @@ using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.ElasticSearch.Admin;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
+using Kentico.Xperience.ElasticSearch.Admin.UIPages;
 using Kentico.Xperience.ElasticSearch.Indexing;
 using Kentico.Xperience.ElasticSearch.Indexing.SearchClients;
 
@@ -18,7 +18,7 @@ using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.
    templateName: TemplateNames.EDIT,
    order: UIPageOrder.NoOrder)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 [UIEvaluatePermission(SystemPermissions.CREATE)]
 internal class IndexCreatePage(

@@ -3,7 +3,7 @@
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.Admin.Base.Forms;
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.Components;
 using Kentico.Xperience.ElasticSearch.Admin.Models;
 
 [assembly: RegisterFormComponent(
@@ -11,7 +11,7 @@ using Kentico.Xperience.ElasticSearch.Admin.Models;
     componentType: typeof(ElasticSearchIndexConfigurationFormComponent),
     name: "ElasticSearch Search Index Configuration")]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.Components;
 
 #pragma warning disable S2094 // intentionally empty class
 public class ElasticSearchIndexConfigurationComponentProperties : FormComponentProperties

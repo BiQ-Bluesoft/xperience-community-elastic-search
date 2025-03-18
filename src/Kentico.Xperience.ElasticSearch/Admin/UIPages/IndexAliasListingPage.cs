@@ -2,8 +2,9 @@
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
-using Kentico.Xperience.ElasticSearch.Admin;
+using Kentico.Xperience.ElasticSearch.Admin.InfoModels.ElasticSearchIndexAliasItem;
 using Kentico.Xperience.ElasticSearch.Admin.Services;
+using Kentico.Xperience.ElasticSearch.Admin.UIPages;
 using Kentico.Xperience.ElasticSearch.Aliasing;
 using Kentico.Xperience.ElasticSearch.Indexing;
 using Kentico.Xperience.ElasticSearch.Indexing.Models;
@@ -19,7 +20,7 @@ using Microsoft.Extensions.Options;
    templateName: TemplateNames.LISTING,
    order: UIPageOrder.NoOrder)]
 
-namespace Kentico.Xperience.ElasticSearch.Admin;
+namespace Kentico.Xperience.ElasticSearch.Admin.UIPages;
 
 /// <summary>
 /// An admin UI page that displays statistics about the registered ElasticSearch indexes.
