@@ -42,6 +42,25 @@ public class SimpleSearchModel : BaseElasticSearchModel
 
 Use this model as a type parameter of your `BaseElasticSearchIndexingStrategy`.
 
+## Specify field types
+To control how your custom model’s fields should be stored in an Elastic search index, override the `void Mapping(TypeMappingDescriptor<TSearchModel> descriptor)` method. 
+This method allows you to define the data type of each field and configure its behavior within Elastic search.
+
+```csharp
+    public override void Mapping(TypeMappingDescriptor<DancingGoatSearchModel> descriptor) =>
+        descriptor
+            .Properties(props => props
+                .Keyword(x => x.Title)
+                .Text(x => x.Content));
+```
+
+Key aspects to consider when mapping fields:
+ 
+ * Data Types: Assign appropriate Elasticsearch types to fields, such as `text`, `keyword`, `integer`, `date`, and `boolean`. Correct mappings ensure accurate queries and filtering.
+ * Searchability: Define whether a field should be used for full-text search - `text` or stored as a keyword for exact matches - `keyword`.
+
+For a full list of supported field types, refer to the [Elastic search data types](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html).
+
 ## Specify a mapping process
 
 Override the `Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)` method and define a process for mapping custom properties of each content item event provided to your custom implementation of `BaseElasticSearchModel`. Properties defined in the `BaseElasticSearchModel` base class will be mapped automatically. Retrieve your implementation of `BaseElasticSearchModel` from `Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)`.
