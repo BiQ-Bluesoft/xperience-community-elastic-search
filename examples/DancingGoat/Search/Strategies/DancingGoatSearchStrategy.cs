@@ -17,7 +17,7 @@ public class DancingGoatSearchStrategy(
     StrategyHelper strategyHelper
     ) : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
 {
-    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSearchModel();
 

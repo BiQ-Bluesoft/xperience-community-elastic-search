@@ -38,7 +38,7 @@ public class ReusableContentItemsIndexingStrategy : BaseElasticSearchIndexingStr
         this.webCrawler = webCrawler;
     }
 
-    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         // IIndexEventItemModel could be a reusable content item or a web page item, so we use
         // pattern matching to get access to the web page item specific type and fields
@@ -87,10 +87,8 @@ public class ReusableContentItemsIndexingStrategy : BaseElasticSearchIndexingStr
 
             return result;
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     public override void Mapping(TypeMappingDescriptor<DancingGoatSearchModel> descriptor) =>

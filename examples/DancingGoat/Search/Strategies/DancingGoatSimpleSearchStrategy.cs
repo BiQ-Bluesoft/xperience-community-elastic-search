@@ -13,7 +13,7 @@ namespace DancingGoat.Search.Strategies;
 
 public class DancingGoatSimpleSearchStrategy(StrategyHelper strategyHelper) : BaseElasticSearchIndexingStrategy<DancingGoatSimpleSearchModel>
 {
-    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSimpleSearchModel();
 

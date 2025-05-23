@@ -70,7 +70,7 @@ public class CustomItemsReindexingSearchStrategy(
     }
 
 
-    public override async Task<IElasticSearchModel> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
+    public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
     {
         var result = new DancingGoatSearchModel();
 
