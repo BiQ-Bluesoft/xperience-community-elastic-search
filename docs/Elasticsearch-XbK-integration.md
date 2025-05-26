@@ -32,7 +32,7 @@ Dále je potřeba přidat následující konfiguraci do `appsettings.json` aplik
  }
 ```
 
-Lze alternativně využít variantu s Username a heslem.
+Alternativně můžete místo API klíče použít přihlašovací jméno a heslo.
 ```json
 "CMSElasticSearch": {
  // ...
@@ -134,7 +134,7 @@ Co se ale stane, pokud dojde ke změně navázaného obsahu, například opakova
 
 V takovém případě je potřeba implementovat logiku, která na základě změny v navázaném obsahu vyhodnotí, které další položky v indexu je nutné přeindexovat. K tomu slouží metoda `FindItemsToReindex`. Všechny položky vrácené z této metody budou předány do `MapToElasticSearchModelOrNull(IIndexEventItemModel item)` pro indexaci.
 
-Ukázka implementace této metody:
+Tato metoda je klíčová pro udržování konzistence dat v indexu v případě změn v navázaném obsahu. Ukázka implementace této metody:
 https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Custom-index-strategy.md?ref_type=heads#keeping-indexed-related-content-up-to-date
 
 
