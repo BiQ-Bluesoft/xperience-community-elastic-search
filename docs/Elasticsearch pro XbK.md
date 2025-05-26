@@ -12,7 +12,7 @@ Elasticsearch je distribuovaný systém postavený na technologii Apache Lucene.
 
 Napojení Elasticsearch běžícího on-premise lze provést pomocí několika jednoduchých kroků. V tomto článku si ukážeme, jaké kroky je potřeba podniknout pro nastavení Elasticsearch, konfiguraci indexace a mapování dat z Kentico Xperience a následné vyhledávání.
 
-## Instalace packages
+## 1. Instalace packages
 
 Jako první je potřeba přidat balíček NuGet. V terminálu spusťte následující příkaz
 
@@ -21,7 +21,7 @@ dotnet add package Kentico.Xperience.ElasticSearch
 ```
 
 
-## Konfigurace Elasticsearch
+## 2. Konfigurace Elasticsearch
 Dále je potřeba přidat následující konfiguraci do `appsettings.json` aplikace zahrnující Endpoint běžící instance Elasticsearch a údaje k autentizaci. Pro autentizaci lze využít buď přihlašovací jméno a heslo, nebo API klíč, který lze vygenerovat v aplikaci Kibana.
 
 ```csharp
@@ -41,7 +41,7 @@ Lze alternativně využít variantu s Username a heslem.
  }
 ```
 
-## Vytvoření modelu a strategie
+## 3. Vytvoření modelu a strategie
 Hlavní funkcionalita této knihovny je postavena na konceptu vlastní indexační strategie, která se plně přizpůsobuje obsahovému modelu a požadovanému vyhledávacímu chování. Tato strategie umožňuje přesně určit, jaká data se mají indexovat, jakým způsobem se mají mapovat do Elasticsearch a jak reagovat na změny v obsahu. V následujících krocích si ukážeme, jak si můžete tento proces nakonfigurovat pomocí připravených rozhraní a metod.
 
 
@@ -150,7 +150,7 @@ services.AddKenticoElasticSearch(builder =>
 
 
 
-## Nastavení indexu v administraci XbyK
+## 4. Nastavení indexu v administraci XbyK
 Dalším krokem je vytvoření samotného indexu v administraci Xperience. To provedete v aplikaci Elastic Search, kterou do systému přidává tato knihovna. Zde nastavíte název indexu, vyberete odpovídající strategii, jazykové varianty, kanály a typy obsahu, které se mají indexovat.
 
 ![XbyK create index](/images/xperience-administration-search-index-edit-form.png)
@@ -167,7 +167,7 @@ Odkaz na dokumentaci: https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasti
 
 
 
-## Vyhledávání
+## 5. Vyhledávání
 Závěrečným krokem je již zbývá samotná implementace vyhledávání. 
 
 Proveďte vyhledávání s vlastním nastavením "search options" pomocí služby `IElasticSearchQueryClientService`. Určete parametry vyhledávání a vyberte data, která budou získána z Elasticsearch indexu.
