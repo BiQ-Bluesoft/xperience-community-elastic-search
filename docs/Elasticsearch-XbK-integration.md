@@ -2,7 +2,7 @@
 
 Vyhledávání se dnes stává klíčovým prvkem téměř každé webové aplikace. Xperience by Kentico nabízí několik způsobů, jak efektivně fulltextově vyhledávat a filtrovat obsah spravovaný v CMS.
 
-Mimo placené cloudové nástroje Azure AI search, Algolia a Recombee byla jedinou bezplatnou variantou integrace Lucene search hostovaný on-premise. Právě to nás motivovalo k implementaci integrace Elasticsearch jako alternativního nástroje umožňující on-premise hosting a je zcela zdarma pod licencí Elastic License 2.0. 
+Kromě placených cloudových nástrojů, jako jsou Azure AI Search, Algolia nebo Recombee, byla dosud jedinou bezplatnou on-premise variantou integrace vyhledávání pomocí Lucene. Právě to nás motivovalo k implementaci integrace Elasticsearch jako alternativního nástroje umožňující on-premise hosting. Elasticsearch je zcela zdarma pod licencí Elastic License 2.0. 
 
 Elasticsearch je distribuovaný systém postavený na technologii Apache Lucene. Vyniká vysokou škálovatelností, flexibilitou a širokou škálou možností pro zpracování rozsáhlých dat a komplexních vyhledávacích požadavků.
 
@@ -24,7 +24,7 @@ dotnet add package Kentico.Xperience.ElasticSearch
 ## 2. Konfigurace Elasticsearch
 Dále je potřeba přidat následující konfiguraci do `appsettings.json` aplikace zahrnující Endpoint běžící instance Elasticsearch a údaje k autentizaci. Pro autentizaci lze využít buď přihlašovací jméno a heslo, nebo API klíč, který lze vygenerovat v aplikaci Kibana.
 
-```csharp
+```json
 "CMSElasticSearch": {
  "SearchServiceEnabled": true,
  "SearchServiceEndPoint": "<your index application url>", //Endpoint běžící instance Elasticsearch
@@ -33,9 +33,10 @@ Dále je potřeba přidat následující konfiguraci do `appsettings.json` aplik
 ```
 
 Lze alternativně využít variantu s Username a heslem.
-```csharp
+```json
 "CMSElasticSearch": {
- ...
+ // ...
+ // ...
  "SearchServiceUsername": "<your index application username>",
  "SearchServicePassword": "<your index application password>",
  }
@@ -168,7 +169,7 @@ Odkaz na dokumentaci: https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasti
 
 
 ## 5. Vyhledávání
-Závěrečným krokem je již zbývá samotná implementace vyhledávání. 
+Závěrečným krokem je samotná implementace vyhledávání. 
 
 Proveďte vyhledávání s vlastním nastavením "search options" pomocí služby `IElasticSearchQueryClientService`. Určete parametry vyhledávání a vyberte data, která budou získána z Elasticsearch indexu.
 
