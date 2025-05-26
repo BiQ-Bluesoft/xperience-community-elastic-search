@@ -1,20 +1,20 @@
 # Xperience by Kentico + Elasticsearch
 
-Vyhledávání se dnes stává klíèovım prvkem témìø kadé webové aplikace. Xperience by Kentico nabízí nìkolik zpùsobù, jak efektivnì fulltextovì vyhledávat a filtrovat obsah spravovanı v CMS.
+VyhledÃ¡vÃ¡nÃ­ se dnes stÃ¡vÃ¡ klÃ­ÄovÃ½m prvkem tÃ©mÄ›Å™ kaÅ¾dÃ© webovÃ© aplikace. Xperience by Kentico nabÃ­zÃ­ nÄ›kolik zpÅ¯sobÅ¯, jak efektivnÄ› fulltextovÄ› vyhledÃ¡vat a filtrovat obsah spravovanÃ½ v CMS.
 
-Mimo placené cloudové nástroje Azure AI search, Algolia a Recombee byla jedinou bezplatnou variantou integrace Lucene search hostovanı on-premise. Právì to nás motivovalo k implementaci integrace Elasticsearch jako alternativního nástroje umoòující on-premise hosting a je zcela zdarma pod licencí Elastic License 2.0. 
+Mimo placenÃ© cloudovÃ© nÃ¡stroje Azure AI search, Algolia a Recombee byla jedinou bezplatnou variantou integrace Lucene search hostovanÃ½ on-premise. PrÃ¡vÄ› to nÃ¡s motivovalo k implementaci integrace Elasticsearch jako alternativnÃ­ho nÃ¡stroje umoÅ¾ÅˆujÃ­cÃ­ on-premise hosting a je zcela zdarma pod licencÃ­ Elastic License 2.0. 
 
-Elasticsearch je distribuovanı systém postavenı na technologii Apache Lucene. Vyniká vysokou škálovatelností, flexibilitou a širokou škálou moností pro zpracování rozsáhlıch dat a komplexních vyhledávacích poadavkù.
+Elasticsearch je distribuovanÃ½ systÃ©m postavenÃ½ na technologii Apache Lucene. VynikÃ¡ vysokou Å¡kÃ¡lovatelnostÃ­, flexibilitou a Å¡irokou Å¡kÃ¡lou moÅ¾nostÃ­ pro zpracovÃ¡nÃ­ rozsÃ¡hlÃ½ch dat a komplexnÃ­ch vyhledÃ¡vacÃ­ch poÅ¾adavkÅ¯.
 
-[comment]: <> (Vedle bezplatné varianty je navíc k dispozici i jako plnì spravovaná cloudová sluba, co jej èiní univerzálním øešením jak pro menší projekty, tak pro rozsáhlé enterprise aplikace.)
+[comment]: <> (Vedle bezplatnÃ© varianty je navÃ­c k dispozici i jako plnÄ› spravovanÃ¡ cloudovÃ¡ sluÅ¾ba, coÅ¾ jej ÄinÃ­ univerzÃ¡lnÃ­m Å™eÅ¡enÃ­m jak pro menÅ¡Ã­ projekty, tak pro rozsÃ¡hlÃ© enterprise aplikace.)
 
 # Elasticsearch pro XbK 
 
-Napojení Elasticsearch bìícího on-premise lze provést pomocí nìkolika jednoduchıch krokù. V tomto èlánku si ukáeme, jaké kroky je potøeba podniknout pro nastavení Elasticsearch, konfiguraci indexace a mapování dat z Kentico Xperience a následné vyhledávání.
+NapojenÃ­ Elasticsearch bÄ›Å¾Ã­cÃ­ho on-premise lze provÃ©st pomocÃ­ nÄ›kolika jednoduchÃ½ch krokÅ¯. V tomto ÄlÃ¡nku si ukÃ¡Å¾eme, jakÃ© kroky je potÅ™eba podniknout pro nastavenÃ­ Elasticsearch, konfiguraci indexace a mapovÃ¡nÃ­ dat z Kentico Xperience a nÃ¡slednÃ© vyhledÃ¡vÃ¡nÃ­.
 
 ## Instalace packages
 
-Jako první je potøeba pøidat balíèek NuGet. V terminálu spuste následující pøíkaz
+Jako prvnÃ­ je potÅ™eba pÅ™idat balÃ­Äek NuGet. V terminÃ¡lu spusÅ¥te nÃ¡sledujÃ­cÃ­ pÅ™Ã­kaz
 
 ```
 dotnet add package Kentico.Xperience.ElasticSearch
@@ -22,17 +22,17 @@ dotnet add package Kentico.Xperience.ElasticSearch
 
 
 ## Konfigurace Elasticsearch
-Dále je potøeba pøidat následující konfiguraci do `appsettings.json` aplikace zahrnující Endpoint bìící instance Elasticsearch a údaje k autentizaci. Pro autentizaci lze vyuít buï pøihlašovací jméno a heslo, nebo API klíè, kterı lze vygenerovat v aplikaci Kibana.
+DÃ¡le je potÅ™eba pÅ™idat nÃ¡sledujÃ­cÃ­ konfiguraci do `appsettings.json` aplikace zahrnujÃ­cÃ­ Endpoint bÄ›Å¾Ã­cÃ­ instance Elasticsearch a Ãºdaje k autentizaci. Pro autentizaci lze vyuÅ¾Ã­t buÄ pÅ™ihlaÅ¡ovacÃ­ jmÃ©no a heslo, nebo API klÃ­Ä, kterÃ½ lze vygenerovat v aplikaci Kibana.
 
 ```csharp
 "CMSElasticSearch": {
  "SearchServiceEnabled": true,
- "SearchServiceEndPoint": "<your index application url>", //Endpoint bìící instance Elasticsearch
+ "SearchServiceEndPoint": "<your index application url>", //Endpoint bÄ›Å¾Ã­cÃ­ instance Elasticsearch
  "SearchServiceAPIKey": "<your API Key for Elasticsearch>"
  }
 ```
 
-Lze alternativnì vyuít variantu s Username a heslem.
+Lze alternativnÄ› vyuÅ¾Ã­t variantu s Username a heslem.
 ```csharp
 "CMSElasticSearch": {
  ...
@@ -41,12 +41,12 @@ Lze alternativnì vyuít variantu s Username a heslem.
  }
 ```
 
-## Vytvoøení modelu a strategie
-Hlavní funkcionalita této knihovny je postavena na konceptu vlastní indexaèní strategie, která se plnì pøizpùsobuje obsahovému modelu a poadovanému vyhledávacímu chování. Tato strategie umoòuje pøesnì urèit, jaká data se mají indexovat, jakım zpùsobem se mají mapovat do Elasticsearch a jak reagovat na zmìny v obsahu. V následujících krocích si ukáeme, jak si mùete tento proces nakonfigurovat pomocí pøipravenıch rozhraní a metod.
+## VytvoÅ™enÃ­ modelu a strategie
+HlavnÃ­ funkcionalita tÃ©to knihovny je postavena na konceptu vlastnÃ­ indexaÄnÃ­ strategie, kterÃ¡ se plnÄ› pÅ™izpÅ¯sobuje obsahovÃ©mu modelu a poÅ¾adovanÃ©mu vyhledÃ¡vacÃ­mu chovÃ¡nÃ­. Tato strategie umoÅ¾Åˆuje pÅ™esnÄ› urÄit, jakÃ¡ data se majÃ­ indexovat, jakÃ½m zpÅ¯sobem se majÃ­ mapovat do Elasticsearch a jak reagovat na zmÄ›ny v obsahu. V nÃ¡sledujÃ­cÃ­ch krocÃ­ch si ukÃ¡Å¾eme, jak si mÅ¯Å¾ete tento proces nakonfigurovat pomocÃ­ pÅ™ipravenÃ½ch rozhranÃ­ a metod.
 
 
 ### Custom index model
-Definujte vlastní model vyhledávání rozšíøením modelu `BaseElasticSearchModel` poskytovaného knihovnou, kterı bude pouit k vytvoøení indexu v Elasticsearch.
+Definujte vlastnÃ­ model vyhledÃ¡vÃ¡nÃ­ rozÅ¡Ã­Å™enÃ­m modelu `BaseElasticSearchModel` poskytovanÃ©ho knihovnou, kterÃ½ bude pouÅ¾it k vytvoÅ™enÃ­ indexu v Elasticsearch.
 
 ```csharp
 public class DancingGoatSearchModel : BaseElasticSearchModel
@@ -58,7 +58,7 @@ public class DancingGoatSearchModel : BaseElasticSearchModel
 ```
 
 ### Implementace Indexing Strategy
-Definujte vlastní implementaci `BaseElasticSearchIndexingStrategy<TSearchModel>`, abyste mohli pøizpùsobit zpùsob, jakım jsou web page items nebo content items zpracovávány pro indexování.
+Definujte vlastnÃ­ implementaci `BaseElasticSearchIndexingStrategy<TSearchModel>`, abyste mohli pÅ™izpÅ¯sobit zpÅ¯sob, jakÃ½m jsou web page items nebo content items zpracovÃ¡vÃ¡ny pro indexovÃ¡nÃ­.
 
 ```csharp
 public class DancingGoatSearchStrategy(...) : BaseElasticSearchIndexingStrategy<DancingGoatSearchModel>
@@ -67,8 +67,8 @@ public class DancingGoatSearchStrategy(...) : BaseElasticSearchIndexingStrategy<
 }
 ```
 
-#### Nastavení polí (TypeMapping)
-Dále je potøeba urèit, jak budou jednotlivá pole modelu uloena v indexu Elasticsearch. Vytvoøte override metodu `Mapping(TypeMappingDescriptor<TSearchModel> descriptor)`. Tato metoda umoòuje definovat datové typy polí a nastavit jejich chování v rámci vyhledávání – napøíklad zda budou slouit k fulltextovému vyhledávání (text) nebo k pøesnému filtrování (keyword).
+#### NastavenÃ­ polÃ­ (TypeMapping)
+DÃ¡le je potÅ™eba urÄit, jak budou jednotlivÃ¡ pole modelu uloÅ¾ena v indexu Elasticsearch. VytvoÅ™te override metodu `Mapping(TypeMappingDescriptor<TSearchModel> descriptor)`. Tato metoda umoÅ¾Åˆuje definovat datovÃ© typy polÃ­ a nastavit jejich chovÃ¡nÃ­ v rÃ¡mci vyhledÃ¡vÃ¡nÃ­ â€“ napÅ™Ã­klad zda budou slouÅ¾it k fulltextovÃ©mu vyhledÃ¡vÃ¡nÃ­ (text) nebo k pÅ™esnÃ©mu filtrovÃ¡nÃ­ (keyword).
 
 
 ```csharp
@@ -79,14 +79,14 @@ public override void Mapping(TypeMappingDescriptor<DancingGoatSearchModel> descr
             .Text(x => x.Content));
 ```
 
-Celı seznam typù najdete v oficiální dokumentaci Elasticsearch https://www.elastic.co/docs/reference/elasticsearch/mapping-reference/field-data-types.
+CelÃ½ seznam typÅ¯ najdete v oficiÃ¡lnÃ­ dokumentaci Elasticsearch https://www.elastic.co/docs/reference/elasticsearch/mapping-reference/field-data-types.
 
-#### Mapování obsahu na search model
-Dalším krokem je definice mapování jednotlivıch vlastností (properties) obsahu do našeho vlastního index modelu. 
+#### MapovÃ¡nÃ­ obsahu na search model
+DalÅ¡Ã­m krokem je definice mapovÃ¡nÃ­ jednotlivÃ½ch vlastnostÃ­ (properties) obsahu do naÅ¡eho vlastnÃ­ho index modelu. 
 
-Pøepište metodu `Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)` a definujte mapování na vlastní implementaci `BaseElasticSearchModel` (v této ukázce tedy `DancingGoatSearchModel`). Spoleèné vlastnosti definované v base class `BaseElasticSearchModel` jsou mapovány automaticky. Je nutné tedy mapovat pouze custom pole daného content typu.
+PÅ™epiÅ¡te metodu `Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)` a definujte mapovÃ¡nÃ­ na vlastnÃ­ implementaci `BaseElasticSearchModel` (v tÃ©to ukÃ¡zce tedy `DancingGoatSearchModel`). SpoleÄnÃ© vlastnosti definovanÃ© v base class `BaseElasticSearchModel` jsou mapovÃ¡ny automaticky. Je nutnÃ© tedy mapovat pouze custom pole danÃ©ho content typu.
 
-V následující code snippet ukázce je znázornìno mapování typu `ArticlePage` s vlastností ArticleTitle a raw contentem obsahu stránky na `DancingGoatSearchModel`.
+V nÃ¡sledujÃ­cÃ­ code snippet ukÃ¡zce je znÃ¡zornÄ›no mapovÃ¡nÃ­ typu `ArticlePage` s vlastnostÃ­ ArticleTitle a raw contentem obsahu strÃ¡nky na `DancingGoatSearchModel`.
 
 ```csharp
 public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(IIndexEventItemModel item)
@@ -121,27 +121,27 @@ public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(I
 ```
 
 > [!NOTE]  
-> `IIndexEventItemModel` je abstraktní tøída poloky zpracovávané pro indexování. Zahrnuje `IndexEventWebPageItemModel` pro poloky webovıch stránek, tak `IndexEventReusableItemModel` pro poloky opakovanì pouitelného obsahu.
+> `IIndexEventItemModel` je abstraktnÃ­ tÅ™Ã­da poloÅ¾ky zpracovÃ¡vanÃ© pro indexovÃ¡nÃ­. Zahrnuje `IndexEventWebPageItemModel` pro poloÅ¾ky webovÃ½ch strÃ¡nek, tak `IndexEventReusableItemModel` pro poloÅ¾ky opakovanÄ› pouÅ¾itelnÃ©ho obsahu.
 
 
-Záleí na konkrétní implementaci, jakım zpùsobem se naèítají obsahová data urèená k indexaci. Lze napøíklad vyuít generickou metodu GetPage<T>, jak je ukázáno v tomto pøíkladu:
+ZÃ¡leÅ¾Ã­ na konkrÃ©tnÃ­ implementaci, jakÃ½m zpÅ¯sobem se naÄÃ­tajÃ­ obsahovÃ¡ data urÄenÃ¡ k indexaci. Lze napÅ™Ã­klad vyuÅ¾Ã­t generickou metodu GetPage<T>, jak je ukÃ¡zÃ¡no v tomto pÅ™Ã­kladu:
 https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Custom-index-strategy.md?ref_type=heads#data-retrieval-during-indexing.   
 
 
-#### Aktualizace navázaného obsahu v indexu
-Pøímá manipulace s konkrétní polokou v CMS automaticky spouští navázané události (eventy), které zajistí, e odpovídající záznam v indexu zùstane aktuální.
-Co se ale stane, pokud dojde ke zmìnì navázaného obsahu, napøíklad opakovanì pouitelného prvku (reusable content item), kterı je souèástí více stránek?
+#### Aktualizace navÃ¡zanÃ©ho obsahu v indexu
+PÅ™Ã­mÃ¡ manipulace s konkrÃ©tnÃ­ poloÅ¾kou v CMS automaticky spouÅ¡tÃ­ navÃ¡zanÃ© udÃ¡losti (eventy), kterÃ© zajistÃ­, Å¾e odpovÃ­dajÃ­cÃ­ zÃ¡znam v indexu zÅ¯stane aktuÃ¡lnÃ­.
+Co se ale stane, pokud dojde ke zmÄ›nÄ› navÃ¡zanÃ©ho obsahu, napÅ™Ã­klad opakovanÄ› pouÅ¾itelnÃ©ho prvku (reusable content item), kterÃ½ je souÄÃ¡stÃ­ vÃ­ce strÃ¡nek?
 
-V takovém pøípadì je potøeba implementovat logiku, která na základì zmìny v navázaném obsahu vyhodnotí, které další poloky v indexu je nutné pøeindexovat. K tomu slouí metoda `FindItemsToReindex`. Všechny poloky vrácené z této metody budou pøedány do `MapToElasticSearchModelOrNull(IIndexEventItemModel item)` pro indexaci.
+V takovÃ©m pÅ™Ã­padÄ› je potÅ™eba implementovat logiku, kterÃ¡ na zÃ¡kladÄ› zmÄ›ny v navÃ¡zanÃ©m obsahu vyhodnotÃ­, kterÃ© dalÅ¡Ã­ poloÅ¾ky v indexu je nutnÃ© pÅ™eindexovat. K tomu slouÅ¾Ã­ metoda `FindItemsToReindex`. VÅ¡echny poloÅ¾ky vrÃ¡cenÃ© z tÃ©to metody budou pÅ™edÃ¡ny do `MapToElasticSearchModelOrNull(IIndexEventItemModel item)` pro indexaci.
 
-Ukázka implementace této metody:
+UkÃ¡zka implementace tÃ©to metody:
 https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Custom-index-strategy.md?ref_type=heads#keeping-indexed-related-content-up-to-date
 
 
 
 
 #### Registrace Strategie
-Aby bylo moné vlastní strategii pouít, je potøeba ji zaregistrovat pomocí dependency injection (DI):
+Aby bylo moÅ¾nÃ© vlastnÃ­ strategii pouÅ¾Ã­t, je potÅ™eba ji zaregistrovat pomocÃ­ dependency injection (DI):
 ```csharp
 services.AddKenticoElasticSearch(builder =>
 {
@@ -151,27 +151,27 @@ services.AddKenticoElasticSearch(builder =>
 
 
 
-## Nastavení indexu v administraci XbyK
-Dalším krokem je vytvoøení samotného indexu v administraci Xperience. To provedete v aplikaci Elastic Search, kterou do systému pøidává tato knihovna. Zde nastavíte název indexu, vyberete odpovídající strategii, jazykové varianty, kanály a typy obsahu, které se mají indexovat.
+## NastavenÃ­ indexu v administraci XbyK
+DalÅ¡Ã­m krokem je vytvoÅ™enÃ­ samotnÃ©ho indexu v administraci Xperience. To provedete v aplikaci Elastic Search, kterou do systÃ©mu pÅ™idÃ¡vÃ¡ tato knihovna. Zde nastavÃ­te nÃ¡zev indexu, vyberete odpovÃ­dajÃ­cÃ­ strategii, jazykovÃ© varianty, kanÃ¡ly a typy obsahu, kterÃ© se majÃ­ indexovat.
 
 ![XbyK create index](/images/xperience-administration-search-index-edit-form.png)
 
-Po vytvoøení a nakonfigurování indexu je potøeba provést jeho pøegenerování, spuštìním akce Rebuild na stránce List of registered Elastic Search indices.
+Po vytvoÅ™enÃ­ a nakonfigurovÃ¡nÃ­ indexu je potÅ™eba provÃ©st jeho pÅ™egenerovÃ¡nÃ­, spuÅ¡tÄ›nÃ­m akce Rebuild na strÃ¡nce List of registered Elastic Search indices.
 
 ![XbyK rebuild index](/images/xperience-administration-search-index-list.png)
 
 
-Po této akci by ji mìl bıt index naplnìnı polokami (dle implementace `DancingGoatSearchStrategy`) a pøipravenı k samotnému vyhledávání a filtrování.
+Po tÃ©to akci by jiÅ¾ mÄ›l bÃ½t index naplnÄ›nÃ½ poloÅ¾kami (dle implementace `DancingGoatSearchStrategy`) a pÅ™ipravenÃ½ k samotnÃ©mu vyhledÃ¡vÃ¡nÃ­ a filtrovÃ¡nÃ­.
 
 
 Odkaz na dokumentaci: https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Managing-Indexes.md
 
 
 
-## Vyhledávání
-Závìreènım krokem je ji zbıvá samotná implementace vyhledávání. 
+## VyhledÃ¡vÃ¡nÃ­
+ZÃ¡vÄ›reÄnÃ½m krokem je jiÅ¾ zbÃ½vÃ¡ samotnÃ¡ implementace vyhledÃ¡vÃ¡nÃ­. 
 
-Proveïte vyhledávání s vlastním nastavením "search options" pomocí sluby `IElasticSearchQueryClientService`. Urèete parametry vyhledávání a vyberte data, která budou získána z Elasticsearch indexu.
+ProveÄte vyhledÃ¡vÃ¡nÃ­ s vlastnÃ­m nastavenÃ­m "search options" pomocÃ­ sluÅ¾by `IElasticSearchQueryClientService`. UrÄete parametry vyhledÃ¡vÃ¡nÃ­ a vyberte data, kterÃ¡ budou zÃ­skÃ¡na z Elasticsearch indexu.
 
 ```csharp
     var index = searchClientService.CreateSearchClientForQueries(indexName);
@@ -199,15 +199,15 @@ Proveïte vyhledávání s vlastním nastavením "search options" pomocí sluby `IElas
     var response = await index.SearchAsync<DancingGoatSearchModel>(request);
 ```
 
-Pøi implementaci vyhledávání se vyuívá standardní ElasticsearchClient (.NET Client v8) s moností vyuít Fluent API nebo Object initializer API. Rozdíl mezi tìmito pøístupy lze vidìt zde https://www.elastic.co/docs/reference/elasticsearch/clients/dotnet/query
+PÅ™i implementaci vyhledÃ¡vÃ¡nÃ­ se vyuÅ¾Ã­vÃ¡ standardnÃ­ ElasticsearchClient (.NET Client v8) s moÅ¾nostÃ­ vyuÅ¾Ã­t Fluent API nebo Object initializer API. RozdÃ­l mezi tÄ›mito pÅ™Ã­stupy lze vidÄ›t zde https://www.elastic.co/docs/reference/elasticsearch/clients/dotnet/query
 
 
 
-## Závìr
+## ZÃ¡vÄ›r
 
-Integrace Elasticsearch do Xperience by Kentico rozšiøuje monosti vyhledávání a nabízí flexibilitu, kterou u jinıch fulltextovıch nástrojù nenajdeme. Tato integrace umoòuje rychlou indexaci, pokroèilé dotazování a monost hostování on-premise, co je velká vıhoda pro uivatele, kteøí chtìjí mít plnou kontrolu nad svımi daty. S dalším rozvojem technologie se dá oèekávat, e se Elasticsearch stane ještì atraktivnìjším øešením pro vyhledávací poadavky v Xperience by Kentico.
+Integrace Elasticsearch do Xperience by Kentico rozÅ¡iÅ™uje moÅ¾nosti vyhledÃ¡vÃ¡nÃ­ a nabÃ­zÃ­ flexibilitu, kterou u jinÃ½ch fulltextovÃ½ch nÃ¡strojÅ¯ nenajdeme. Tato integrace umoÅ¾Åˆuje rychlou indexaci, pokroÄilÃ© dotazovÃ¡nÃ­ a moÅ¾nost hostovÃ¡nÃ­ on-premise, coÅ¾ je velkÃ¡ vÃ½hoda pro uÅ¾ivatele, kteÅ™Ã­ chtÄ›jÃ­ mÃ­t plnou kontrolu nad svÃ½mi daty. S dalÅ¡Ã­m rozvojem technologie se dÃ¡ oÄekÃ¡vat, Å¾e se Elasticsearch stane jeÅ¡tÄ› atraktivnÄ›jÅ¡Ã­m Å™eÅ¡enÃ­m pro vyhledÃ¡vacÃ­ poÅ¾adavky v Xperience by Kentico.
 
-Doufáme, e vám tento èlánek pomohl lépe se zorientovat v integraci Elasticsearch do Xperience by Kentico. Monosti této integrace ale sahají ještì dál, ne bylo uvedeno v tomto èlánku. V dokumentaci integrace najdete napøíklad i ukázku pro inspiraci pøi [crawlování stránek](https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Scraping-web-page-content.md?ref_type=heads#scraping-web-page-content) nebo pøi správì indexovıch [aliasù](https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Managing-Aliases.md?ref_type=heads#managing-aliases).
+DoufÃ¡me, Å¾e vÃ¡m tento ÄlÃ¡nek pomohl lÃ©pe se zorientovat v integraci Elasticsearch do Xperience by Kentico. MoÅ¾nosti tÃ©to integrace ale sahajÃ­ jeÅ¡tÄ› dÃ¡l, neÅ¾ bylo uvedeno v tomto ÄlÃ¡nku. V dokumentaci integrace najdete napÅ™Ã­klad i ukÃ¡zku pro inspiraci pÅ™i [crawlovÃ¡nÃ­ strÃ¡nek](https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Scraping-web-page-content.md?ref_type=heads#scraping-web-page-content) nebo pÅ™i sprÃ¡vÄ› indexovÃ½ch [aliasÅ¯](https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Managing-Aliases.md?ref_type=heads#managing-aliases).
 
 
-Detailnìjší návod k vytvoøení vlastní indexaèní strategie (vèetnì code snippets), zpùsobu mapování dat a propojení s Kentico Xperience, naleznete pøímo v oficiálním repozitáøi knihovny. Odkaz na GitLab repozitáø: https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch.
+DetailnÄ›jÅ¡Ã­ nÃ¡vod k vytvoÅ™enÃ­ vlastnÃ­ indexaÄnÃ­ strategie (vÄetnÄ› code snippets), zpÅ¯sobu mapovÃ¡nÃ­ dat a propojenÃ­ s Kentico Xperience, naleznete pÅ™Ã­mo v oficiÃ¡lnÃ­m repozitÃ¡Å™i knihovny. Odkaz na GitLab repozitÃ¡Å™: https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch.
