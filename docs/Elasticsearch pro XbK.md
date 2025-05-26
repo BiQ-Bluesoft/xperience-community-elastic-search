@@ -120,8 +120,7 @@ public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(I
 }
 ```
 
-> [!NOTE]  
-> `IIndexEventItemModel` je abstraktní třída položky zpracovávané pro indexování. Zahrnuje `IndexEventWebPageItemModel` pro položky webových stránek, tak `IndexEventReusableItemModel` pro položky opakovaně použitelného obsahu.
+`IIndexEventItemModel` je abstraktní třída položky zpracovávané pro indexování. Zahrnuje `IndexEventWebPageItemModel` pro položky webových stránek, tak `IndexEventReusableItemModel` pro položky opakovaně použitelného obsahu.
 
 
 Záleží na konkrétní implementaci, jakým způsobem se načítají obsahová data určená k indexaci. Lze například využít generickou metodu GetPage<T>, jak je ukázáno v tomto příkladu:
