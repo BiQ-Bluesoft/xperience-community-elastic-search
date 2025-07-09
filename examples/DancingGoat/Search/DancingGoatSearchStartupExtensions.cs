@@ -8,9 +8,9 @@ namespace DancingGoat.Search;
 
 public static class DancingGoatSearchStartupExtensions
 {
-    public static IServiceCollection AddXperienceCommunityServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddXperienceCommunityElasticSearchServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddXperienceCommunity(builder =>
+        services.AddXperienceCommunityElasticSearch(builder =>
         {
             builder.RegisterStrategy<DancingGoatSearchStrategy, DancingGoatSearchModel>(nameof(DancingGoatSearchStrategy));
             builder.RegisterStrategy<DancingGoatSimpleSearchStrategy, DancingGoatSimpleSearchModel>(nameof(DancingGoatSimpleSearchStrategy));

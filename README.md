@@ -37,7 +37,7 @@ dotnet add package XperienceCommunity.ElasticSearch
 
    ```csharp
    // Program.cs
-   services.AddXperienceCommunity(builder =>
+   services.AddXperienceCommunityElasticSearch(builder =>
     {
         builder.RegisterStrategy<GlobalElasticSearchStrategy, GlobalSearchModel>("DefaultStrategy");
     }, configuration);

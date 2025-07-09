@@ -48,7 +48,7 @@ builder.Services.AddLocalization()
 
 builder.Services.AddDancingGoatServices();
 
-builder.Services.AddXperienceCommunityServices(builder.Configuration);
+builder.Services.AddXperienceCommunityElasticSearchServices(builder.Configuration);
 
 ConfigureMembershipServices(builder.Services);
 
