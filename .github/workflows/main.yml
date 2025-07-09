@@ -2,7 +2,7 @@ name: "CI: Build and Test"
 
 on:
   push:
-    branches: [IN-654-Elastic-search-from-azure]
+    branches: [main, IN-654-Elastic-search-from-azure]
     paths:
       - "**.cs"
       - "**.tsx"
