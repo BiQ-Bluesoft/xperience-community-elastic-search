@@ -10,8 +10,8 @@ on:
       - "**.csproj"
       - "**.props"
       - "**.targets"
-      - "**.sln"
-      - "**/Client/**/*.json"
+      - "**.slnx"
+      - "**.json"
       - ".github/workflows/main.yml"
   pull_request:
     branches: [main]
