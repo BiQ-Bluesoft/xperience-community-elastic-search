@@ -2,22 +2,22 @@
 
 Search is becoming a key element of nearly every web application today. Xperience by Kentico offers several ways to effectively perform full-text search and filter content managed in the CMS.
 
-Aside from paid cloud-based tools like Azure AI Search, Algolia, or Recombee, the only free on-premise option until now has been Lucene-based search integration. This limitation motivated us to implement Elasticsearch as an alternative tool that supports on-premise hosting. Elasticsearch is completely free under the Elastic License 2.0.
+Aside from paid cloud-based tools like Azure AI Search, Algolia, the only free on-premise option until now has been Lucene-based search integration. This limitation motivated us to implement Elasticsearch as an alternative tool that supports on-premise hosting. Elasticsearch is completely free under the Elastic License 2.0 and [open-source AGPL](https://www.elastic.co/blog/elasticsearch-is-open-source-again).
 
 Elasticsearch is a distributed system built on Apache Lucene. It excels in scalability, flexibility, and a broad range of capabilities for processing large volumes of data and complex search queries.
 
 [comment]: <> "In addition to the free option, it is also available as a fully managed cloud service, making it a universal solution for both smaller projects and large enterprise applications."
 
-# Elasticsearch for XbK
+# Elasticsearch for XbyK
 
-Integrating an on-premise Elasticsearch instance can be done in a few straightforward steps. In this article, we’ll walk through the necessary steps to set up Elasticsearch, configure indexing and data mapping from Kentico Xperience, and implement the search functionality.
+Integrating an on-premise Elasticsearch instance can be done in a few straightforward steps. In this article, we’ll walk through the necessary steps to set up Elasticsearch, configure indexing and data mapping from XbyK, and implement the search functionality.
 
 ## 1. Installing Packages
 
 First, add the NuGet package by running the following command in your terminal:
 
 ```
-dotnet add package Kentico.Xperience.ElasticSearch
+dotnet add package XperienceCommunity.ElasticSearch
 ```
 
 ## 2. Elasticsearch Configuration
@@ -147,7 +147,7 @@ services.AddKenticoElasticSearch(builder =>
 }, configuration);
 ```
 
-## 4. Index Configuration in the XbK Admin Interface
+## 4. Index Configuration in the XbyK Admin Interface
 
 Next, create the index in the Xperience admin interface using the *Elastic Search* application added by this library. Here, set the index name, choose the indexing strategy, select language variants, channels, and content types to be indexed.
 
