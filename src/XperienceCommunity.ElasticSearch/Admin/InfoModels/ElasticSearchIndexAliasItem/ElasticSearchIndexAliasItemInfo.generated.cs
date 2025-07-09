@@ -19,13 +19,13 @@ public partial class ElasticSearchIndexAliasItemInfo : AbstractInfo<ElasticSearc
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoelasticsearch.elasticsearchindexaliasitem";
+    public const string OBJECT_TYPE = "xperiencecommunity.elasticsearchindexaliasitem";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIndexAliasItemInfo>), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIndexAliasItem", nameof(ElasticSearchIndexAliasItemId), null, nameof(ElasticSearchIndexAliasItemGuid), nameof(ElasticSearchIndexAliasItemIndexAliasName), null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIndexAliasItemInfo>), OBJECT_TYPE, "XperienceCommunity.ElasticSearchIndexAliasItem", nameof(ElasticSearchIndexAliasItemId), null, nameof(ElasticSearchIndexAliasItemGuid), nameof(ElasticSearchIndexAliasItemIndexAliasName), null, null, null, null)
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =

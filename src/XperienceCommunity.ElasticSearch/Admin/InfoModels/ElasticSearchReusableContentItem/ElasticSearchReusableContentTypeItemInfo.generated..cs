@@ -20,13 +20,13 @@ public class ElasticSearchReusableContentTypeItemInfo : AbstractInfo<ElasticSear
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoelasticsearch.elasticsearchreusablecontenttypeitem";
+    public const string OBJECT_TYPE = "xperiencecommunity.elasticsearchreusablecontenttypeitem";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchReusableContentTypeItemInfo>), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchReusableContentTypeItem", nameof(ElasticSearchReusableContentTypeItemId), null, nameof(ElasticSearchReusableContentTypeItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchReusableContentTypeItemInfo>), OBJECT_TYPE, "XperienceCommunity.ElasticSearchReusableContentTypeItem", nameof(ElasticSearchReusableContentTypeItemId), null, nameof(ElasticSearchReusableContentTypeItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

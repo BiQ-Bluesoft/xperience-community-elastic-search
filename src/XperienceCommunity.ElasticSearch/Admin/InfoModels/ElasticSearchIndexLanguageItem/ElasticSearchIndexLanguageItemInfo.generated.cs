@@ -20,13 +20,13 @@ public partial class ElasticSearchIndexLanguageItemInfo : AbstractInfo<ElasticSe
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoelasticsearch.elasticsearchindexlanguageitem";
+    public const string OBJECT_TYPE = "xperiencecommunity.elasticsearchindexlanguageitem";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIndexLanguageItemInfo>), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIndexLanguageItem", nameof(ElasticSearchIndexLanguageItemID), null, nameof(ElasticSearchIndexLanguageItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIndexLanguageItemInfo>), OBJECT_TYPE, "XperienceCommunity.ElasticSearchIndexLanguageItem", nameof(ElasticSearchIndexLanguageItemID), null, nameof(ElasticSearchIndexLanguageItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

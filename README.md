@@ -37,7 +37,7 @@ dotnet add package XperienceCommunity.ElasticSearch
 
    ```csharp
    // Program.cs
-   services.AddKenticoElasticSearch(builder =>
+   services.AddXperienceCommunity(builder =>
     {
         builder.RegisterStrategy<GlobalElasticSearchStrategy, GlobalSearchModel>("DefaultStrategy");
     }, configuration);

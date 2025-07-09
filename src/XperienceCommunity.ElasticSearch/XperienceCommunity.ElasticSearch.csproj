@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AdminOrgName>kentico</AdminOrgName>
+		<AdminOrgName>xperience-community</AdminOrgName>
 		<RootNamespace>XperienceCommunity.ElasticSearch</RootNamespace>
 		<NoWarn>$(NoWarn);S1075</NoWarn>
 
@@ -27,7 +27,7 @@
 
 		<!-- Requires that npm run build or npm run build:dev was executed _before_ the .NET build -->
 		<AdminClientPath Include="Admin\Client\dist\**" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-			<ProjectName>xperience-integrations-elasticsearch</ProjectName>
+			<ProjectName>xperience-community-elasticsearch</ProjectName>
 		</AdminClientPath>
 	</ItemGroup>
 
@@ -39,7 +39,7 @@
 
 		<ItemGroup>
 			<AdminClientPath Include="Admin\Client\dist\**">
-				<ProjectName>xperience-integrations-elasticsearch</ProjectName>
+				<ProjectName>xperience-community-elasticsearch</ProjectName>
 			</AdminClientPath>
 		</ItemGroup>
 	</Target>
@@ -47,9 +47,6 @@
 	<ItemGroup>
 		<PackageReference Include="Elastic.Clients.Elasticsearch" />
 		<PackageReference Include="Kentico.Xperience.Admin" />
-		<PackageReference Include="Kentico.Xperience.AzureStorage" />
-		<PackageReference Include="Kentico.Xperience.Core.Tests" />
-		<PackageReference Include="Kentico.Xperience.ImageProcessing" />
 		<PackageReference Include="Kentico.Xperience.WebApp" />
 		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>

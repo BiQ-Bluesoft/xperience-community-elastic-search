@@ -1109,9 +1109,6 @@
         "dependencies": {
           "Elastic.Clients.Elasticsearch": "[8.15.6, )",
           "Kentico.Xperience.Admin": "[30.2.0, )",
-          "Kentico.Xperience.AzureStorage": "[30.2.0, )",
-          "Kentico.Xperience.Core.Tests": "[30.2.0, )",
-          "Kentico.Xperience.ImageProcessing": "[30.2.0, )",
           "Kentico.Xperience.WebApp": "[30.2.0, )",
           "System.Text.Json": "[8.0.5, )"
         }

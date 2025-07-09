@@ -20,13 +20,13 @@ public partial class ElasticSearchIncludedPathItemInfo : AbstractInfo<ElasticSea
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoelasticsearch.elasticsearchincludedpathitem";
+    public const string OBJECT_TYPE = "xperiencecommunity.elasticsearchincludedpathitem";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIncludedPathItemInfo>), OBJECT_TYPE, "KenticoElasticSearch.ElasticSearchIncludedPathItem", nameof(ElasticSearchIncludedPathItemId), null, nameof(ElasticSearchIncludedPathItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<ElasticSearchIncludedPathItemInfo>), OBJECT_TYPE, "XperienceCommunity.ElasticSearchIncludedPathItem", nameof(ElasticSearchIncludedPathItemId), null, nameof(ElasticSearchIncludedPathItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn = new List<ObjectDependency>()

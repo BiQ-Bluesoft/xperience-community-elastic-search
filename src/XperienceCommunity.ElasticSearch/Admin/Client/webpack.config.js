@@ -4,8 +4,8 @@ const baseWebpackConfig = require('@kentico/xperience-webpack-config');
 module.exports = (opts) => {
   const baseConfig = (webpackConfigEnv, argv) => {
     return baseWebpackConfig({
-      orgName: 'kentico',
-      projectName: 'xperience-integrations-elasticsearch',
+      orgName: 'xperience-community',
+      projectName: 'xperience-community-elasticsearch',
       webpackConfigEnv: webpackConfigEnv,
       argv: argv,
     });

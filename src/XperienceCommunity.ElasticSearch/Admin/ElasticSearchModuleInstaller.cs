@@ -16,7 +16,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 {
     public void Install()
     {
-        var resource = resourceProvider.Get("CMS.Integration.ElasticSearch")
+        var resource = resourceProvider.Get("XperienceCommunity.ElasticSearch")
             ?? new ResourceInfo();
 
         InitializeResource(resource);
@@ -31,11 +31,11 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
     public ResourceInfo InitializeResource(ResourceInfo resource)
     {
-        resource.ResourceDisplayName = "Kentico Integration - ElasticSearch";
+        resource.ResourceDisplayName = "XperienceCommunity - ElasticSearch";
 
         // Prefix ResourceName with "CMS" to prevent C# class generation
         // Classes are already available through the library itself
-        resource.ResourceName = "CMS.Integration.ElasticSearch";
+        resource.ResourceName = "XperienceCommunity.ElasticSearch";
         resource.ResourceDescription = "Kentico ElasticSearch custom data";
         resource.ResourceIsInDevelopment = false;
         if (resource.HasChanged)

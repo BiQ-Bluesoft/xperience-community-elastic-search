@@ -29,16 +29,16 @@ internal class ElasticSearchAdminModule : AdminModule
     {
         base.OnInit(parameters);
 
-        var options = Service.Resolve<IOptions<ElasticSearchOptions>>();
+        var services = parameters.Services;
+
+        var options = services.GetRequiredService<IOptions<ElasticSearchOptions>>();
 
         if (!options.Value?.SearchServiceEnabled ?? false)
         {
             return;
         }
 
-        RegisterClientModule("kentico", "xperience-integrations-elasticsearch");
-
-        var services = parameters.Services;
+        RegisterClientModule("xperience-community", "xperience-community-elasticsearch");
 
         installer = services.GetRequiredService<ElasticSearchModuleInstaller>();
         storageService = services.GetRequiredService<IElasticSearchConfigurationStorageService>();

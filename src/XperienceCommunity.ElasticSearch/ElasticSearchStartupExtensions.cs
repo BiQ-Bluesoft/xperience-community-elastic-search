@@ -26,7 +26,7 @@ public static class ElasticSearchStartupExtensions
     /// <param name="serviceCollection"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddKenticoElasticSearch(this IServiceCollection serviceCollection, IConfiguration configuration)
+    public static IServiceCollection AddXperienceCommunity(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddElasticSearchServicesInternal(configuration);
 
@@ -41,7 +41,7 @@ public static class ElasticSearchStartupExtensions
     /// <param name="configure"></param>
     /// <param name="configuration">The application configuration.</param>
     /// <returns></returns>
-    public static IServiceCollection AddKenticoElasticSearch(this IServiceCollection serviceCollection, Action<IElasticSearchBuilder> configure, IConfiguration configuration)
+    public static IServiceCollection AddXperienceCommunity(this IServiceCollection serviceCollection, Action<IElasticSearchBuilder> configure, IConfiguration configuration)
     {
         serviceCollection.AddElasticSearchServicesInternal(configuration);
 
