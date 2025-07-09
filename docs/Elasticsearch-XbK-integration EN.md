@@ -22,6 +22,8 @@ dotnet add package XperienceCommunity.ElasticSearch
 
 ## 2. Elasticsearch Configuration
 
+> **Note:** This article assumes that Elasticsearch is already running on your device. Setting up Elasticsearch for local development is straightforward—see the [official quickstart guide](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/local-development-installation-quickstart) for easy installation instructions.
+
 Next, add the following configuration to your application’s `appsettings.json`, including the endpoint of the running Elasticsearch instance and authentication credentials. Authentication can be done using either a username and password or an API key, which can be generated in the Kibana interface.
 
 ```json
@@ -54,7 +56,7 @@ Define your own search model by extending the `BaseElasticSearchModel` provided 
 public class DancingGoatSearchModel : BaseElasticSearchModel
 {
     public string Title { get; set; }
-    
+
     public string Content { get; set; }
 }
 ```
@@ -124,7 +126,7 @@ public override async Task<IElasticSearchModel?> MapToElasticSearchModelOrNull(I
 
 `IIndexEventItemModel` is an abstract type representing an item being processed for indexing. This includes `IndexEventWebPageItemModel` for web page items and `IndexEventReusableItemModel` for reusable content items.
 
-You can retrieve content using methods like `GetPage<T>`, as shown in this example:
+You can retrieve content using methods like `GetPage<T>` from the `StrategyHelper` class, as shown in this example:
 [Data retrieval during indexing](https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch/-/blob/IN-654-Elastic-search-from-azure/docs/Custom-index-strategy.md?ref_type=heads#data-retrieval-during-indexing).
 
 #### Updating Related Content in the Index
@@ -149,7 +151,7 @@ services.AddKenticoElasticSearch(builder =>
 
 ## 4. Index Configuration in the XbyK Admin Interface
 
-Next, create the index in the Xperience admin interface using the *Elastic Search* application added by this library. Here, set the index name, choose the indexing strategy, select language variants, channels, and content types to be indexed.
+Next, create the index in the Xperience admin interface using the _Elastic Search_ application added by this library. Here, set the index name, choose the indexing strategy, select language variants, channels, and content types to be indexed.
 
 ![XbyK create index](/images/xperience-administration-search-index-edit-form.png)
 
