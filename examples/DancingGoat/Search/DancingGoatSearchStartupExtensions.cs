@@ -2,7 +2,7 @@
 using DancingGoat.Search.Services;
 using DancingGoat.Search.Strategies;
 
-using Kentico.Xperience.ElasticSearch;
+using XperienceCommunity.ElasticSearch;
 
 namespace DancingGoat.Search;
 

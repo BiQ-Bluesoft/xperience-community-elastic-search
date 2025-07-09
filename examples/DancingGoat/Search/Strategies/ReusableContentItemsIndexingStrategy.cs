@@ -7,8 +7,8 @@ using DancingGoat.Search.Services;
 
 using Elastic.Clients.Elasticsearch.Mapping;
 
-using Kentico.Xperience.ElasticSearch.Indexing.Models;
-using Kentico.Xperience.ElasticSearch.Indexing.Strategies;
+using XperienceCommunity.ElasticSearch.Indexing.Models;
+using XperienceCommunity.ElasticSearch.Indexing.Strategies;
 
 namespace DancingGoat.Search.Strategies;
 

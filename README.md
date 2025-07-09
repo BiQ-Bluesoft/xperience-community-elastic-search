@@ -17,7 +17,7 @@ This integration enables you to create [ElasticSearch](https://www.elastic.co/) 
 Add the package to your application using the .NET CLI
 
 ```powershell
-dotnet add package Kentico.Xperience.ElasticSearch
+dotnet add package XperienceCommunity.ElasticSearch
 ```
 
 ## Quick Start
@@ -44,9 +44,9 @@ dotnet add package Kentico.Xperience.ElasticSearch
    ```
 
 4. Create an index in Xperience's Administration within the Search application added by this library.
-![Administration search edit form](/images/xperience-administration-search-index-edit-form.png)
+   ![Administration search edit form](/images/xperience-administration-search-index-edit-form.png)
 5. Rebuild the index in Xperience's Administration within the Search application added by this library.
-![Administration search edit form](/images/xperience-administration-search-index-list.png)
+   ![Administration search edit form](/images/xperience-administration-search-index-list.png)
 6. Display the results on your site with a Razor View 👍.
 
 ## Full Instructions

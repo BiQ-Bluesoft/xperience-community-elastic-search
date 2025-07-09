@@ -1,0 +1,75 @@
+using CMS.Membership;
+
+using Kentico.Xperience.Admin.Base;
+using Kentico.Xperience.Admin.Base.Forms;
+
+using XperienceCommunity.ElasticSearch.Admin.Models;
+using XperienceCommunity.ElasticSearch.Admin.Services;
+using XperienceCommunity.ElasticSearch.Admin.UIPages;
+using XperienceCommunity.ElasticSearch.Indexing;
+using XperienceCommunity.ElasticSearch.Indexing.SearchClients;
+
+using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
+
+[assembly: UIPage(
+   parentType: typeof(IndexListingPage),
+   slug: "create",
+   uiPageType: typeof(IndexCreatePage),
+   name: "Create index",
+   templateName: TemplateNames.EDIT,
+   order: UIPageOrder.NoOrder)]
+
+namespace XperienceCommunity.ElasticSearch.Admin.UIPages;
+
+[UIEvaluatePermission(SystemPermissions.CREATE)]
+internal class IndexCreatePage(
+    IFormItemCollectionProvider formItemCollectionProvider,
+    IFormDataBinder formDataBinder,
+    IElasticSearchConfigurationStorageService storageService,
+    IPageLinkGenerator pageLinkGenerator,
+    IElasticSearchClient defaultElasticSearchClient) : BaseIndexEditPage(formItemCollectionProvider, formDataBinder, storageService, defaultElasticSearchClient)
+{
+    private ElasticSearchConfigurationModel? model;
+
+    protected override ElasticSearchConfigurationModel Model
+    {
+        get
+        {
+            model ??= new();
+
+            return model;
+        }
+    }
+
+    protected override async Task<ICommandResponse> ProcessFormData(ElasticSearchConfigurationModel model, ICollection<IFormItem> formItems)
+    {
+        var result = await ValidateAndProcess(model);
+
+        if (result.ModificationResult == ModificationResult.Success)
+        {
+            var index = ElasticSearchIndexStore.Instance.GetRequiredIndex(model.IndexName);
+
+            var pageParameters = new PageParameterValues
+            {
+                { typeof(IndexEditPage), index.Identifier}
+            };
+            var successResponse = NavigateTo(pageLinkGenerator.GetPath<IndexEditPage>(pageParameters))
+                .AddSuccessMessage("Index created. Please rebuild the index");
+
+            return successResponse;
+        }
+
+        var errorResponse = ResponseFrom(new FormSubmissionResult(FormSubmissionStatus.ValidationFailure));
+
+        if (result.ErrorMessages is not null)
+        {
+            result.ErrorMessages.ForEach(errorMessage => errorResponse.AddErrorMessage(errorMessage));
+        }
+        else
+        {
+            errorResponse.AddErrorMessage("Could not create index.");
+        }
+
+        return errorResponse;
+    }
+}

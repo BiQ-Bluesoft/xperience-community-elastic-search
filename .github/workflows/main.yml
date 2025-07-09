@@ -50,7 +50,7 @@ jobs:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
       DOTNET_NOLOGO: 1
       SIGN_FILE: false
-      PROJECT_NAME: Kentico.Xperience.ElasticSearch
+      PROJECT_NAME: XperienceCommunity.ElasticSearch
 
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
       DOTNET_NOLOGO: 1
       SIGN_FILE: false
-      PROJECT_NAME: Kentico.Xperience.ElasticSearch
+      PROJECT_NAME: XperienceCommunity.ElasticSearch
 
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,36 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+using Kentico.Xperience.Admin.Base.FormAnnotations;
+
+using XperienceCommunity.ElasticSearch.Admin.InfoModels.ElasticSearchIndexAliasItem;
+using XperienceCommunity.ElasticSearch.Admin.Providers;
+
+namespace XperienceCommunity.ElasticSearch.Admin.Models;
+
+public class ElasticSearchAliasConfigurationModel
+{
+    public int Id { get; set; }
+
+    [TextInputComponent(Label = "Alias Name", Order = 1)]
+    [Required]
+    [MinLength(1)]
+    [MaxLength(128)]
+    [RegularExpression("^(?!-)[a-z0-9-]+(?<!-)$", ErrorMessage = "Alias name must only contain lowercase letters, digits or dashes, cannot start or end with dashes and is limited to 128 characters.")]
+    public string AliasName { get; set; } = string.Empty;
+
+    [GeneralSelectorComponent(dataProviderType: typeof(ExistingIndexOptionsProvider), Label = "Index Names", Order = 2)]
+    [MinLength(1, ErrorMessage = "You must select at least one index name")]
+    public IEnumerable<string> IndexNames { get; set; } = [];
+
+    public ElasticSearchAliasConfigurationModel()
+    { }
+
+    public ElasticSearchAliasConfigurationModel(
+        ElasticSearchIndexAliasItemInfo alias,
+        IEnumerable<string> aliasIndexes)
+    {
+        Id = alias.ElasticSearchIndexAliasItemId;
+        AliasName = alias.ElasticSearchIndexAliasItemIndexAliasName;
+        IndexNames = aliasIndexes;
+    }
+}

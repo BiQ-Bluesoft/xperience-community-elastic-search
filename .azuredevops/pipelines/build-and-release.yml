@@ -48,10 +48,10 @@ stages:
             value: Release
 
           - name: ProjectFolder
-            value: src/Kentico.Xperience.ElasticSearch
+            value: src/XperienceCommunity.ElasticSearch
 
           - name: ProjectFilePath
-            value: src/Kentico.Xperience.ElasticSearch/Kentico.Xperience.ElasticSearch.csproj
+            value: src/XperienceCommunity.ElasticSearch/XperienceCommunity.ElasticSearch.csproj
 
         steps:
           - task: PowerShell@2

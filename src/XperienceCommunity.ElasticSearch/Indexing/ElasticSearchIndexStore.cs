@@ -1,0 +1,117 @@
+﻿using XperienceCommunity.ElasticSearch.Admin.Models;
+using XperienceCommunity.ElasticSearch.Admin.Services;
+using XperienceCommunity.ElasticSearch.Indexing.Models;
+using XperienceCommunity.ElasticSearch.Indexing.Strategies;
+
+namespace XperienceCommunity.ElasticSearch.Indexing;
+
+/// <summary>
+/// Represents a global singleton store of ElasticSearch indexes
+/// </summary>
+public sealed class ElasticSearchIndexStore
+{
+    private static readonly Lazy<ElasticSearchIndexStore> mInstance = new();
+    private readonly List<ElasticSearchIndex> registeredIndexes = [];
+
+    /// <summary>
+    /// Gets singleton instance of the <see cref="ElasticSearchIndexStore"/>
+    /// </summary>
+    public static ElasticSearchIndexStore Instance => mInstance.Value;
+
+    /// <summary>
+    /// Gets all registered indexes.
+    /// </summary>
+    public IEnumerable<ElasticSearchIndex> GetAllIndices() => registeredIndexes;
+
+    /// <summary>
+    /// Gets a registered <see cref="ElasticSearchIndex"/> with the specified <paramref name="indexName"/>,
+    /// or <c>null</c>.
+    /// </summary>
+    /// <param name="indexName">The name of the index to retrieve.</param>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="InvalidOperationException" />
+    public ElasticSearchIndex? GetIndex(string indexName)
+    {
+        if (string.IsNullOrEmpty(indexName))
+        {
+            return null;
+        }
+
+        var realIndexName = RemovePostfix(indexName);
+        return registeredIndexes.SingleOrDefault(i => i.IndexName.Equals(realIndexName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// Gets a registered <see cref="ElasticSearchIndex"/> with the specified <paramref name="identifier"/>,
+    /// or <c>null</c>.
+    /// </summary>
+    /// <param name="identifier">The identifier of the index to retrieve.</param>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="InvalidOperationException" />
+    public ElasticSearchIndex? GetIndex(int identifier) => registeredIndexes.Find(i => i.Identifier == identifier);
+
+    /// <summary>
+    /// Gets a registered <see cref="ElasticSearchIndex"/> with the specified <paramref name="indexName"/>. If no index is found, a <see cref="InvalidOperationException" /> is thrown.
+    /// </summary>
+    /// <param name="indexName">The name of the index to retrieve.</param>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="InvalidOperationException" />
+    public ElasticSearchIndex GetRequiredIndex(string indexName)
+    {
+        if (string.IsNullOrEmpty(indexName))
+        {
+            throw new ArgumentException("Value must not be null or empty");
+        }
+
+        var realIndexName = RemovePostfix(indexName);
+        return registeredIndexes.SingleOrDefault(i => i.IndexName.Equals(realIndexName, StringComparison.OrdinalIgnoreCase))
+            ?? throw new InvalidOperationException($"The index '{indexName}' is not registered.");
+    }
+
+    /// <summary>
+    /// Adds an index to the store.
+    /// </summary>
+    /// <param name="index">The index to add.</param>
+    /// <exception cref="ArgumentNullException" />
+    /// <exception cref="InvalidOperationException" />
+    internal void AddIndex(ElasticSearchIndex index)
+    {
+        ArgumentNullException.ThrowIfNull(index);
+
+        if (registeredIndexes.Exists(i => i.IndexName.Equals(index.IndexName, StringComparison.OrdinalIgnoreCase) || index.Identifier == i.Identifier))
+        {
+            throw new InvalidOperationException($"Attempted to register ElasticSearch index with identifier [{index.Identifier}] and name [{index.IndexName}] but it is already registered.");
+        }
+
+        registeredIndexes.Add(index);
+    }
+
+    /// <summary>
+    /// Resets all indices
+    /// </summary>
+    /// <param name="models"></param>
+    internal void SetIndices(IEnumerable<ElasticSearchConfigurationModel> models)
+    {
+        registeredIndexes.Clear();
+
+        foreach (var index in models)
+        {
+            Instance.AddIndex(new ElasticSearchIndex(index, StrategyStorage.Strategies));
+        }
+    }
+
+    /// <summary>
+    /// Sets the current indices to those provided by <paramref name="configurationService"/>
+    /// </summary>
+    /// <param name="configurationService"></param>
+    internal static void SetIndices(IElasticSearchConfigurationStorageService configurationService)
+    {
+        var indices = configurationService.GetAllIndexData();
+
+        Instance.SetIndices(indices);
+    }
+
+    private static string RemovePostfix(string collectionName) => collectionName.Replace("-primary", string.Empty)
+                                                                         .Replace("-secondary", string.Empty);
+
+}

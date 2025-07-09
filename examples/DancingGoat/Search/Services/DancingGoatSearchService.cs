@@ -4,7 +4,7 @@ using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.Search;
 using Elastic.Clients.Elasticsearch.QueryDsl;
 
-using Kentico.Xperience.ElasticSearch.Search;
+using XperienceCommunity.ElasticSearch.Search;
 
 namespace DancingGoat.Search.Services;
 

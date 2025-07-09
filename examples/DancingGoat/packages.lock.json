@@ -1104,7 +1104,7 @@
           "System.IO.Hashing": "8.0.0"
         }
       },
-      "kentico.xperience.elasticsearch": {
+      "xperiencecommunity.elasticsearch": {
         "type": "Project",
         "dependencies": {
           "Elastic.Clients.Elasticsearch": "[8.15.6, )",

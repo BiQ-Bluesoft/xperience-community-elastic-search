@@ -1,4 +1,4 @@
-﻿using Kentico.Xperience.ElasticSearch.Indexing.Models;
+﻿using XperienceCommunity.ElasticSearch.Indexing.Models;
 
 namespace DancingGoat.Search.Models;
 

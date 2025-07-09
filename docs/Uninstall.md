@@ -8,12 +8,12 @@ To remove this configuration and the added database tables perform one of the fo
 
 ### Using Continuous Integration (CI)
 
-1. Remove the `Kentico.Xperience.ElasticSearch` NuGet package from the solution
+1. Remove the `XperienceCommunity.ElasticSearch` NuGet package from the solution
 1. Remove any code references to the package and recompile your solution
 1. If you are using Xperience's Continuous Integration (CI), delete the files with the paths from your CI repository folder:
 
    - `\App_Data\CIRepository\@global\cms.class\kenticoelasticsearch.*\**`
-   - `\App_Data\CIRepository\@global\cms.class\kentico.xperience.elasticsearch\**`
+   - `\App_Data\CIRepository\@global\cms.class\XperienceCommunity.ElasticSearch\**`
    - `\App_Data\CIRepository\@global\kenticoelasticsearch.*\**`
 
 1. Run a CI restore, which will clean up the database tables and `CMS_Class` records.

@@ -29,6 +29,6 @@
     <PackageReference Include="Kentico.Xperience.WebApp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Kentico.Xperience.ElasticSearch\Kentico.Xperience.ElasticSearch.csproj" />
+    <ProjectReference Include="..\..\src\XperienceCommunity.ElasticSearch\XperienceCommunity.ElasticSearch.csproj" />
   </ItemGroup>
 </Project>
