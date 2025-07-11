@@ -3,13 +3,14 @@ using CMS.Base;
 using CMS.Core;
 
 using Kentico.Xperience.Admin.Base;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 using XperienceCommunity.ElasticSearch.Admin;
 using XperienceCommunity.ElasticSearch.Admin.Services;
 using XperienceCommunity.ElasticSearch.Aliasing;
 using XperienceCommunity.ElasticSearch.Indexing;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 [assembly: RegisterModule(typeof(ElasticSearchAdminModule))]
 

@@ -5,13 +5,13 @@ using CMS.Core;
 using CMS.DataEngine;
 using CMS.Websites;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 using XperienceCommunity.ElasticSearch;
 using XperienceCommunity.ElasticSearch.Indexing;
 using XperienceCommunity.ElasticSearch.Indexing.Models;
 using XperienceCommunity.ElasticSearch.Indexing.SearchTasks;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 [assembly: RegisterModule(typeof(ElasticSearchSearchModule))]
 

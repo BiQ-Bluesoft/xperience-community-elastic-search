@@ -2,12 +2,13 @@
 
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Forms;
+
+using Microsoft.IdentityModel.Tokens;
+
 using XperienceCommunity.ElasticSearch.Admin.Models;
 using XperienceCommunity.ElasticSearch.Admin.Services;
 using XperienceCommunity.ElasticSearch.Aliasing;
 using XperienceCommunity.ElasticSearch.Helpers.Extensions;
-
-using Microsoft.IdentityModel.Tokens;
 
 using IFormItemCollectionProvider = Kentico.Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider;
 

@@ -1,20 +1,19 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 using XperienceCommunity.ElasticSearch.Admin;
 using XperienceCommunity.ElasticSearch.Admin.Services;
 using XperienceCommunity.ElasticSearch.Aliasing;
-
 using XperienceCommunity.ElasticSearch.Indexing;
 using XperienceCommunity.ElasticSearch.Indexing.Models;
 using XperienceCommunity.ElasticSearch.Indexing.SearchClients;
 using XperienceCommunity.ElasticSearch.Indexing.SearchTasks;
 using XperienceCommunity.ElasticSearch.Indexing.Strategies;
 using XperienceCommunity.ElasticSearch.Search;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace XperienceCommunity.ElasticSearch;
 

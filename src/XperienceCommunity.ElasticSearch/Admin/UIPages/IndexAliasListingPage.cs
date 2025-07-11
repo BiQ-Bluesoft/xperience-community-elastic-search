@@ -2,6 +2,9 @@
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
+
+using Microsoft.Extensions.Options;
+
 using XperienceCommunity.ElasticSearch.Admin.InfoModels.ElasticSearchIndexAliasItem;
 using XperienceCommunity.ElasticSearch.Admin.Services;
 using XperienceCommunity.ElasticSearch.Admin.UIPages;
@@ -9,8 +12,6 @@ using XperienceCommunity.ElasticSearch.Aliasing;
 using XperienceCommunity.ElasticSearch.Indexing;
 using XperienceCommunity.ElasticSearch.Indexing.Models;
 using XperienceCommunity.ElasticSearch.Indexing.SearchClients;
-
-using Microsoft.Extensions.Options;
 
 [assembly: UIPage(
    parentType: typeof(IndexListingPage),

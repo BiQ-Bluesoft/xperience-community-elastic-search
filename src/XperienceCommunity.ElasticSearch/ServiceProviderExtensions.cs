@@ -1,7 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
+
 using XperienceCommunity.ElasticSearch.Indexing.Models;
 using XperienceCommunity.ElasticSearch.Indexing.Strategies;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace XperienceCommunity.ElasticSearch;
 

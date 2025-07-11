@@ -3,6 +3,9 @@ using CMS.Helpers;
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
+
+using Microsoft.Extensions.Options;
+
 using XperienceCommunity.ElasticSearch.Admin.InfoModels.ElasticSearchIndexItem;
 using XperienceCommunity.ElasticSearch.Admin.Models;
 using XperienceCommunity.ElasticSearch.Admin.Services;
@@ -11,8 +14,6 @@ using XperienceCommunity.ElasticSearch.Helpers.Constants;
 using XperienceCommunity.ElasticSearch.Indexing;
 using XperienceCommunity.ElasticSearch.Indexing.Models;
 using XperienceCommunity.ElasticSearch.Indexing.SearchClients;
-
-using Microsoft.Extensions.Options;
 
 [assembly: UIPage(
    parentType: typeof(ElasticSearchApplicationPage),
