@@ -89,9 +89,12 @@ jobs:
             ./src/${{ env.PROJECT_NAME }}/obj/Release/
 
   publish-nugget:
-    name: Publish NuGet Package to Feedz.io
+    name: Publish NuGet Package to Github Packages
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
+      packages: write
 
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
