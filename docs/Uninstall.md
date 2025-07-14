@@ -34,5 +34,5 @@ delete
 FROM [dbo].[CMS_Class] where ClassName like 'kenticoelasticsearch%'
 
 delete
-from [CMS_Resource] where ResourceName = 'CMS.Integration.ElasticSearch'
+from [CMS_Resource] where ResourceName = 'XperienceCommunity.ElasticSearch'
 ```

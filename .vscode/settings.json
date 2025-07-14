@@ -30,7 +30,7 @@
     "editor.defaultFormatter": "ms-dotnettools.csharp"
   },
 
-  "dotnet.defaultSolution": "XperienceCommunity.ElasticSearch.sln",
+  "dotnet.defaultSolution": "XperienceCommunity.ElasticSearch.slnx",
 
   "files.associations": {
     ".azuredevops/**/*.yml": "azure-pipelines"
