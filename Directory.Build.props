@@ -6,7 +6,7 @@
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
     <VersionPrefix>0.0.1</VersionPrefix>
-    <VersionSuffix>preview-1</VersionSuffix>
+    <VersionSuffix>preview-2</VersionSuffix>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <PackageProjectUrl>https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch</PackageProjectUrl>
