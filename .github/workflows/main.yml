@@ -122,4 +122,4 @@ jobs:
         run: dotnet pack ./src/${{ env.PROJECT_NAME }} --configuration Release -o ./nupkg
 
       - name: Publish to Github Packages
-        run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/BiQ-Bluesoft/index.json --api-key "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"
+        run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/BiQ-Bluesoft/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
