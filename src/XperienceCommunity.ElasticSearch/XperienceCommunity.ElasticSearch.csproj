@@ -2,9 +2,13 @@
 	<PropertyGroup>
 		<Product>Xperience by Kentico ElasticSearch Search</Product>
 		<Title>$(Product)</Title>
+		<Authors>BiQ Bluesoft</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageId>XperienceCommunity.ElasticSearch</PackageId>
 		<Description>Enables the creation of ElasticSearch search indexes and the indexing of Xperience website channel pages and reusable content items.</Description>
-		<RepositoryUrl>https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch</RepositoryUrl>
+		<RepositoryUrl>https://github.com/BiQ-Bluesoft/xperience-community-elastic-search</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<PropertyGroup>

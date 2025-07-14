@@ -121,5 +121,5 @@ jobs:
       - name: Pack NuGet package
         run: dotnet pack ./src/${{ env.PROJECT_NAME }} --configuration Release -o ./nupkg
 
-      - name: Publish to Feedz.io
-        run: dotnet nuget push ./nupkg/*.nupkg --source https://f.feedz.io/bluesoft/elastic/nuget/index.json --api-key ${{ secrets.FEEDZ_API_KEY }}
+      - name: Publish to Github Packages
+        run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/BiQ-Bluesoft/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
