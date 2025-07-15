@@ -32,11 +32,11 @@ public sealed class ElasticSearchIndexConfigurationComponentAttribute : FormComp
 [ComponentAttribute(typeof(ElasticSearchIndexConfigurationComponentAttribute))]
 public class ElasticSearchIndexConfigurationFormComponent : FormComponent<ElasticSearchIndexConfigurationComponentProperties, ElasticSearchIndexConfigurationComponentClientProperties, IEnumerable<ElasticSearchIndexIncludedPath>>
 {
-    public const string IDENTIFIER = "kentico.xperience-integrations-elasticsearch.elasticsearch-index-configuration";
+    public const string IDENTIFIER = "xperience-community-elasticsearch.elasticsearch-index-configuration";
 
     internal List<ElasticSearchIndexIncludedPath>? Value { get; set; }
 
-    public override string ClientComponentName => "@kentico/xperience-integrations-elasticsearch/ElasticSearchIndexConfiguration";
+    public override string ClientComponentName => "@xperience-community/xperience-community-elasticsearch/ElasticSearchIndexConfiguration";
 
     public override IEnumerable<ElasticSearchIndexIncludedPath> GetValue() => Value ?? [];
     public override void SetValue(IEnumerable<ElasticSearchIndexIncludedPath> value) => Value = value.ToList();
