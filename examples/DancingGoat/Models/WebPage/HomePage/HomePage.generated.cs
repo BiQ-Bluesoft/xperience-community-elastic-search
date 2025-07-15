@@ -11,60 +11,61 @@
 
 using System;
 using System.Collections.Generic;
+
 using CMS.Websites;
 
 namespace DancingGoat.Models
 {
-	/// <summary>
-	/// Represents a page of type <see cref="HomePage"/>.
-	/// </summary>
-	public partial class HomePage : IWebPageFieldsSource
-	{
-		/// <summary>
-		/// Code name of the content type.
-		/// </summary>
-		public const string CONTENT_TYPE_NAME = "DancingGoat.HomePage";
+    /// <summary>
+    /// Represents a page of type <see cref="HomePage"/>.
+    /// </summary>
+    public partial class HomePage : IWebPageFieldsSource
+    {
+        /// <summary>
+        /// Code name of the content type.
+        /// </summary>
+        public const string CONTENT_TYPE_NAME = "DancingGoat.HomePage";
 
 
-		/// <summary>
-		/// Represents system properties for a web page item.
-		/// </summary>
-		public WebPageFields SystemFields { get; set; }
+        /// <summary>
+        /// Represents system properties for a web page item.
+        /// </summary>
+        public WebPageFields SystemFields { get; set; }
 
 
-		/// <summary>
-		/// HomePageBanner.
-		/// </summary>
-		public IEnumerable<Banner> HomePageBanner { get; set; }
+        /// <summary>
+        /// HomePageBanner.
+        /// </summary>
+        public IEnumerable<Banner> HomePageBanner { get; set; }
 
 
-		/// <summary>
-		/// HomePageEvent.
-		/// </summary>
-		public IEnumerable<Event> HomePageEvent { get; set; }
+        /// <summary>
+        /// HomePageEvent.
+        /// </summary>
+        public IEnumerable<Event> HomePageEvent { get; set; }
 
 
-		/// <summary>
-		/// HomePageOurStory.
-		/// </summary>
-		public string HomePageOurStory { get; set; }
+        /// <summary>
+        /// HomePageOurStory.
+        /// </summary>
+        public string HomePageOurStory { get; set; }
 
 
-		/// <summary>
-		/// HomePageReference.
-		/// </summary>
-		public IEnumerable<Reference> HomePageReference { get; set; }
+        /// <summary>
+        /// HomePageReference.
+        /// </summary>
+        public IEnumerable<Reference> HomePageReference { get; set; }
 
 
-		/// <summary>
-		/// HomePageCafes.
-		/// </summary>
-		public IEnumerable<Cafe> HomePageCafes { get; set; }
+        /// <summary>
+        /// HomePageCafes.
+        /// </summary>
+        public IEnumerable<Cafe> HomePageCafes { get; set; } = [];
 
 
-		/// <summary>
-		/// HomePageArticlesSection.
-		/// </summary>
-		public IEnumerable<WebPageRelatedItem> HomePageArticlesSection { get; set; }
-	}
+        /// <summary>
+        /// HomePageArticlesSection.
+        /// </summary>
+        public IEnumerable<WebPageRelatedItem> HomePageArticlesSection { get; set; }
+    }
 }

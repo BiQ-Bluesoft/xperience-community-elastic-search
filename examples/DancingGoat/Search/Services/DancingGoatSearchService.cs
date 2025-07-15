@@ -35,6 +35,19 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
         };
 
         var response = await index.SearchAsync<DancingGoatSearchModel>(request);
+        if (!response.IsValidResponse)
+        {
+            return new DancingGoatSearchViewModel()
+            {
+                Hits = [],
+                TotalHits = 0,
+                Query = searchText,
+                TotalPages = 0,
+                PageSize = pageSize,
+                Page = page
+            };
+        }
+
         return new DancingGoatSearchViewModel()
         {
             Hits = response.Hits.Select(x => new DancingGoatSearchResult()
@@ -76,6 +89,20 @@ public class DancingGoatSearchService(IElasticSearchQueryClientService searchCli
         };
 
         var response = await index.SearchAsync<DancingGoatSimpleSearchModel>(request);
+
+        if (!response.IsValidResponse)
+        {
+            return new DancingGoatSearchViewModel()
+            {
+                Hits = [],
+                TotalHits = 0,
+                Query = searchText,
+                TotalPages = 0,
+                PageSize = pageSize,
+                Page = page
+            };
+        }
+
         return new DancingGoatSearchViewModel()
         {
             Hits = response.Documents.Select(x => new DancingGoatSearchResult()
