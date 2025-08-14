@@ -52,7 +52,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchIndexItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchIndexItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "ElasticSearch Index Item";
+        info.ClassDisplayName = "ElasticSearch - Index Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
@@ -143,7 +143,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchIndexAliasItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchIndexAliasItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "ElasticSearch Index Item";
+        info.ClassDisplayName = "ElasticSearch - Index Alias Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
@@ -186,7 +186,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchIndexAliasIndexItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchIndexAliasIndexItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "ElasticSearch Index Item";
+        info.ClassDisplayName = "ElasticSearch - Alias Index Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
@@ -241,7 +241,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchIncludedPathItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchIncludedPathItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "ElasticSearch Path Item";
+        info.ClassDisplayName = "ElasticSearch - Path Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
@@ -297,7 +297,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchIndexLanguageItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchIndexLanguageItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "ElasticSearch Indexed Language Item";
+        info.ClassDisplayName = "ElasticSearch - Indexed Language Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
@@ -354,7 +354,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchContentTypeItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchContentTypeItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "ElasticSearch Type Item";
+        info.ClassDisplayName = "ElasticSearch - Content Type Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
@@ -425,7 +425,7 @@ internal class ElasticSearchModuleInstaller(IInfoProvider<ResourceInfo> resource
 
         info.ClassName = ElasticSearchReusableContentTypeItemInfo.TYPEINFO.ObjectClassName;
         info.ClassTableName = ElasticSearchReusableContentTypeItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Elastic Search Reusable Content Type Item";
+        info.ClassDisplayName = "ElasticSearch - Reusable Content Type Item";
         info.ClassType = ClassType.OTHER;
         info.ClassResourceID = resource.ResourceID;
 
