@@ -111,18 +111,7 @@ internal class DefaultElasticSearchClient(
 
     /// <inheritdoc />
     public async Task<ElasticSearchResponse> EditIndexAsync(string oldIndexName, ElasticSearchConfigurationModel newConfiguration,
-        CancellationToken cancellationToken = default)
-    {
-        if (newConfiguration.IndexName != oldIndexName)
-        {
-            // Do we want this functionality?
-            return ElasticSearchResponse.Failure($"Editing name of the already created index is not permitted.");
-        }
-        else
-        {
-            return await StartRebuildAsync(newConfiguration.IndexName, cancellationToken);
-        }
-    }
+        CancellationToken cancellationToken = default) => await StartRebuildAsync(newConfiguration.IndexName, cancellationToken);
 
     /// <inheritdoc />
     public async Task<int> DeleteRecordsAsync(

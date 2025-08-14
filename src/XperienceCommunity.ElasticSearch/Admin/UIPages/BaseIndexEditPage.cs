@@ -49,18 +49,25 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
             );
         }
 
+        // Edit
         if (StorageService.GetIndexIds().Exists(x => x == configuration.Id))
         {
             var oldIndex = StorageService.GetIndexDataOrNull(configuration.Id);
+
+            // We cannot change the name of already created index
+            if (oldIndex?.IndexName != configuration.IndexName)
+            {
+                return new ModificationResponse(ModificationResult.Failure, [$"Editing name of the already created index is not permitted."]);
+            }
 
             if (StorageService.TryEditIndex(configuration))
             {
                 ElasticSearchIndexStore.SetIndices(StorageService);
 
-                var elasticRespone = await defaultElasticSearchClient.EditIndexAsync(oldIndex!.IndexName, configuration, default);
-                if (!elasticRespone.IsSuccess)
+                var elasticResponse = await defaultElasticSearchClient.EditIndexAsync(oldIndex!.IndexName, configuration, default);
+                if (!elasticResponse.IsSuccess)
                 {
-                    return new ModificationResponse(ModificationResult.Failure, [elasticRespone.ErrorMessage]);
+                    return new ModificationResponse(ModificationResult.Failure, [elasticResponse.ErrorMessage]);
                 }
 
                 return new ModificationResponse(ModificationResult.Success);
@@ -69,6 +76,7 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
             return new ModificationResponse(ModificationResult.Failure);
         }
 
+        // Create
         if (!string.IsNullOrWhiteSpace(configuration.IndexName) && StorageService.TryCreateIndex(configuration))
         {
             ElasticSearchIndexStore.Instance.AddIndex(new ElasticSearchIndex(configuration, StrategyStorage.Strategies));
@@ -78,8 +86,10 @@ internal abstract class BaseIndexEditPage : ModelEditPage<ElasticSearchConfigura
             {
                 return new ModificationResponse(ModificationResult.Failure, [elasticResponse.ErrorMessage]);
             }
+
             return new ModificationResponse(ModificationResult.Success);
         }
+
         return new ModificationResponse(ModificationResult.Failure);
     }
 }
