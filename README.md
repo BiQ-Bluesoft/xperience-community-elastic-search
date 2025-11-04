@@ -42,9 +42,9 @@ dotnet add package XperienceCommunity.ElasticSearch
    ```
 
 4. Create an index in Xperience's Administration within the Search application added by this library.
-   ![Administration search edit form](/images/xperience-administration-search-index-edit-form.png)
+   ![Administration search edit form](https://raw.githubusercontent.com/BiQ-Bluesoft/xperience-community-elastic-search/refs/heads/main/images/xperience-administration-search-index-edit-form.png)
 5. Rebuild the index in Xperience's Administration within the Search application added by this library.
-   ![Administration search edit form](/images/xperience-administration-search-index-list.png)
+   ![Administration search edit form](https://raw.githubusercontent.com/BiQ-Bluesoft/xperience-community-elastic-search/refs/heads/main/images/xperience-administration-search-index-list.png)
 6. Display the results on your site with a Razor View 👍.
 
 ## Full Instructions
