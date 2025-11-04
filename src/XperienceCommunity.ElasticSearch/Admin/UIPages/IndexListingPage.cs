@@ -52,7 +52,7 @@ internal class IndexListingPage(
                 new()
                 {
                     Headline = "Indexing is disabled",
-                    Content = "Indexing is disabled. See <a target='_blank' href='https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch'>our instructions</a> to read more about ElasticSearch alias indexes.",
+                    Content = "Indexing is disabled. See <a target='_blank' href='https://github.com/BiQ-Bluesoft/xperience-community-elastic-search'>our instructions</a> to read more about ElasticSearch alias indexes.",
                     ContentAsHtml = true,
                     Type = CalloutType.FriendlyWarning,
                     Placement = CalloutPlacement.OnDesk
@@ -69,7 +69,7 @@ internal class IndexListingPage(
                     new()
                     {
                         Headline = "No indexes",
-                        Content = "No ElasticSearch indexes registered. See <a target='_blank' href='https://gitlab.bluesoft.cz/oss/xperience-by-kentico-elasticsearch'>our instructions</a> to read more about creating and registering ELasticSearch indexes.",
+                        Content = "No ElasticSearch indexes registered. See <a target='_blank' href='https://github.com/BiQ-Bluesoft/xperience-community-elastic-search'>our instructions</a> to read more about creating and registering ELasticSearch indexes.",
                         ContentAsHtml = true,
                         Type = CalloutType.FriendlyWarning,
                         Placement = CalloutPlacement.OnDesk
