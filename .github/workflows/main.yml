@@ -12,6 +12,7 @@ on:
       - "**.targets"
       - "**.slnx"
       - "**.json"
+      - "**.md"
       - ".github/workflows/main.yml"
   pull_request:
     branches: [main]
